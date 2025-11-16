@@ -204,6 +204,14 @@ foreach ($_SESSION['cart'] as $i => $item) {
     }
 }
 
+// Fetch active services
+$services = [];
+$res = $conn->query("SELECT service_id, service_name, price FROM services WHERE archived = 0");
+
+if ($res && $res->num_rows > 0) {
+    $services = $res->fetch_all(MYSQLI_ASSOC);
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
     $payment = (float)($_POST['payment'] ?? 0);
     $discount = (float)($_POST['discount'] ?? 0);
