@@ -1,0 +1,470 @@
+/* =========================
+   INVENTORY SYSTEM THEME – ORANGE + GRAY
+   ========================= */
+:root {
+  /* Palette */
+  --orange-600: #ea580c;
+  --orange-500: #f97316;
+  --orange-400: #fb923c;
+
+  --gray-900: #1f2937;
+  --gray-700: #374151;
+  --gray-500: #6b7280;
+  --gray-300: #d1d5db;
+  --gray-200: #e5e7eb;
+  --gray-100: #f3f4f6;
+  --gray-50:  #f9fafb;
+
+  /* Surfaces */
+  --surface:  #ffffff;
+  --bg-start: #f8fafc;
+  --bg-end:   #eef2f7;
+
+  /* Effects */
+  --radius-lg: 16px;
+  --radius-md: 14px;
+  --shadow-1: 0 4px 10px rgba(0,0,0,.06);
+  --shadow-2: 0 6px 16px rgba(0,0,0,.10);
+  --shadow-3: 0 6px 18px rgba(0,0,0,.20);
+
+  /* Motion */
+  --ease: cubic-bezier(.2,.7,.3,1);
+  --t-150: .15s;
+  --t-200: .20s;
+  --t-250: .25s;
+}
+
+/* =========================
+   GLOBAL
+   ========================= */
+body {
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--gray-900);
+  background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+}
+
+.container,
+.container-fluid {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+/* =========================
+   HEADER – orange highlight
+   ========================= */
+.page-header {
+  margin: 0 0 24px;
+  padding: 22px 24px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--orange-600), var(--orange-500));
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(234,88,12,.25);
+  animation: fadeInDown .6s var(--ease);
+}
+
+.page-header h2 {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: .2px;
+}
+.page-header h2 i {
+  font-size: 1.3rem;
+}
+
+/* =========================
+   CARDS
+   ========================= */
+.card-custom {
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+  margin-bottom: 20px;
+  overflow: hidden;
+  transition: transform var(--t-200) var(--ease),
+              box-shadow var(--t-200) var(--ease);
+}
+.card-custom:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-2);
+}
+
+.card-custom .card-header {
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200);
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+/* =========================
+   TABLES
+   ========================= */
+.table-modern {
+  margin-bottom: 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table-modern thead th {
+  background: linear-gradient(135deg, var(--orange-600), var(--orange-500));
+  color: #fff;
+  font-weight: 600;
+  font-size: .85rem;
+  text-transform: uppercase;
+  border: 0;
+}
+form .form-control, form .btn {
+  height: 42px;
+}
+.table-modern tbody td {
+  vertical-align: middle;
+  color: var(--gray-700);
+  background: #fff;
+}
+
+.table-modern tbody tr:hover td {
+  background: var(--gray-100);
+  transition: background var(--t-250) var(--ease);
+}
+
+/* =========================
+   BUTTONS
+   ========================= */
+.btn-modern,
+.btn-action {
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: transform var(--t-150) var(--ease),
+              box-shadow var(--t-150) var(--ease),
+              opacity var(--t-200) var(--ease);
+}
+.btn-modern i,
+.btn-action i { margin-right: 6px; }
+
+.btn-modern:hover,
+.btn-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0,0,0,.12);
+}
+.btn-modern:active,
+.btn-action:active {
+  transform: scale(.97);
+  box-shadow: 0 2px 6px rgba(0,0,0,.20);
+}
+
+/* Variants */
+.btn-accent {
+  background: linear-gradient(135deg, var(--orange-600), var(--orange-500));
+  color: #fff;
+}
+.btn-neutral {
+  background: var(--gray-100);
+  color: var(--gray-900);
+  border: 1px solid var(--gray-300);
+}
+.btn-accent:hover {
+  box-shadow: 0 4px 12px rgba(234,88,12,.25);
+}
+.btn-neutral:hover {
+  background: var(--gray-200);
+}
+
+/* =========================
+   MODALS
+   ========================= */
+.modal-content {
+  border: 0;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-3);
+  background: var(--surface);
+}
+.modal-header,
+.modal-footer {
+  border: 0;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  background: var(--gray-50);
+}
+
+/* =========================
+   SIDEBAR / NAV
+   ========================= */
+.sidebar a {
+  display: flex;
+  align-items: center;
+
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: var(--gray-700);
+  text-decoration: none;
+  transition: background var(--t-200) var(--ease), color var(--t-200) var(--ease);
+}
+
+
+/* Pending badge */
+.badge-pending {
+  display: inline-block;
+  min-width: 22px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: .75rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, var(--orange-600), var(--orange-500));
+}
+
+/* =========================
+   ANIMATIONS
+   ========================= */
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Push the page content to the right of the fixed sidebar */
+@media (min-width: 992px){
+  #mainSidebar ~ .container-fluid{ margin-left: var(--sidebar-desktop) !important; }
+}
+@media (min-width: 768px) and (max-width: 991.98px){
+  #mainSidebar ~ .container-fluid{ margin-left: var(--sidebar-rail) !important; }
+  /* if your JS adds .expanded on tablet, respect it */
+  #mainSidebar.expanded ~ .container-fluid{ margin-left: var(--sidebar-desktop) !important; }
+}
+@media (max-width: 767.98px){
+  #mainSidebar ~ .container-fluid{ margin-left: 0 !important; } /* sidebar overlays on mobile */
+}
+
+/* Keep table inside the white card and avoid sideways bleed */
+.table-responsive{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.table.table-modern{ table-layout: fixed; width:100%; }
+.table.table-modern th, .table.table-modern td{
+  white-space: normal; word-break: break-word; overflow-wrap: anywhere;
+}
+html, body{ overflow-x:hidden; } /* belt & suspenders */
+
+
+
+
+/* Make the table use horizontal space better */
+.table-modern {
+  table-layout: auto;
+  width: 100%;
+}
+
+/* Column widths (desktop) */
+.col-id      { width: 90px;  white-space: nowrap; }
+.col-branch  { width: 160px; }
+.col-date    { width: 170px; white-space: nowrap; }
+.col-total   { width: 120px; white-space: nowrap; }
+.col-status  { width: 150px; white-space: nowrap; }
+.col-actions { width: 240px; }
+
+/* Let long text wrap to free space for Actions */
+.col-remarks,
+.col-refitems {
+  min-width: 220px;
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* Action buttons: line up nicely and never crush */
+.actions-wrap{
+  display: inline-flex;
+  gap: .5rem;
+  flex-wrap: nowrap;
+  align-items: center;
+  white-space: nowrap;
+}
+
+/* Slightly tighten cell padding to gain a bit more width */
+.table-modern > :not(caption) > * > * {
+  padding: .55rem .75rem;
+}
+
+/* Responsive behavior: allow wrapping when screen narrows */
+@media (max-width: 1400px){
+  .col-actions { width: 260px; } /* a bit more on large laptops */
+}
+@media (max-width: 1200px){
+  .actions-wrap{ flex-wrap: wrap; }
+  .col-actions { width: 100%; min-width: 220px; }
+}
+/* Optional: push Actions cell content to center on narrow screens */
+@media (max-width: 992px){
+  .col-actions { text-align: center; }
+}
+/* --- SALES HISTORY TABLE: viewport fix --- */
+
+/* Keep headers on one line (prevents R E F U N D E D vertical stacking) */
+.table-modern thead th{
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
+}
+
+/* Default body cells: one line unless we opt-in to wrapping */
+.table-modern tbody td{
+  white-space: nowrap;
+}
+
+/* Allow wrapping ONLY for long-text columns:
+   5 = Remarks, 6 = Refunded Items */
+.table-modern thead th:nth-child(5),
+.table-modern thead th:nth-child(6),
+.table-modern tbody td:nth-child(5),
+.table-modern tbody td:nth-child(6){
+  white-space: normal !important;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  min-width: 240px;              /* gives them room at this width */
+}
+
+/* Ensure actions area doesn’t get crushed */
+.table-modern thead th:last-child,
+.table-modern tbody td:last-child{
+  min-width: 220px;
+}
+
+/* Keep date/total readable and on one line */
+.table-modern thead th:nth-child(3),
+.table-modern tbody td:nth-child(3),  /* Date */
+.table-modern thead th:nth-child(4),
+.table-modern tbody td:nth-child(4)   /* Total */
+{
+  white-space: nowrap;
+}
+
+/* Maintain the orange header look */
+.table-modern thead th{
+  background: linear-gradient(135deg, var(--orange-600), var(--orange-500)) !important;
+  color:#fff !important;
+  font-weight:700;
+}
+
+/* Layout: let browser size columns naturally */
+.table-modern{ table-layout:auto !important; }
+
+/* Keep the table inside the card if it still overflows on smaller screens */
+.table-responsive{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+/* =========================
+    SALES HISTORY — RESPONSIVE FIX
+   ========================= */
+
+/* Make the table behave properly on all screens */
+.table-modern {
+  width: 100%;
+  table-layout: auto !important;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* Table header: prevent wrapping */
+.table-modern thead th {
+  white-space: nowrap !important;
+  padding: 12px 10px;
+}
+
+/* Default cell behavior: no wrap */
+.table-modern tbody td {
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* LONG TEXT columns — allow wrapping */
+.col-remarks,
+.col-refitems {
+  white-space: normal !important;
+  word-break: break-word;
+  min-width: 220px;
+}
+
+/* Ensure action buttons NEVER collapse */
+.col-actions {
+  min-width: 240px;
+  white-space: nowrap !important;
+}
+
+.actions-wrap {
+  display: inline-flex;
+  gap: 6px;
+  flex-wrap: nowrap;
+}
+
+/* Smooth horizontal scroll */
+.table-responsive {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent the card from clipping the table */
+.card-custom {
+  overflow: visible !important;
+}
+
+/* Fix right-side clipping inside container-fluid */
+.page-content {
+  padding-right: 16px;
+  overflow-x: hidden;
+}
+
+/* =========================
+   TABLET FIX (768px–1024px)
+   ========================= */
+@media (max-width: 1024px) {
+
+  /* Make action buttons wrap nicely */
+  .actions-wrap {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .col-actions {
+    min-width: 200px;
+  }
+
+  /* Remarks / refunded text uses more width */
+  .col-remarks,
+  .col-refitems {
+    min-width: 250px;
+  }
+}
+
+/* =========================
+   MOBILE FIX (<768px)
+   ========================= */
+@media (max-width: 768px) {
+
+  .page-header h2 {
+    font-size: 1.3rem;
+  }
+
+  /* Table gets horizontal scroll */
+  .table-responsive {
+    border-radius: 12px;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    scrollbar-width: thin;
+  }
+
+  /* Ensure the table fits in mobile viewport */
+  .table-modern {
+    min-width: 900px;
+  }
+
+  /* Allow columns to expand slightly */
+  .col-remarks,
+  .col-refitems {
+    min-width: 260px;
+  }
+}

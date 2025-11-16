@@ -1,0 +1,98 @@
+* Content fills space to the right of the sidebar */
+.content{
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 24px;             /* match your other pages */
+  box-sizing: border-box;
+  background: #f5f5f5;
+}
+
+/* FULL-WIDTH approvals: no max-width cap */
+.approvals-wrap{
+  width: 100%;
+  max-width: none;           /* <= remove the old 980px cap */
+  margin: 0;                 /* no centering */
+  padding: 10px 10px;                /* optional: or keep padding if you want */
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-sizing: border-box;
+}
+
+/* Cards fill the wrapper */
+.approval-section{
+  width: 100%;
+  background: #fff;
+  border: 1px solid #0000003b;
+  border-radius: 12px;
+  padding: 20px 22px;
+  box-sizing: border-box;
+}
+
+/* Tables inside cards should stretch too */
+.approval-section table{
+  width: 100%;
+  border-collapse: collapse;
+}
+.approval-section th, .approval-section td{
+  padding: 12px 14px;
+  border-bottom: 1px solid #eee;
+}
+.approval-section th{
+  background: #f7931e;
+  color: #fff;
+}
+/* Only style the table header cells */
+.approval-section table thead th {
+  background: linear-gradient(90deg, #f7931e, #ffb347);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+}
+
+/* Restore your custom buttons */
+.btn-approve { background: #28a745; color: #fff; }
+.btn-reject  { background: #dc3545; color: #fff; }
+
+.btn-approve:hover { background: #218838; }
+.btn-reject:hover  { background: #c82333; }
+
+
+
+.approval-section td {
+  border: none;               /* remove default borders */
+  background-color: #e7e7e7;
+}
+
+/* optional: keep corners rounded on the header */
+.approval-section table thead th:first-child {
+  border-top-left-radius: 8px;
+}
+.approval-section table thead th:last-child {
+  border-top-right-radius: 8px;
+}
+
+/* Toast base */
+#appToast.toast {
+  border: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,.15);
+}
+
+/* Toast body always white/black */
+#appToast .toast-body {
+  background: #fff;
+  color: #000;
+  font-weight: 500;
+  padding: 1rem;
+}
+
+
+/* Variants */
+#appToast .toast-header.bg-success {
+  background: linear-gradient(135deg,#28a745,#1e7e34) !important;
+}
+#appToast .toast-header.bg-danger {
+  background: linear-gradient(135deg,#dc3545,#b02a37) !important;
+}

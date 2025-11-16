@@ -1,0 +1,164 @@
+/* ============================
+   Archive Page Styling
+============================ */
+
+/* Page container */
+.content {
+    flex: 1;
+    padding: 30px;
+    background: #f8f9fc;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    color: #333;
+}
+
+/* ============================
+   Cards
+============================ */
+.card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    border: none;
+}
+
+.card h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ============================
+   Table Containers
+============================ */
+.table-container {
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: auto;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+}
+
+/* Make Bootstrap tables match your custom tables */
+.table,
+.table-striped,
+.table-dark {
+    border-radius: 14px !important;
+    overflow: hidden;
+}
+
+.table th,
+.table td {
+    font-size: 14px;
+    vertical-align: middle !important;
+}
+
+/* Custom table styling */
+.table-container table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table-container th,
+.table-container td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+/* Sticky header for scrollable tables */
+.table-container th {
+    background: linear-gradient(135deg, #f7931e, #ffb84d);
+    color: white;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+/* Match Bootstrap dark table headers with the same color theme */
+.table-dark th {
+    background: linear-gradient(135deg, #f7931e, #ffb84d) !important;
+    color: #fff !important;
+    border-color: transparent !important;
+}
+
+/* ============================
+   Buttons
+============================ */
+.btn-restore,
+.btn-delete {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.btn-restore {
+    background: #28a745;
+    color: white;
+}
+
+.btn-delete {
+    background: #dc3545;
+    color: white;
+    margin-left: 6px;
+}
+
+.btn-restore:hover,
+.btn-delete:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.18);
+}
+
+/* ============================
+   Empty Message
+============================ */
+.empty-msg {
+    font-style: italic;
+    color: #777;
+    padding: 18px 0;
+    text-align: center;
+}
+
+/* ============================
+   Scrollbar
+============================ */
+.table-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+    background: #f1f3f5;
+    border-radius: 8px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: #cfcfcf;
+    border-radius: 8px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: #a9a9a9;
+}
+
+/* ============================
+   Modal Buttons (Fix Hover Bug)
+============================ */
+.modal-footer button:hover,
+.modal-footer button:focus,
+.modal-footer button:active {
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
