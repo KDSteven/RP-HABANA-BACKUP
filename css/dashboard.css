@@ -362,3 +362,8 @@
     .dashboard-page .card h3 { font-size: 13px; }
     .dashboard-page .card p { font-size: 16px; }
 }
+.indicator-sub {
+    margin: -8px 0 10px 0;
+    font-size: 13px;
+    color: #6c757d;
+}

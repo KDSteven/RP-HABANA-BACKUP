@@ -204,14 +204,6 @@ foreach ($_SESSION['cart'] as $i => $item) {
     }
 }
 
-// Fetch active services
-$services = [];
-$res = $conn->query("SELECT service_id, service_name, price FROM services WHERE archived = 0");
-
-if ($res && $res->num_rows > 0) {
-    $services = $res->fetch_all(MYSQLI_ASSOC);
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
     $payment = (float)($_POST['payment'] ?? 0);
     $discount = (float)($_POST['discount'] ?? 0);
@@ -300,6 +292,25 @@ while ($row = $result->fetch_assoc()) {
 
 $stmt->close();
 
+/** Services list (filtered by branch) */
+$services = [];
+$branch_id = (int)($_SESSION['branch_id'] ?? 0);
+
+if ($branch_id > 0) {
+    $stmt = $conn->prepare("
+        SELECT * 
+        FROM services 
+        WHERE branch_id = ? 
+          AND archived = 0
+    ");
+    $stmt->bind_param("i", $branch_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($s = $result->fetch_assoc()) {
+        $services[] = $s;
+    }
+    $stmt->close();
+}
 
 
 /** Admin: pending password resets badge */
