@@ -4,7 +4,7 @@ include 'config/db.php';
 include 'functions.php';
 
 if (!isset($_SESSION['role'])) {
-    header("Location: index.php");
+    header("Location: index.html");
     exit;
 }
 
@@ -208,6 +208,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
     $payment = (float)($_POST['payment'] ?? 0);
     $discount = (float)($_POST['discount'] ?? 0);
     $discount_type = $_POST['discount_type'] ?? 'amount';
+
+    if ($discount < 100 || $discount > 500) {
+    $errorMessage = "Discount must be between ₱100 and ₱500.";
+}
+
 
     try {
         $result = checkoutCart($conn, $user_id, $branch_id, $payment, $discount, $discount_type);
@@ -640,7 +645,7 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
 
               <!-- Discount -->
               <div class="d-flex gap-2">
-                <input type="number" step="0.01" min="0" name="discount" 
+                <input type="number" step="0.01" min="0" max="500" name="discount" 
                        id="discountInput" class="form-control" placeholder="Discount">
                 <select name="discount_type" id="discountType" class="form-select" style="max-width:110px;">
                   <option value="amount">₱</option>
@@ -838,6 +843,26 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="notifications.js"></script>
 <script>
+  // ---- GLOBAL TOAST CONTROL ----
+// GLOBAL TOAST DEDUP MEMORY
+const shownGlobalToasts = new Set();
+
+function toastKey(title, message) {
+    return (title + "|" + message).toLowerCase().trim();
+}
+
+function safeToast(title, message, type = 'primary', delay = 3000) {
+    const key = toastKey(title, message);
+
+    // Prevent duplicates
+    if (shownGlobalToasts.has(key)) return;
+    shownGlobalToasts.add(key);
+
+    // Call the REAL toast function
+    window._showRealToast(title, message, type, delay);
+}
+</script>
+<script>
 document.addEventListener("DOMContentLoaded", () => {
 
     const paymentInput = document.getElementById("paymentInput");
@@ -887,8 +912,8 @@ document.addEventListener('DOMContentLoaded', () => {
       cm.show();
     } else {
       // fallback toast
-      if (window.showToast) {
-        showToast('<i class="fas fa-money-bill-wave"></i> Change Due',
+      if (window.safeToast) {
+        safeToast('<i class="fas fa-money-bill-wave"></i> Change Due',
                   'Please hand the change to the customer.',
                   'success', 5000);
       }
@@ -983,7 +1008,7 @@ document.querySelectorAll('.num-btn').forEach(btn => {
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   // ======= Toast helper =======
-  function showToast(title, message, type='primary', delay=3000) {
+  window._showRealToast = function(title, message, type='primary', delay=3000) {
     let container = document.querySelector('.toast-container');
     // Safety: auto-create container if missing
     if (!container) {
@@ -1051,11 +1076,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const diffDays = daysUntil(today, expDate);
 
     if (diffDays <= 0) {
-      showToast('<i class="fas fa-skull-crossbones"></i> Expired Product',
+      safeToast('<i class="fas fa-skull-crossbones"></i> Expired Product',
                 `"${name || 'Product'}" has already expired!`, 'danger');
       shownExpiryToasts.add(key);
     } else if (diffDays <= NEAR_EXPIRY_DAYS) {
-      showToast('<i class="fas fa-exclamation-triangle"></i> Near Expiration',
+      safeToast('<i class="fas fa-exclamation-triangle"></i> Near Expiration',
                 `"${name || 'Product'}" is near expiration (${diffDays} days left)`, 'warning');
       shownExpiryToasts.add(key);
     }
@@ -1078,11 +1103,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const diffDays = daysUntil(today, expDate);
 
       if (diffDays <= 0) {
-        showToast('<i class="fas fa-skull-crossbones"></i> Expired Product',
+        safeToast('<i class="fas fa-skull-crossbones"></i> Expired Product',
                   `"${productName}" has already expired!`, 'danger');
         shownExpiryToasts.add(key);
       } else if (diffDays <= NEAR_EXPIRY_DAYS) {
-        showToast('<i class="fas fa-exclamation-triangle"></i> Near Expiration',
+        safeToast('<i class="fas fa-exclamation-triangle"></i> Near Expiration',
                   `"${productName}" is near expiration (${diffDays} days left)`, 'warning');
         shownExpiryToasts.add(key);
       }
@@ -1280,9 +1305,9 @@ if (cartSection) cartSection.innerHTML = html;
       .then(data => {
         if (data.success) {
           updateCart(data.cart_html);
-          showToast('<i class="fas fa-check-circle"></i> Added', `${payload.name} added to cart`, 'success');
+          safeToast('<i class="fas fa-check-circle"></i> Added', `${payload.name} added to cart`, 'success');
         } else {
-          showToast('Error', data.message || 'Failed to add item', 'danger');
+          safeToast('Error', data.message || 'Failed to add item', 'danger');
         }
       });
     };
@@ -1310,10 +1335,10 @@ if (cartSection) cartSection.innerHTML = html;
         .then(data => {
           if (data.success) {
             updateCart(data.cart_html);
-            if (payload.action==='remove_item') showToast('<i class="fas fa-trash-alt"></i> Removed','Item removed from cart','warning');
-          } else showToast('<i class="fas fa-times-circle"></i> Error', data.message || 'Failed to update cart', 'danger');
+            if (payload.action==='remove_item') safeToast('<i class="fas fa-trash-alt"></i> Removed','Item removed from cart','warning');
+          } else safeToast('<i class="fas fa-times-circle"></i> Error', data.message || 'Failed to update cart', 'danger');
         })
-        .catch(() => showToast('<i class="fas fa-times-circle"></i> Error', 'Server error', 'danger'));
+        .catch(() => safeToast('<i class="fas fa-times-circle"></i> Error', 'Server error', 'danger'));
       };
     });
   }
@@ -1343,14 +1368,15 @@ if (cartSection) cartSection.innerHTML = html;
       if (data.success) {
         updateCart(data.cart_html);
         resetPaymentModal();
-        showToast('<i class="fas fa-ban"></i> Canceled','Order has been canceled','success');
+        resetToastMemory();
+        safeToast('<i class="fas fa-ban"></i> Canceled','Order has been canceled','success');
       } else {
-        showToast('<i class="fas fa-times-circle"></i> Error', data.message || 'Failed to cancel order', 'danger');
+        safeToast('<i class="fas fa-times-circle"></i> Error', data.message || 'Failed to cancel order', 'danger');
       }
       inst.hide();
     })
     .catch(() => {
-      showToast('<i class="fas fa-times-circle"></i> Error','Server error','danger');
+      safeToast('<i class="fas fa-times-circle"></i> Error','Server error','danger');
       inst.hide();
     });
   });
@@ -1416,18 +1442,18 @@ if (cartSection) cartSection.innerHTML = html;
             // Post-render general scan (dedup set prevents duplicates)
             (window.queueMicrotask ? queueMicrotask : fn => setTimeout(fn, 0))(() => checkCartExpiration());
 
-            showToast('<i class="fas fa-barcode"></i> Barcode Scan','Product added to cart','success');
+            safeToast('<i class="fas fa-barcode"></i> Barcode Scan','Product added to cart','success');
           } else {
-            showToast('<i class="fas fa-times-circle"></i> Error', data.message || 'Failed to add barcode', 'danger');
+            safeToast('<i class="fas fa-times-circle"></i> Error', data.message || 'Failed to add barcode', 'danger');
           }
           barcodeInput.value = ''; tryFocusScanner();
         })
-        .catch(() => showToast('<i class="fas fa-times-circle"></i> Error','Server error during barcode add','danger'));
+        .catch(() => safeToast('<i class="fas fa-times-circle"></i> Error','Server error during barcode add','danger'));
       }
     });
   })();
 <?php if(!empty($errorMessage)): ?>
-    showToast(
+    safeToast(
         '<i class="fas fa-times-circle"></i> Payment Error',
         '<?= addslashes($errorMessage) ?>',
         'danger'
@@ -1457,6 +1483,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const m = new bootstrap.Modal(document.getElementById('startShiftModal'));
     m.show();
   <?php endif; ?>
+});
+
+document.getElementById("discountInput").addEventListener("input", function () {
+    let val = parseFloat(this.value);
+
+    // If empty, do nothing so user can continue typing
+    if (this.value === "") return;
+
+    // If value is outside allowed range, clear it
+    if (val < 0 || val > 500) {
+        this.value = "";
+    }
+
+    updatePaymentComputed();
 });
 </script>
 

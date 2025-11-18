@@ -125,10 +125,24 @@
 }
 
 /* Gradient Colors for Cards */
-.dashboard-page .card.green { background: linear-gradient(135deg, #4caf50, #81c784); color: #fff; }
-.dashboard-page .card.orange { background: linear-gradient(135deg, #ff9800, #ffb74d); color: #fff; }
-.dashboard-page .card.red { background: linear-gradient(135deg, #f44336, #e57373); color: #fff; }
-.dashboard-page .card.blue { background: linear-gradient(135deg, #2196f3, #64b5f6); color: #fff; }
+.dashboard-page .card.green {
+  background: linear-gradient(135deg, #4CAF50, #66BB6A);
+  color: #fff;
+}
+.dashboard-page .card.orange {
+  background: linear-gradient(135deg, #FFB74D, #FFA726);
+  color: #fff;
+}
+
+.dashboard-page .card.red {
+  background: linear-gradient(135deg, #E57373, #EF5350);
+  color: #fff;
+}
+
+.dashboard-page .card.blue {
+  background: linear-gradient(135deg, #64B5F6, #42A5F5);
+  color: #fff;
+}
 
 .card.green h3, .card.green p {
     color: #fff; /* White text on green card */
@@ -249,7 +263,7 @@
     padding: 8px 16px;
     border: none;
     border-radius: 6px;
-    background-color: #f7931e;
+    background-color: #FF7A30;
     color: white;
     font-weight: 600;
     cursor: pointer;
@@ -300,7 +314,7 @@
 .item-row span.name { font-weight: 600; }
 
 .progress-bar {
-    background: #e9ecef;
+    background: #9797978f;
     height: 10px;
     border-radius: 6px;
     overflow: hidden;
@@ -314,9 +328,9 @@
 }
 
 /* Color-coded progress bars */
-.progress.fast { background: #28a745; }
-.progress.slow { background: #ffc107; }
-.progress.none { background: #dc3545; }
+.progress.fast { background: #FF7A30; }
+.progress.slow { background: #FF7A30; }
+.progress.none { background: #FF7A30; }
 
 /* FLEXIBLE BOTTOM SECTIONS */
 .bottom.flex-sections {

@@ -12,14 +12,14 @@
 body {
     display: flex;
     min-height: 100vh;
-    background: #f5f5f5;
+    background: #F0F3F5;
     color: #333;
 }
 
 /* Sidebar */
 .sidebar {
     width: 220px;
-    background: #f7931e;
+    background: #FF7A30;
     padding: 30px 15px;
     color: white;
     flex-shrink: 0;
@@ -69,7 +69,7 @@ body {
 
 .sidebar a:hover,
 .sidebar a.active {
-    background: #e67e00;
+    background: #e26b2a;
 }
 
 .sidebar a i {

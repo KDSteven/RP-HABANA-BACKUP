@@ -986,7 +986,7 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
                         <span class="item-qty"><?= $item['total_qty']; ?> sold</span>
                     </div>
                     <div class="progress-bar">
-                        <div class="progress" style="width:<?= round($percentage); ?>%; background:#28a745;"></div>
+                        <div class="progress" style="width:<?= round($percentage); ?>%; background: #FF7A30;"></div>
                     </div>
                 </li>
                 <?php endforeach; ?>
@@ -1015,7 +1015,7 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
                         <span class="item-qty"><?= $item['total_qty']; ?> sold</span>
                     </div>
                     <div class="progress-bar">
-                        <div class="progress" style="width:<?= round($percentage); ?>%; background:#ffc107;"></div>
+                        <div class="progress" style="width:<?= round($percentage); ?>%; background: #FF7A30;"></div>
                     </div>
                 </li>
                 <?php endforeach; ?>
@@ -1038,7 +1038,7 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
                             <span class="item-qty"><?= htmlspecialchars($item['total_qty']) ?> sold</span>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress" style="width:<?= intval($item['total_qty']) ?>%; background: #dc3545;"></div>
+                            <div class="progress" style="width:<?= intval($item['total_qty']) ?>%;background: #FF7A30;"></div>
                         </div>
                     </li>
                 <?php endforeach; ?>
@@ -1094,7 +1094,7 @@ fetch(`monthly_sale.php?${qs.toString()}`)
         datasets: [{
           label: 'Sales (₱)',
           data: data.sales,
-          backgroundColor: '#f7931e'
+          backgroundColor: '#FF7A30'
         }]
       },
       options: {
@@ -1126,7 +1126,17 @@ if (serviceJobData.length > 0) {
     const labels = serviceJobData.map(item => item.service_name);
     const data = serviceJobData.map(item => item.count || 0);
 
-    const colors = labels.map(() => `hsl(${Math.floor(Math.random()*360)}, 70%, 60%)`);
+    // Professional consistent color palette
+    const fixedColors = [
+        "#FF7A30",
+        "#ff9f6bff",
+        "#9e6e54ff",
+        "#914117ff",
+        "#702700ff",
+        "#e65000ff"
+    ];
+
+    const colors = labels.map((_, i) => fixedColors[i % fixedColors.length]);
 
     new Chart(ctx, {
         type: 'bar',
@@ -1148,20 +1158,17 @@ if (serviceJobData.length > 0) {
                 x: { 
                     beginAtZero: true,
                     ticks: {
-                        stepSize: 1,         // Force 0,1,2,3...
-                        callback: function(value) {
-                            return Math.floor(value); // Ensure integers only
-                        }
+                        stepSize: 1,
+                        callback: value => Math.floor(value)
                     }
                 },
-                y: { 
-                    ticks: { autoSkip: false } 
-                }
+                y: { ticks: { autoSkip: false } }
             }
         }
     });
 }
 </script>
+
 
 
 <script>
