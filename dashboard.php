@@ -880,8 +880,9 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
 
     <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
 </div>
-  </div>
+ 
 </div>
+
 
 <div class="content">
     <div class="Report">
