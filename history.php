@@ -210,15 +210,15 @@ function keep_qs(array $overrides = []): string {
   <link rel="stylesheet" href="css/sidebar.css">
   <audio id="notifSound" src="notif.mp3" preload="auto"></audio>
 </head>
-<body>
-<!-- Sidebar -->
-<div class="sidebar" id="mainSidebar">
+<body class="history-page">
+
+<!-- ============= SIDEBAR (same pattern as dashboard/pos) ============= -->
+<div id="mainSidebar" class="sidebar expanded">
   <!-- Toggle button always visible on the rail -->
-  <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
+  <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="true">
     <i class="fas fa-bars" aria-hidden="true"></i>
   </button>
 
-  <!-- Wrap existing sidebar content so we can hide/show it cleanly -->
   <div class="sidebar-content">
     <h2 class="user-heading">
       <span class="role"><?= htmlspecialchars(strtoupper($role), ENT_QUOTES) ?></span>
@@ -231,282 +231,264 @@ function keep_qs(array $overrides = []): string {
       </span>
     </h2>
 
-        <!-- Common -->
+    <!-- Common -->
     <a href="dashboard.php"><i class="fas fa-tv"></i> Dashboard</a>
 
-    <?php
-// put this once before the sidebar (top of file is fine)
-$self = strtolower(basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)));
-$isArchive = substr($self, 0, 7) === 'archive'; // matches archive.php, archive_view.php, etc.
-$invOpen   = in_array($self, ['inventory.php','physical_inventory.php'], true);
-$toolsOpen = ($self === 'backup_admin.php' || $isArchive);
-?>
+    <!-- Admin Links -->
+    <?php if ($role === 'admin'): ?>
 
-<!-- Admin Links -->
-<?php if ($role === 'admin'): ?>
-
-  <!-- Inventory group (unchanged) -->
-<div class="menu-group has-sub">
-  <button class="menu-toggle" type="button" aria-expanded="<?= $invOpen ? 'true' : 'false' ?>">
-  <span><i class="fas fa-box"></i> Inventory
-    <?php if ($pendingTotalInventory > 0): ?>
-      <span class="badge-pending"><?= $pendingTotalInventory ?></span>
-    <?php endif; ?>
-  </span>
-    <i class="fas fa-chevron-right caret"></i>
-  </button>
-  <div class="submenu" <?= $invOpen ? '' : 'hidden' ?>>
-    <a href="inventory.php#pending-requests" class="<?= $self === 'inventory.php#pending-requests' ? 'active' : '' ?>">
-      <i class="fas fa-list"></i> Inventory List
-        <?php if ($pendingTotalInventory > 0): ?>
-          <span class="badge-pending"><?= $pendingTotalInventory ?></span>
-        <?php endif; ?>
-    </a>
-    <a href="physical_inventory.php" class="<?= $self === 'physical_inventory.php' ? 'active' : '' ?>">
-      <i class="fas fa-warehouse"></i> Physical Inventory
-    </a>
-        <a href="barcode-print.php<?php 
-        $b = (int)($_SESSION['current_branch_id'] ?? 0);
-        echo $b ? ('?branch='.$b) : '';?>" class="<?= $self === 'barcode-print.php' ? 'active' : '' ?>">
-        <i class="fas fa-barcode"></i> Barcode Labels
-    </a>
-  </div>
-</div>
-
-    <a href="services.php" class="<?= $self === 'services.php' ? 'active' : '' ?>">
-      <i class="fa fa-wrench" aria-hidden="true"></i> Services
-    </a>
-
-  <!-- Sales (normal link with active state) -->
-  <a href="sales.php" class="<?= $self === 'sales.php' ? 'active' : '' ?>">
-    <i class="fas fa-receipt"></i> Sales
-  </a>
-
-
-<a href="accounts.php" class="<?= $self === 'accounts.php' ? 'active' : '' ?>">
-  <i class="fas fa-users"></i> Accounts & Branches
-  <?php if ($pendingResetsCount > 0): ?>
-    <span class="badge-pending"><?= $pendingResetsCount ?></span>
-  <?php endif; ?>
-</a>
-
-  <!-- NEW: Backup & Restore group with Archive inside -->
-  <div class="menu-group has-sub">
-    <button class="menu-toggle" type="button" aria-expanded="<?= $toolsOpen ? 'true' : 'false' ?>">
-      <span><i class="fas fa-screwdriver-wrench me-2"></i> Data Tools</span>
-      <i class="fas fa-chevron-right caret"></i>
-    </button>
-    <div class="submenu" <?= $toolsOpen ? '' : 'hidden' ?>>
-      <a href="/config/admin/backup_admin.php" class="<?= $self === 'backup_admin.php' ? 'active' : '' ?>">
-        <i class="fa-solid fa-database"></i> Backup & Restore
-      </a>
-      <a href="archive.php" class="<?= $isArchive ? 'active' : '' ?>">
-        <i class="fas fa-archive"></i> Archive
-      </a>
-    </div>
-  </div>
-
-  <a href="logs.php" class="<?= $self === 'logs.php' ? 'active' : '' ?>">
-    <i class="fas fa-file-alt"></i> Logs
-  </a>
-
-<?php endif; ?>
-
-
-
-   <!-- Stockman Links -->
-  <?php if ($role === 'stockman'): ?>
-    <div class="menu-group has-sub">
-      <button class="menu-toggle" type="button" aria-expanded="<?= $invOpen ? 'true' : 'false' ?>">
-        <span><i class="fas fa-box"></i> Inventory</span>
-        <i class="fas fa-chevron-right caret"></i>
-      </button>
-      <div class="submenu" <?= $invOpen ? '' : 'hidden' ?>>
-        <a href="inventory.php" class="<?= $self === 'inventory.php' ? 'active' : '' ?>">
-          <i class="fas fa-list"></i> Inventory List
-        </a>
-        <a href="physical_inventory.php" class="<?= $self === 'physical_inventory.php' ? 'active' : '' ?>">
-          <i class="fas fa-warehouse"></i> Physical Inventory
-        </a>
-        <!-- Stockman can access Barcode Labels; server forces their branch -->
-        <a href="barcode-print.php" class="<?= $self === 'barcode-print.php' ? 'active' : '' ?>">
-          <i class="fas fa-barcode"></i> Barcode Labels
-        </a>
+      <div class="menu-group has-sub">
+        <button class="menu-toggle" type="button" aria-expanded="<?= $invOpen ? 'true' : 'false' ?>">
+          <span>
+            <i class="fas fa-box"></i> Inventory
+            <?php if ($pendingTotalInventory > 0): ?>
+              <span class="badge-pending"><?= $pendingTotalInventory ?></span>
+            <?php endif; ?>
+          </span>
+          <i class="fas fa-chevron-right caret"></i>
+        </button>
+        <div class="submenu" <?= $invOpen ? '' : 'hidden' ?>>
+          <a href="inventory.php#pending-requests" class="<?= $self === 'inventory.php#pending-requests' ? 'active' : '' ?>">
+            <i class="fas fa-list"></i> Inventory List
+            <?php if ($pendingTotalInventory > 0): ?>
+              <span class="badge-pending"><?= $pendingTotalInventory ?></span>
+            <?php endif; ?>
+          </a>
+          <a href="physical_inventory.php" class="<?= $self === 'physical_inventory.php' ? 'active' : '' ?>">
+            <i class="fas fa-warehouse"></i> Physical Inventory
+          </a>
+          <a href="barcode-print.php<?php
+              $b = (int)($_SESSION['current_branch_id'] ?? 0);
+              echo $b ? ('?branch='.$b) : '';
+          ?>" class="<?= $self === 'barcode-print.php' ? 'active' : '' ?>">
+            <i class="fas fa-barcode"></i> Barcode Labels
+          </a>
+        </div>
       </div>
-    </div>
-  <?php endif; ?>
+
+      <a href="services.php" class="<?= $self === 'services.php' ? 'active' : '' ?>">
+        <i class="fa fa-wrench" aria-hidden="true"></i> Services
+      </a>
+
+      <a href="sales.php" class="<?= $self === 'sales.php' ? 'active' : '' ?>">
+        <i class="fas fa-receipt"></i> Sales
+      </a>
+
+      <a href="accounts.php" class="<?= $self === 'accounts.php' ? 'active' : '' ?>">
+        <i class="fas fa-users"></i> Accounts & Branches
+        <?php if ($pendingResetsCount > 0): ?>
+          <span class="badge-pending"><?= $pendingResetsCount ?></span>
+        <?php endif; ?>
+      </a>
+
+      <div class="menu-group has-sub">
+        <button class="menu-toggle" type="button" aria-expanded="<?= $toolsOpen ? 'true' : 'false' ?>">
+          <span><i class="fas fa-screwdriver-wrench me-2"></i> Data Tools</span>
+          <i class="fas fa-chevron-right caret"></i>
+        </button>
+        <div class="submenu" <?= $toolsOpen ? '' : 'hidden' ?>>
+          <a href="/config/admin/backup_admin.php" class="<?= $self === 'backup_admin.php' ? 'active' : '' ?>">
+            <i class="fa-solid fa-database"></i> Backup & Restore
+          </a>
+          <a href="archive.php" class="<?= $isArchive ? 'active' : '' ?>">
+            <i class="fas fa-archive"></i> Archive
+          </a>
+        </div>
+      </div>
+
+      <a href="logs.php" class="<?= $self === 'logs.php' ? 'active' : '' ?>">
+        <i class="fas fa-file-alt"></i> Logs
+      </a>
+
+    <?php endif; ?>
+
+    <!-- Stockman Links -->
+    <?php if ($role === 'stockman'): ?>
+      <div class="menu-group has-sub">
+        <button class="menu-toggle" type="button" aria-expanded="<?= $invOpen ? 'true' : 'false' ?>">
+          <span><i class="fas fa-box"></i> Inventory</span>
+          <i class="fas fa-chevron-right caret"></i>
+        </button>
+        <div class="submenu" <?= $invOpen ? '' : 'hidden' ?>>
+          <a href="inventory.php" class="<?= $self === 'inventory.php' ? 'active' : '' ?>">
+            <i class="fas fa-list"></i> Inventory List
+          </a>
+          <a href="physical_inventory.php" class="<?= $self === 'physical_inventory.php' ? 'active' : '' ?>">
+            <i class="fas fa-warehouse"></i> Physical Inventory
+          </a>
+          <a href="barcode-print.php" class="<?= $self === 'barcode-print.php' ? 'active' : '' ?>">
+            <i class="fas fa-barcode"></i> Barcode Labels
+          </a>
+        </div>
+      </div>
+    <?php endif; ?>
+
     <!-- Staff Links -->
     <?php if ($role === 'staff'): ?>
         <a href="pos.php"><i class="fas fa-cash-register"></i> Point of Sale</a>
         <a href="history.php" class="active"><i class="fas fa-history"></i> Sales History</a>
         <a href="shift_summary.php" class="<?= $self === 'shift_summary.php' ? 'active' : '' ?>">
-        <i class="fa-solid fa-clipboard-check"></i> Shift Summary</a>
+          <i class="fa-solid fa-clipboard-check"></i> Shift Summary
+        </a>
     <?php endif; ?>
 
     <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
-    </div>
-  </div>                                  
-<div class="container-fluid page-content py-5">
+  </div>
+</div>
+
+<div id="sidebarBackdrop"></div>
+
+<!-- ============= PAGE CONTENT (wrapped in .content like dashboard) ============= -->
+<div class="content">
+  <div class="container-fluid page-content py-5">
 
     <!-- Header -->
     <div class="page-header mb-4">
       <h2><i class="fas fa-history"></i> Sales History</h2>
     </div>
 
-    <!-- Filter Card -->
+    <!-- Filters -->
     <form method="GET" class="d-flex flex-wrap align-items-end gap-3 mb-4">
+      <div class="d-flex flex-column">
+        <label class="form-label">From</label>
+        <input type="date" name="from_date" class="form-control"
+               value="<?= htmlspecialchars($_GET['from_date'] ?? '') ?>">
+      </div>
 
-        <div class="d-flex flex-column">
-          <label class="form-label">From</label>
-          <input type="date" name="from_date" class="form-control"
-                 value="<?= htmlspecialchars($_GET['from_date'] ?? '') ?>">
+      <div class="d-flex flex-column">
+        <label class="form-label">To</label>
+        <input type="date" name="to_date" class="form-control"
+               value="<?= htmlspecialchars($_GET['to_date'] ?? '') ?>">
+      </div>
+
+      <div class="d-flex flex-column">
+        <label class="form-label">Sale ID</label>
+        <div class="input-group">
+          <input type="text" name="sale_id" id="saleIdInput" class="form-control"
+                 placeholder="Sale ID"
+                 value="<?= htmlspecialchars($_GET['sale_id'] ?? '') ?>">
+          <button type="button" class="btn btn-outline-secondary" id="clearSaleId">
+            <i class="fa-solid fa-times"></i>
+          </button>
         </div>
+      </div>
 
-        <div class="d-flex flex-column">
-          <label class="form-label">To</label>
-          <input type="date" name="to_date" class="form-control"
-                 value="<?= htmlspecialchars($_GET['to_date'] ?? '') ?>">
-        </div>
+      <button type="submit" class="btn btn-modern btn-gradient-blue">
+        <i class="fas fa-search"></i> Search
+      </button>
 
-        <div class="d-flex flex-column">
-          <label class="form-label">Sale ID</label>
-          <div class="input-group">
-            <input type="text" name="sale_id" id="saleIdInput" class="form-control"
-                   placeholder="Sale ID"
-                   value="<?= htmlspecialchars($_GET['sale_id'] ?? '') ?>">
-
-            <button type="button" class="btn btn-outline-secondary" id="clearSaleId">
-              <i class="fa-solid fa-times"></i>
-            </button>
-          </div>
-        </div>
-
-        <button type="submit" class="btn btn-modern btn-gradient-blue">
-          <i class="fas fa-search"></i> Search
-        </button>
-
-        <button type="submit" class="btn btn-neutral">
-          <i class="fas fa-filter"></i> Filter
-        </button>
+      <button type="submit" class="btn btn-neutral">
+        <i class="fas fa-filter"></i> Filter
+      </button>
     </form>
 
     <!-- Sales Table -->
     <div class="card-custom p-4">
+      <?php if ($sales_result->num_rows === 0): ?>
+        <div class="text-center text-muted py-4">
+          <i class="fas fa-info-circle fs-4 d-block mb-2"></i>
+          No sales history found.
+        </div>
+      <?php else: ?>
+        <div class="table-responsive">
+          <table class="table table-modern table-bordered align-middle w-100">
+            <thead>
+              <tr>
+                <th class="col-id">Sale ID</th>
+                <th class="col-branch">Branch</th>
+                <th class="col-date">Date</th>
+                <th class="col-total text-end">Total (₱)</th>
+                <th class="col-remarks">Remarks</th>
+                <th class="col-refitems">Refunded Items</th>
+                <th class="col-status">Status</th>
+                <th class="col-actions text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php while ($sale = $sales_result->fetch_assoc()): ?>
+                <tr>
+                  <td><?= (int)$sale['sale_id'] ?></td>
+                  <td><?= htmlspecialchars($sale['branch_name']) ?></td>
+                  <td><?= htmlspecialchars($sale['sale_date']) ?></td>
 
-        <?php if ($sales_result->num_rows === 0): ?>
-            <div class="text-center text-muted py-4">
-              <i class="fas fa-info-circle fs-4 d-block mb-2"></i>
-              No sales history found.
-            </div>
+                  <td>
+                    <span class="fw-bold text-success">
+                      ₱<?= number_format((float)$sale['total'] + (float)$sale['stored_vat'], 2) ?>
+                    </span>
+                  </td>
 
-        <?php else: ?>
+                  <?php $remarks  = trim($sale['refund_remarks'] ?? '—'); ?>
+                  <td><?= htmlspecialchars(mb_strimwidth($remarks, 0, 80, '…')) ?></td>
 
-            <div class="table-responsive">
-                <table class="table table-modern table-bordered align-middle w-100">
-                    <thead>
-                        <tr>
-                            <th class="col-id">Sale ID</th>
-                            <th class="col-branch">Branch</th>
-                            <th class="col-date">Date</th>
-                            <th class="col-total text-end">Total (₱)</th>
-                            <th class="col-remarks">Remarks</th>
-                            <th class="col-refitems">Refunded Items</th>
-                            <th class="col-status">Status</th>
-                            <th class="col-actions text-center">Actions</th>
-                        </tr>
-                    </thead>
+                  <?php $refItems = trim($sale['refunded_products'] ?? '—'); ?>
+                  <td><?= htmlspecialchars(mb_strimwidth($refItems, 0, 60, '…')) ?></td>
 
-                    <tbody>
-                        <?php while ($sale = $sales_result->fetch_assoc()): ?>
-                        <tr>
-                            <td><?= (int)$sale['sale_id'] ?></td>
-                            <td><?= htmlspecialchars($sale['branch_name']) ?></td>
-                            <td><?= htmlspecialchars($sale['sale_date']) ?></td>
+                  <?php
+                    $refunded      = (float)$sale['refund_amount'];
+                    $productTotal  = (float)$sale['products_total'];
 
-                            <td>
-                              <span class="fw-bold text-success">
-                                ₱<?= number_format((float)$sale['total'] + (float)$sale['stored_vat'], 2) ?>
-                              </span>
-                            </td>
+                    if ($productTotal < 0.01) {
+                        $status = "Not Refundable";
+                        $badge  = "secondary";
+                    } elseif ($refunded <= 0) {
+                        $status = "Not Refund";
+                        $badge  = "secondary";
+                    } elseif ($refunded >= $productTotal - 0.01) {
+                        $status = "Full Refund";
+                        $badge  = "success";
+                    } else {
+                        $status = "Partial Refund";
+                        $badge  = "warning text-dark";
+                    }
+                  ?>
+                  <td><span class="badge bg-<?= $badge ?>"><?= $status ?></span></td>
 
-                            <?php $remarks = trim($sale['refund_remarks'] ?? '—'); ?>
-                            <td><?= htmlspecialchars(mb_strimwidth($remarks, 0, 80, '…')) ?></td>
+                  <td class="col-actions">
+                    <div class="actions-wrap">
+                      <button type="button"
+                              onclick="openReceiptModal(<?= (int)$sale['sale_id'] ?>)"
+                              class="btn btn-info btn-modern btn-sm">
+                        <i class="fas fa-receipt"></i> Receipt
+                      </button>
 
-                            <?php $refItems = trim($sale['refunded_products'] ?? '—'); ?>
-                            <td><?= htmlspecialchars(mb_strimwidth($refItems, 0, 60, '…')) ?></td>
+                      <?php if ($status !== "Full Refund"): ?>
+                        <button class="btn-action btn-gradient-green btn-sm"
+                                onclick="openReturnModal(<?= (int)$sale['sale_id'] ?>)">
+                          <i class="fas fa-undo"></i> Refund
+                        </button>
+                      <?php endif; ?>
+                    </div>
+                  </td>
+                </tr>
+              <?php endwhile; ?>
+            </tbody>
+          </table>
+        </div>
 
-                              <?php
-                                  $refunded = (float)$sale['refund_amount'];
-                                  $productTotal = (float)$sale['products_total'];
+        <!-- Pagination -->
+        <nav class="mt-3">
+          <ul class="pagination pagination-sm mb-0">
+            <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
+              <a class="page-link" href="?<?= keep_qs(['page' => max(1, $page - 1)]) ?>">Prev</a>
+            </li>
 
-                                  // If no products in sale
-                                  if ($productTotal < 0.01) {
-                                      $status = "Not Refundable";
-                                      $badge = "secondary";
-                                  }
-                                  // No refund
-                                  elseif ($refunded <= 0) {
-                                      $status = "Not Refund";
-                                      $badge = "secondary";
-                                  }
-                                  // Full refund of all products
-                                  elseif ($refunded >= $productTotal - 0.01) {
-                                      $status = "Full Refund";
-                                      $badge = "success";
-                                  }
-                                  // Some products refunded
-                                  else {
-                                      $status = "Partial Refund";
-                                      $badge = "warning text-dark";
-                                  }
-                              ?>
-                              <td><span class="badge bg-<?= $badge ?>"><?= $status ?></span></td>
+            <?php for ($p = $start; $p <= $end; $p++): ?>
+              <li class="page-item <?= $p === $page ? 'active' : '' ?>">
+                <a class="page-link" href="?<?= keep_qs(['page' => $p]) ?>"><?= $p ?></a>
+              </li>
+            <?php endfor; ?>
 
-                            <td class="col-actions">
-                                <div class="actions-wrap">
-                                    <button type="button"
-                                            onclick="openReceiptModal(<?= (int)$sale['sale_id'] ?>)"
-                                            class="btn btn-info btn-modern btn-sm">
-                                        <i class="fas fa-receipt"></i> Receipt
-                                    </button>
-
-                                    <?php if ($status !== "Full Refund"): ?>
-                                    <button class="btn-action btn-gradient-green btn-sm"
-                                            onclick="openReturnModal(<?= (int)$sale['sale_id'] ?>)">
-                                        <i class="fas fa-undo"></i> Refund
-                                    </button>
-                                    <?php endif; ?>
-                                </div>
-                            </td>
-                        </tr>
-                        <?php endwhile; ?>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Pagination -->
-            <nav class="mt-3">
-              <ul class="pagination pagination-sm mb-0">
-                <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
-                  <a class="page-link" href="?<?= keep_qs(['page' => max(1, $page - 1)]) ?>">Prev</a>
-                </li>
-
-                <?php for ($p = $start; $p <= $end; $p++): ?>
-                <li class="page-item <?= $p === $page ? 'active' : '' ?>">
-                  <a class="page-link" href="?<?= keep_qs(['page' => $p]) ?>"><?= $p ?></a>
-                </li>
-                <?php endfor; ?>
-
-                <li class="page-item <?= $page >= $totalPages ? 'disabled' : '' ?>">
-                  <a class="page-link" href="?<?= keep_qs(['page' => min($totalPages, $page + 1)]) ?>">Next</a>
-                </li>
-              </ul>
-            </nav>
-
-        <?php endif; ?>
+            <li class="page-item <?= $page >= $totalPages ? 'disabled' : '' ?>">
+              <a class="page-link" href="?<?= keep_qs(['page' => min($totalPages, $page + 1)]) ?>">Next</a>
+            </li>
+          </ul>
+        </nav>
+      <?php endif; ?>
     </div>
 
-</div>
+  </div><!-- /.container-fluid -->
+</div><!-- /.content -->
+
 
 <!-- Return Modal -->
 <div class="modal fade" id="returnModal" tabindex="-1">

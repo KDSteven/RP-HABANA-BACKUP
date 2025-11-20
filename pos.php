@@ -361,264 +361,244 @@ if (isset($_SESSION['user_id'])) {
 @media(max-width:1024px){ .pos-wrapper{flex-direction:column;} }
 </style>
 </head>
-<body>
+<body class="pos-page">
 
-<!-- Sidebar -->
-<div class="sidebar" id="mainSidebar">
-  <!-- Toggle button always visible on the rail -->
-  <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
-    <i class="fas fa-bars" aria-hidden="true"></i>
-  </button>
+<!-- ============ SIDEBAR (same as dashboard) ============ -->
+<div id="mainSidebar" class="sidebar expanded">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="true">
+        <i class="fas fa-bars"></i>
+    </button>
 
-  <!-- Wrap existing sidebar content so we can hide/show it cleanly -->
-  <div class="sidebar-content">
-    <h2 class="user-heading">
-      <span class="role"><?= htmlspecialchars(strtoupper($role), ENT_QUOTES) ?></span>
-      <?php if ($currentName !== ''): ?>
-        <span class="name">(<?= htmlspecialchars($currentName, ENT_QUOTES) ?>)</span>
-      <?php endif; ?>
-      <span class="notif-wrapper">
-        <i class="fas fa-bell" id="notifBell"></i>
-        <span id="notifCount" <?= $pending > 0 ? '' : 'style="display:none;"' ?>><?= (int)$pending ?></span>
-      </span>
-    </h2>
+    <div class="sidebar-content">
+        <h2 class="user-heading">
+            <span class="role"><?= htmlspecialchars(strtoupper($role), ENT_QUOTES) ?></span>
+            <?php if ($currentName !== ''): ?>
+                <span class="name">(<?= htmlspecialchars($currentName, ENT_QUOTES) ?>)</span>
+            <?php endif; ?>
+            <span class="notif-wrapper">
+                <i class="fas fa-bell" id="notifBell"></i>
+                <span id="notifCount" <?= $pending > 0 ? '' : 'style="display:none;"' ?>><?= (int)$pending ?></span>
+            </span>
+        </h2>
 
         <!-- Common -->
-    <a href="dashboard.php"><i class="fas fa-tv"></i> Dashboard</a>
+        <a href="dashboard.php"><i class="fas fa-tv"></i> Dashboard</a>
 
-    <?php
-// put this once before the sidebar (top of file is fine)
-$self = strtolower(basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)));
-$isArchive = substr($self, 0, 7) === 'archive'; // matches archive.php, archive_view.php, etc.
-$invOpen   = in_array($self, ['inventory.php','physical_inventory.php'], true);
-$toolsOpen = ($self === 'backup_admin.php' || $isArchive);
-?>
+        <!-- Admin links -->
+        <?php if ($role === 'admin'): ?>
 
-<!-- Admin Links -->
-<?php if ($role === 'admin'): ?>
-
-  <!-- Inventory group (unchanged) -->
-<div class="menu-group has-sub">
-  <button class="menu-toggle" type="button" aria-expanded="<?= $invOpen ? 'true' : 'false' ?>">
-  <span><i class="fas fa-box"></i> Inventory
-    <?php if ($pendingTotalInventory > 0): ?>
-      <span class="badge-pending"><?= $pendingTotalInventory ?></span>
-    <?php endif; ?>
-  </span>
-    <i class="fas fa-chevron-right caret"></i>
-  </button>
-  <div class="submenu" <?= $invOpen ? '' : 'hidden' ?>>
-    <a href="inventory.php#pending-requests" class="<?= $self === 'inventory.php#pending-requests' ? 'active' : '' ?>">
-      <i class="fas fa-list"></i> Inventory List
-        <?php if ($pendingTotalInventory > 0): ?>
-          <span class="badge-pending"><?= $pendingTotalInventory ?></span>
-        <?php endif; ?>
-    </a>
-    <a href="physical_inventory.php" class="<?= $self === 'physical_inventory.php' ? 'active' : '' ?>">
-      <i class="fas fa-warehouse"></i> Physical Inventory
-    </a>
-        <a href="barcode-print.php<?php 
-        $b = (int)($_SESSION['current_branch_id'] ?? 0);
-        echo $b ? ('?branch='.$b) : '';?>" class="<?= $self === 'barcode-print.php' ? 'active' : '' ?>">
-        <i class="fas fa-barcode"></i> Barcode Labels
-    </a>
-  </div>
-</div>
-
-    <a href="services.php" class="<?= $self === 'services.php' ? 'active' : '' ?>">
-      <i class="fa fa-wrench" aria-hidden="true"></i> Services
-    </a>
-
-  <!-- Sales (normal link with active state) -->
-  <a href="sales.php" class="<?= $self === 'sales.php' ? 'active' : '' ?>">
-    <i class="fas fa-receipt"></i> Sales
-  </a>
-
-
-<a href="accounts.php" class="<?= $self === 'accounts.php' ? 'active' : '' ?>">
-  <i class="fas fa-users"></i> Accounts & Branches
-  <?php if ($pendingResetsCount > 0): ?>
-    <span class="badge-pending"><?= $pendingResetsCount ?></span>
-  <?php endif; ?>
-</a>
-
-  <!-- NEW: Backup & Restore group with Archive inside -->
-  <div class="menu-group has-sub">
-    <button class="menu-toggle" type="button" aria-expanded="<?= $toolsOpen ? 'true' : 'false' ?>">
-      <span><i class="fas fa-screwdriver-wrench me-2"></i> Data Tools</span>
-      <i class="fas fa-chevron-right caret"></i>
-    </button>
-    <div class="submenu" <?= $toolsOpen ? '' : 'hidden' ?>>
-      <a href="/config/admin/backup_admin.php" class="<?= $self === 'backup_admin.php' ? 'active' : '' ?>">
-        <i class="fa-solid fa-database"></i> Backup & Restore
-      </a>
-      <a href="archive.php" class="<?= $isArchive ? 'active' : '' ?>">
-        <i class="fas fa-archive"></i> Archive
-      </a>
-    </div>
-  </div>
-
-  <a href="logs.php" class="<?= $self === 'logs.php' ? 'active' : '' ?>">
-    <i class="fas fa-file-alt"></i> Logs
-  </a>
-
-<?php endif; ?>
-
-
-
-   <!-- Stockman Links -->
-  <?php if ($role === 'stockman'): ?>
-    <div class="menu-group has-sub">
-      <button class="menu-toggle" type="button" aria-expanded="<?= $invOpen ? 'true' : 'false' ?>">
-        <span><i class="fas fa-box"></i> Inventory</span>
-        <i class="fas fa-chevron-right caret"></i>
-      </button>
-      <div class="submenu" <?= $invOpen ? '' : 'hidden' ?>>
-        <a href="inventory.php" class="<?= $self === 'inventory.php' ? 'active' : '' ?>">
-          <i class="fas fa-list"></i> Inventory List
-        </a>
-        <a href="physical_inventory.php" class="<?= $self === 'physical_inventory.php' ? 'active' : '' ?>">
-          <i class="fas fa-warehouse"></i> Physical Inventory
-        </a>
-        <!-- Stockman can access Barcode Labels; server forces their branch -->
-        <a href="barcode-print.php" class="<?= $self === 'barcode-print.php' ? 'active' : '' ?>">
-          <i class="fas fa-barcode"></i> Barcode Labels
-        </a>
-      </div>
-    </div>
-  <?php endif; ?>
-    <!-- Staff Links -->
-    <?php if ($role === 'staff'): ?>
-        <a href="pos.php" class="active"><i class="fas fa-cash-register"></i> Point of Sale</a>
-        <a href="history.php"><i class="fas fa-history"></i> Sales History</a>
-        <a href="shift_summary.php" class="<?= $self === 'shift_summary.php' ? 'active' : '' ?>">
-        <i class="fa-solid fa-clipboard-check"></i> Shift Summary</a>
-    <?php endif; ?>
-
-    <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
-</div>
-  </div>
-</div>
-<!-- POS WRAPPER -->
-<div class="pos-wrapper">
-
-    <!-- TOP BAR: SHIFT + SEARCH -->
-    <div class="pos-topbar">
-
-        <!-- SHIFT INFO -->
-        <div class="shift-info">
-            <?php if ($activeShift): ?>
-                <strong>Shift:</strong> #<?= (int)$activeShift['shift_id'] ?> |
-                <strong>Opened:</strong> <?= htmlspecialchars($activeShift['start_time']) ?> |
-                <strong>Opening Cash:</strong> ₱<?= number_format((float)$activeShift['opening_cash'],2) ?>
-            <?php else: ?>
-                <span class="text-danger fw-bold">NO ACTIVE SHIFT</span>
-            <?php endif; ?>
-        </div>
-
-        <!-- SHIFT ACTIONS -->
-        <div class="shift-actions">
-            <?php if ($activeShift): ?>
-                <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#payInOutModal">Petty Cash</button>
-                <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#endShiftModal">End Shift</button>
-            <?php else: ?>
-                <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#startShiftModal">Start Shift</button>
-            <?php endif; ?>
-        </div>
-
-        <!-- SEARCH BOX -->
-<div class="card mb-0" style="flex:1;">
-  <form method="GET" class="d-flex gap-2">
-    <div class="input-group">
-      <span class="input-group-text">
-        <i class="fas fa-search"></i>
-      </span>
-      <input type="text"
-             name="search"
-             placeholder="Scan or search product..."
-             class="form-control"
-             value="<?= htmlspecialchars($search ?? '', ENT_QUOTES) ?>">
-    </div>
-    <button class="btn btn-secondary" type="submit">
-      <i class="fas fa-search"></i>
-    </button>
-  </form>
-</div>
-
-
-        <!-- BARCODE SCAN INPUT (HIDDEN) -->
-        <input type="text" id="barcodeInput" autocomplete="off" autofocus
-               style="opacity:0; position:absolute; left:-9999px;">
-    </div>
-
-
-    <!-- MAIN GRID LAYOUT -->
-    <div class="pos-body">
-
-        <!-- LEFT: CART AREA (NEVER SCROLLS) -->
-        <div class="pos-cart" id="cartSection">
-    <?php include "pos_cart_partial.php"; ?>
-</div>
-
-        <!-- RIGHT: PRODUCT BUTTONS (SCROLL ONLY HERE) -->
-        <div class="pos-products <?= !$activeShift ? 'pe-none opacity-50' : '' ?>">
-
-            <?php foreach ($category_products as $cat => $products): ?>
-                <div class="product-section">
-                    <h4><?= htmlspecialchars($cat) ?></h4>
-                    <div class="product-grid">
-
-                        <?php foreach ($products as $p): ?>
-                            <button class="product-btn quick-add-btn"
-                                data-type="product"
-                                data-id="<?= (int)$p['product_id'] ?>"
-                                data-qty="1"
-                                data-expiration="<?= htmlspecialchars($p['expiration_date'] ?? '', ENT_QUOTES) ?>"
-                                data-name="<?= htmlspecialchars($p['product_name'], ENT_QUOTES) ?>">
-                                <?= htmlspecialchars($p['product_name']) ?>
-                            </button>
-                        <?php endforeach; ?>
-
-                    </div>
-                </div>
-            <?php endforeach; ?>
-
-
-            <!-- SERVICES -->
-            <div class="product-section">
-                <h4>Services</h4>
-                <div class="product-grid">
-
-                    <?php foreach ($services as $s): ?>
-                        <button class="product-btn service quick-add-btn"
-                            data-type="service"
-                            data-id="<?= (int)$s['service_id'] ?>"
-                            data-price="<?= htmlspecialchars($s['price'], ENT_QUOTES) ?>"
-                            data-qty="1"
-                            data-name="<?= htmlspecialchars($s['service_name'], ENT_QUOTES) ?>">
-                            <?= $s['service_name'] ?><br>
-                            ₱<?= number_format($s['price'], 2) ?>
-                        </button>
-                    <?php endforeach; ?>
-
+            <div class="menu-group has-sub">
+                <button class="menu-toggle" type="button" aria-expanded="<?= $invOpen ? 'true' : 'false' ?>">
+                    <span>
+                        <i class="fas fa-box"></i> Inventory
+                        <?php if ($pendingTotalInventory > 0): ?>
+                            <span class="badge-pending"><?= $pendingTotalInventory ?></span>
+                        <?php endif; ?>
+                    </span>
+                    <i class="fas fa-chevron-right caret"></i>
+                </button>
+                <div class="submenu" <?= $invOpen ? '' : 'hidden' ?>>
+                    <a href="inventory.php#pending-requests" class="<?= $self === 'inventory.php#pending-requests' ? 'active' : '' ?>">
+                        <i class="fas fa-list"></i> Inventory List
+                        <?php if ($pendingTotalInventory > 0): ?>
+                            <span class="badge-pending"><?= $pendingTotalInventory ?></span>
+                        <?php endif; ?>
+                    </a>
+                    <a href="physical_inventory.php" class="<?= $self === 'physical_inventory.php' ? 'active' : '' ?>">
+                        <i class="fas fa-warehouse"></i> Physical Inventory
+                    </a>
+                    <a href="barcode-print.php<?php 
+                        $b = (int)($_SESSION['current_branch_id'] ?? 0);
+                        echo $b ? ('?branch='.$b) : '';
+                    ?>" class="<?= $self === 'barcode-print.php' ? 'active' : '' ?>">
+                        <i class="fas fa-barcode"></i> Barcode Labels
+                    </a>
                 </div>
             </div>
 
-        </div>
+            <a href="services.php" class="<?= $self === 'services.php' ? 'active' : '' ?>">
+                <i class="fas fa-wrench"></i> Services
+            </a>
+
+            <a href="sales.php" class="<?= $self === 'sales.php' ? 'active' : '' ?>">
+                <i class="fas fa-receipt"></i> Sales
+            </a>
+
+            <a href="accounts.php" class="<?= $self === 'accounts.php' ? 'active' : '' ?>">
+                <i class="fas fa-users"></i> Accounts & Branches
+                <?php if ($pendingResetsCount > 0): ?>
+                    <span class="badge-pending"><?= $pendingResetsCount ?></span>
+                <?php endif; ?>
+            </a>
+
+            <div class="menu-group has-sub">
+                <button class="menu-toggle" type="button" aria-expanded="<?= $toolsOpen ? 'true' : 'false' ?>">
+                    <span><i class="fas fa-screwdriver-wrench me-2"></i> Data Tools</span>
+                    <i class="fas fa-chevron-right caret"></i>
+                </button>
+                <div class="submenu" <?= $toolsOpen ? '' : 'hidden' ?>>
+                    <a href="/config/admin/backup_admin.php" class="<?= $self === 'backup_admin.php' ? 'active' : '' ?>">
+                        <i class="fas fa-database"></i> Backup & Restore
+                    </a>
+                    <a href="archive.php" class="<?= $isArchive ? 'active' : '' ?>">
+                        <i class="fas fa-archive"></i> Archive
+                    </a>
+                </div>
+            </div>
+
+            <a href="logs.php" class="<?= $self === 'logs.php' ? 'active' : '' ?>">
+                <i class="fas fa-file-alt"></i> Logs
+            </a>
+
+        <?php endif; ?>
+
+        <!-- Stockman -->
+        <?php if ($role === 'stockman'): ?>
+            <div class="menu-group has-sub">
+                <button class="menu-toggle" type="button" aria-expanded="<?= $invOpen ? 'true' : 'false' ?>">
+                    <span><i class="fas fa-box"></i> Inventory</span>
+                    <i class="fas fa-chevron-right caret"></i>
+                </button>
+                <div class="submenu" <?= $invOpen ? '' : 'hidden' ?>>
+                    <a href="inventory.php" class="<?= $self === 'inventory.php' ? 'active' : '' ?>">
+                        <i class="fas fa-list"></i> Inventory List
+                    </a>
+                    <a href="physical_inventory.php" class="<?= $self === 'physical_inventory.php' ? 'active' : '' ?>">
+                        <i class="fas fa-warehouse"></i> Physical Inventory
+                    </a>
+                    <a href="barcode-print.php" class="<?= $self === 'barcode-print.php' ? 'active' : '' ?>">
+                        <i class="fas fa-barcode"></i> Barcode Labels
+                    </a>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <!-- Staff -->
+        <?php if ($role === 'staff'): ?>
+            <a href="pos.php" class="active"><i class="fas fa-cash-register"></i> Point of Sale</a>
+            <a href="history.php"><i class="fas fa-history"></i> Sales History</a>
+            <a href="shift_summary.php" class="<?= $self === 'shift_summary.php' ? 'active' : '' ?>">
+                <i class="fas fa-clipboard-check"></i> Shift Summary
+            </a>
+        <?php endif; ?>
+
+        <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </div>
-
-
-    <!-- FIXED PAYMENT BAR (ALWAYS VISIBLE) -->
-    <div class="pos-payment-bar">
-        <button id="openPaymentBtn" class="pay-btn">
-            <i class="fas fa-money-bill-wave"></i> Pay
-        </button>
-        <button id="cancelOrderBtn" class="cancel-btn">
-            <i class="fas fa-times"></i> Cancel
-        </button>
-    </div>
-
 </div>
+
+<div id="sidebarBackdrop"></div>
+
+<!-- ============ PAGE CONTENT (aligned like dashboard) ============ -->
+<div class="content">
+    <div class="pos-wrapper">
+
+        <!-- TOP BAR: SHIFT + SEARCH -->
+        <div class="pos-topbar">
+
+            <div class="shift-info">
+                <?php if ($activeShift): ?>
+                    <strong>Shift:</strong> #<?= (int)$activeShift['shift_id'] ?> |
+                    <strong>Opened:</strong> <?= htmlspecialchars($activeShift['start_time']) ?> |
+                    <strong>Opening Cash:</strong> ₱<?= number_format((float)$activeShift['opening_cash'],2) ?>
+                <?php else: ?>
+                    <span class="text-danger fw-bold">NO ACTIVE SHIFT</span>
+                <?php endif; ?>
+            </div>
+
+            <div class="shift-actions">
+                <?php if ($activeShift): ?>
+                    <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#payInOutModal">Petty Cash</button>
+                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#endShiftModal">End Shift</button>
+                <?php else: ?>
+                    <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#startShiftModal">Start Shift</button>
+                <?php endif; ?>
+            </div>
+
+            <!-- SEARCH -->
+            <div class="card mb-0 flex-grow-1">
+                <form method="GET" class="d-flex gap-2">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text"
+                               name="search"
+                               placeholder="Scan or search product..."
+                               class="form-control"
+                               value="<?= htmlspecialchars($search ?? '', ENT_QUOTES) ?>">
+                    </div>
+                    <button class="btn btn-secondary" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+
+            <input type="text" id="barcodeInput" autocomplete="off" autofocus
+                   style="opacity:0; position:absolute; left:-9999px;">
+        </div>
+
+        <!-- MAIN BODY: CART + PRODUCTS -->
+        <div class="pos-body">
+
+            <!-- CART -->
+            <div class="pos-cart" id="cartSection">
+                <?php include "pos_cart_partial.php"; ?>
+            </div>
+
+            <!-- PRODUCTS -->
+            <div class="pos-products <?= !$activeShift ? 'pe-none opacity-50' : '' ?>">
+
+                <?php foreach ($category_products as $cat => $products): ?>
+                    <div class="product-section">
+                        <h4><?= htmlspecialchars($cat) ?></h4>
+                        <div class="product-grid">
+                            <?php foreach ($products as $p): ?>
+                                <button class="product-btn quick-add-btn"
+                                    data-type="product"
+                                    data-id="<?= (int)$p['product_id'] ?>"
+                                    data-qty="1"
+                                    data-expiration="<?= htmlspecialchars($p['expiration_date'] ?? '', ENT_QUOTES) ?>"
+                                    data-name="<?= htmlspecialchars($p['product_name'], ENT_QUOTES) ?>">
+                                    <?= htmlspecialchars($p['product_name']) ?>
+                                </button>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+
+                <!-- SERVICES -->
+                <div class="product-section">
+                    <h4>Services</h4>
+                    <div class="product-grid">
+                        <?php foreach ($services as $s): ?>
+                            <button class="product-btn service quick-add-btn"
+                                data-type="service"
+                                data-id="<?= (int)$s['service_id'] ?>"
+                                data-price="<?= htmlspecialchars($s['price'], ENT_QUOTES) ?>"
+                                data-qty="1"
+                                data-name="<?= htmlspecialchars($s['service_name'], ENT_QUOTES) ?>">
+                                <?= $s['service_name'] ?><br>
+                                ₱<?= number_format($s['price'], 2) ?>
+                            </button>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- PAYMENT BAR -->
+        <div class="pos-payment-bar">
+            <button id="openPaymentBtn" class="pay-btn">
+                <i class="fas fa-money-bill-wave"></i> Pay
+            </button>
+            <button id="cancelOrderBtn" class="cancel-btn">
+                <i class="fas fa-times"></i> Cancel
+            </button>
+        </div>
+
+    </div> <!-- .pos-wrapper -->
+</div> <!-- .content -->
 
 <!-- Payment Modal -->
 <div class="modal fade" id="paymentModal" tabindex="-1">

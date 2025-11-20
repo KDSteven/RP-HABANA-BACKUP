@@ -1,37 +1,39 @@
+// sidebar.js
 (function () {
   var sidebar  = document.getElementById('mainSidebar');
   var toggle   = document.getElementById('sidebarToggle');
-  var backdrop = document.getElementById('sidebarBackdrop');
+  var backdrop = document.getElementById('sidebarBackdrop'); // optional
 
   if (!sidebar || !toggle) return;
 
-  // --- Hide sidebar by default ---
-  sidebar.classList.remove('expanded'); // ensure it's collapsed initially
-  toggle.setAttribute('aria-expanded', 'false');
-  if (backdrop) backdrop.classList.remove('is-open');
+  var STORAGE_KEY = 'sidebar-expanded';
 
-  function expand() {
-    sidebar.classList.add('expanded');
-    toggle.setAttribute('aria-expanded', 'true');
-    if (backdrop) backdrop.classList.add('is-open');
+  // --- Read saved state (default: expanded = true) ---
+  var saved = localStorage.getItem(STORAGE_KEY);
+  var isExpanded = (saved === null) ? true : (saved === '1');
+
+  function applyState() {
+    if (isExpanded) {
+      sidebar.classList.add('expanded');
+      toggle.setAttribute('aria-expanded', 'true');
+      if (backdrop) backdrop.classList.add('is-open');
+    } else {
+      sidebar.classList.remove('expanded');
+      toggle.setAttribute('aria-expanded', 'false');
+      if (backdrop) backdrop.classList.remove('is-open');
+    }
   }
 
-  function collapse() {
-    sidebar.classList.remove('expanded');
-    toggle.setAttribute('aria-expanded', 'false');
-    if (backdrop) backdrop.classList.remove('is-open');
-  }
+  // Apply initial state on page load
+  applyState();
 
+  // --- Toggle handler (ONLY way to open/close) ---
   toggle.addEventListener('click', function () {
-    sidebar.classList.contains('expanded') ? collapse() : expand();
+    isExpanded = !isExpanded;
+    localStorage.setItem(STORAGE_KEY, isExpanded ? '1' : '0');
+    applyState();
   });
 
-  if (backdrop) {
-    backdrop.addEventListener('click', collapse);
-  }
-
-  // Close on ESC key
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') collapse();
-  });
+  // NOTE: no ESC key listener, no backdrop click handler
+  // so it will NOT close unless the user clicks the toggle.
 })();

@@ -76,9 +76,12 @@ if (isset($_SESSION['user_id'])) {
     .mono{font-variant-numeric: tabular-nums; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;}
   </style>
 </head>
-<body class="bg-light">
-<div class="sidebar" id="mainSidebar">
-  <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
+<body class="summary-page">
+
+<!-- ============= SIDEBAR (same structure as dashboard/pos/history) ============= -->
+<div id="mainSidebar" class="sidebar expanded">
+  <!-- Toggle button on the rail -->
+  <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="true">
     <i class="fas fa-bars" aria-hidden="true"></i>
   </button>
 
@@ -94,256 +97,261 @@ if (isset($_SESSION['user_id'])) {
       </span>
     </h2>
 
+    <!-- Common -->
     <a href="dashboard.php"><i class="fas fa-tv"></i> Dashboard</a>
 
-<?php
-$self = strtolower(basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)));
-$isArchive = substr($self, 0, 7) === 'archive';
-$invOpen   = in_array($self, ['inventory.php','physical_inventory.php'], true);
-$toolsOpen = ($self === 'backup_admin.php' || $isArchive);
-?>
+    <!-- Admin Links -->
+    <?php if ($role === 'admin'): ?>
+      <div class="menu-group has-sub">
+        <button class="menu-toggle" type="button" aria-expanded="<?= $invOpen ? 'true' : 'false' ?>">
+          <span>
+            <i class="fas fa-box"></i> Inventory
+            <?php if ($pendingTotalInventory > 0): ?>
+              <span class="badge-pending"><?= $pendingTotalInventory ?></span>
+            <?php endif; ?>
+          </span>
+          <i class="fas fa-chevron-right caret"></i>
+        </button>
+        <div class="submenu" <?= $invOpen ? '' : 'hidden' ?>>
+          <a href="inventory.php#pending-requests" class="<?= $self === 'inventory.php#pending-requests' ? 'active' : '' ?>">
+            <i class="fas fa-list"></i> Inventory List
+            <?php if ($pendingTotalInventory > 0): ?>
+              <span class="badge-pending"><?= $pendingTotalInventory ?></span>
+            <?php endif; ?>
+          </a>
+          <a href="physical_inventory.php" class="<?= $self === 'physical_inventory.php' ? 'active' : '' ?>">
+            <i class="fas fa-warehouse"></i> Physical Inventory
+          </a>
+          <a href="barcode-print.php<?php
+              $b = (int)($_SESSION['current_branch_id'] ?? 0);
+              echo $b ? ('?branch='.$b) : '';
+          ?>" class="<?= $self === 'barcode-print.php' ? 'active' : '' ?>">
+            <i class="fas fa-barcode"></i> Barcode Labels
+          </a>
+        </div>
+      </div>
 
-<?php if ($role === 'admin'): ?>
-  <div class="menu-group has-sub">
-    <button class="menu-toggle" type="button" aria-expanded="<?= $invOpen ? 'true' : 'false' ?>">
-      <span><i class="fas fa-box"></i> Inventory
-        <?php if ($pendingTotalInventory > 0): ?>
-          <span class="badge-pending"><?= $pendingTotalInventory ?></span>
+      <a href="services.php" class="<?= $self === 'services.php' ? 'active' : '' ?>">
+        <i class="fa fa-wrench"></i> Services
+      </a>
+
+      <a href="sales.php" class="<?= $self === 'sales.php' ? 'active' : '' ?>">
+        <i class="fas fa-receipt"></i> Sales
+      </a>
+
+      <a href="accounts.php" class="<?= $self === 'accounts.php' ? 'active' : '' ?>">
+        <i class="fas fa-users"></i> Accounts & Branches
+        <?php if ($pendingResetsCount > 0): ?>
+          <span class="badge-pending"><?= $pendingResetsCount ?></span>
         <?php endif; ?>
-      </span>
-      <i class="fas fa-chevron-right caret"></i>
-    </button>
-    <div class="submenu" <?= $invOpen ? '' : 'hidden' ?>>
-      <a href="inventory.php#pending-requests" class="<?= $self === 'inventory.php#pending-requests' ? 'active' : '' ?>">
-        <i class="fas fa-list"></i> Inventory List
-        <?php if ($pendingTotalInventory > 0): ?>
-          <span class="badge-pending"><?= $pendingTotalInventory ?></span>
-        <?php endif; ?>
       </a>
-      <a href="physical_inventory.php" class="<?= $self === 'physical_inventory.php' ? 'active' : '' ?>">
-        <i class="fas fa-warehouse"></i> Physical Inventory
+
+      <div class="menu-group has-sub">
+        <button class="menu-toggle" type="button" aria-expanded="<?= $toolsOpen ? 'true' : 'false' ?>">
+          <span><i class="fas fa-screwdriver-wrench me-2"></i> Data Tools</span>
+          <i class="fas fa-chevron-right caret"></i>
+        </button>
+        <div class="submenu" <?= $toolsOpen ? '' : 'hidden' ?>>
+          <a href="/config/admin/backup_admin.php" class="<?= $self === 'backup_admin.php' ? 'active' : '' ?>">
+            <i class="fa-solid fa-database"></i> Backup & Restore
+          </a>
+          <a href="archive.php" class="<?= $isArchive ? 'active' : '' ?>">
+            <i class="fas fa-archive"></i> Archive
+          </a>
+        </div>
+      </div>
+
+      <a href="logs.php" class="<?= $self === 'logs.php' ? 'active' : '' ?>">
+        <i class="fas fa-file-alt"></i> Logs
       </a>
-      <a href="barcode-print.php<?php 
-        $b = (int)($_SESSION['current_branch_id'] ?? 0);
-        echo $b ? ('?branch='.$b) : '';?>" class="<?= $self === 'barcode-print.php' ? 'active' : '' ?>">
-        <i class="fas fa-barcode"></i> Barcode Labels
+    <?php endif; ?>
+
+    <!-- Stockman Links -->
+    <?php if ($role === 'stockman'): ?>
+      <div class="menu-group has-sub">
+        <button class="menu-toggle" type="button" aria-expanded="<?= $invOpen ? 'true' : 'false' ?>">
+          <span><i class="fas fa-box"></i> Inventory</span>
+          <i class="fas fa-chevron-right caret"></i>
+        </button>
+        <div class="submenu" <?= $invOpen ? '' : 'hidden' ?>>
+          <a href="inventory.php" class="<?= $self === 'inventory.php' ? 'active' : '' ?>">
+            <i class="fas fa-list"></i> Inventory List
+          </a>
+          <a href="physical_inventory.php" class="<?= $self === 'physical_inventory.php' ? 'active' : '' ?>">
+            <i class="fas fa-warehouse"></i> Physical Inventory
+          </a>
+          <a href="barcode-print.php" class="<?= $self === 'barcode-print.php' ? 'active' : '' ?>">
+            <i class="fas fa-barcode"></i> Barcode Labels
+          </a>
+        </div>
+      </div>
+    <?php endif; ?>
+
+    <!-- Staff Links -->
+    <?php if ($role === 'staff'): ?>
+      <a href="pos.php"><i class="fas fa-cash-register"></i> Point of Sale</a>
+      <a href="history.php"><i class="fas fa-history"></i> Sales History</a>
+      <a href="shift_summary.php" class="active">
+        <i class="fa-solid fa-clipboard-check"></i> Shift Summary
       </a>
-    </div>
-  </div>
+    <?php endif; ?>
 
-  <a href="services.php" class="<?= $self === 'services.php' ? 'active' : '' ?>">
-    <i class="fa fa-wrench"></i> Services
-  </a>
-
-  <a href="sales.php" class="<?= $self === 'sales.php' ? 'active' : '' ?>">
-    <i class="fas fa-receipt"></i> Sales
-  </a>
-
-  <a href="accounts.php" class="<?= $self === 'accounts.php' ? 'active' : '' ?>">
-    <i class="fas fa-users"></i> Accounts & Branches
-  </a>
-
-  <div class="menu-group has-sub">
-    <button class="menu-toggle" type="button" aria-expanded="<?= $toolsOpen ? 'true' : 'false' ?>">
-      <span><i class="fas fa-screwdriver-wrench me-2"></i> Data Tools</span>
-      <i class="fas fa-chevron-right caret"></i>
-    </button>
-    <div class="submenu" <?= $toolsOpen ? '' : 'hidden' ?>>
-      <a href="/config/admin/backup_admin.php" class="<?= $self === 'backup_admin.php' ? 'active' : '' ?>">
-        <i class="fa-solid fa-database"></i> Backup & Restore
-      </a>
-      <a href="archive.php" class="<?= $isArchive ? 'active' : '' ?>">
-        <i class="fas fa-archive"></i> Archive
-      </a>
-    </div>
-  </div>
-
-  <a href="logs.php" class="<?= $self === 'logs.php' ? 'active' : '' ?>">
-    <i class="fas fa-file-alt"></i> Logs
-  </a>
-<?php endif; ?>
-
-<?php if ($role === 'stockman'): ?>
-  <div class="menu-group has-sub">
-    <button class="menu-toggle" type="button" aria-expanded="<?= $invOpen ? 'true' : 'false' ?>">
-      <span><i class="fas fa-box"></i> Inventory</span>
-      <i class="fas fa-chevron-right caret"></i>
-    </button>
-    <div class="submenu" <?= $invOpen ? '' : 'hidden' ?>>
-      <a href="inventory.php" class="<?= $self === 'inventory.php' ? 'active' : '' ?>">
-        <i class="fas fa-list"></i> Inventory List
-      </a>
-      <a href="physical_inventory.php" class="<?= $self === 'physical_inventory.php' ? 'active' : '' ?>">
-        <i class="fas fa-warehouse"></i> Physical Inventory
-      </a>
-      <a href="barcode-print.php" class="<?= $self === 'barcode-print.php' ? 'active' : '' ?>">
-        <i class="fas fa-barcode"></i> Barcode Labels
-      </a>
-    </div>
-  </div>
-<?php endif; ?>
-
-<?php if ($role === 'staff'): ?>
-  <a href="pos.php"><i class="fas fa-cash-register"></i> Point of Sale</a>
-  <a href="history.php"><i class="fas fa-history"></i> Sales History</a>
-  <a href="shift_summary.php" class="<?= $self === 'shift_summary.php' ? 'active' : '' ?>">
-    <i class="fa-solid fa-clipboard-check"></i> Shift Summary</a>
-<?php endif; ?>
-
-  <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
   </div>
 </div>
 
-<div class="container-fluid page-content py-4" id="summary-wrapper">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <div class="summary-header">
-      <h2><i class="fa-solid fa-clipboard-check"></i> Shift Summary</h2>
-    </div>
-  </div>
+<div id="sidebarBackdrop"></div>
 
-  <!-- Shift picker -->
-  <div class="card p-3 mb-3">
-    <div class="row g-2 align-items-end">
-      <div class="col-sm-6 col-lg-4">
-        <label class="form-label">Select Shift</label>
-        <select id="shiftSelect" class="form-select">
-          <?php foreach ($shifts as $s): ?>
-            <?php
-              $label = '#'.$s['shift_id'].' — '.($s['cashier_name'] ?? 'User').' — '.($s['start_time']);
-              if (!empty($s['end_time'])) $label .= ' → '.$s['end_time'];
-              $sid = (int)$s['shift_id'];
-            ?>
-            <option value="<?= $sid ?>" <?= $sid === $defaultShiftId ? 'selected':'' ?>>
-              <?= htmlspecialchars($label, ENT_QUOTES) ?>
-            </option>
-          <?php endforeach; ?>
-          <?php if (!$shifts): ?>
-            <option value="0">No shifts in last 14 days</option>
-          <?php endif; ?>
-        </select>
+<!-- ============= MAIN CONTENT WRAPPED IN .content (important for layout) ============= -->
+<div class="content">
+  <div class="container-fluid page-content py-4" id="summary-wrapper">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="summary-header">
+        <h2><i class="fa-solid fa-clipboard-check"></i> Shift Summary</h2>
       </div>
-      <div class="col-auto">
-        <button id="refreshBtn" class="btn btn-primary"><i class="fa-solid fa-rotate"></i> Refresh</button>
-      </div>
-      <div class="col-auto text-muted small">Auto-refreshes every 10 seconds.</div>
     </div>
-  </div>
 
-  <!-- KPIs (only essentials) -->
-<!-- ====== Cards layout (single row, two stacked columns) ====== -->
-<div class="row g-3 align-items-start">
-  <!-- LEFT COLUMN: Cash Drawer + Shift Details -->
-  <div class="col-lg-4 d-flex flex-column gap-3">
-    <!-- Cash Drawer -->
-    <div class="card p-3 kpi-card">
-      <div class="kpi">
-        <div class="ico"><i class="fa-solid fa-cash-register"></i></div>
-        <div>
-          <div class="label">Cash Drawer (expected)</div>
-          <div id="kpiExpected" class="value mono">₱0.00</div>
-          <div id="kpiExpectedBreak" class="sub"></div>
+    <!-- Shift picker -->
+    <div class="card p-3 mb-3">
+      <div class="row g-2 align-items-end">
+        <div class="col-sm-6 col-lg-4">
+          <label class="form-label">Select Shift</label>
+          <select id="shiftSelect" class="form-select">
+            <?php foreach ($shifts as $s): ?>
+              <?php
+                $label = '#'.$s['shift_id'].' — '.($s['cashier_name'] ?? 'User').' — '.($s['start_time']);
+                if (!empty($s['end_time'])) $label .= ' → '.$s['end_time'];
+                $sid = (int)$s['shift_id'];
+              ?>
+              <option value="<?= $sid ?>" <?= $sid === $defaultShiftId ? 'selected':'' ?>>
+                <?= htmlspecialchars($label, ENT_QUOTES) ?>
+              </option>
+            <?php endforeach; ?>
+            <?php if (!$shifts): ?>
+              <option value="0">No shifts in last 14 days</option>
+            <?php endif; ?>
+          </select>
         </div>
+        <div class="col-auto">
+          <button id="refreshBtn" class="btn btn-primary"><i class="fa-solid fa-rotate"></i> Refresh</button>
+        </div>
+        <div class="col-auto text-muted small">Auto-refreshes every 10 seconds.</div>
       </div>
     </div>
 
-    <!-- Shift Details -->
-    <div class="card p-3">
-      <h5 class="mb-2">Shift Details</h5>
-      <div id="shiftDetails" class="small"></div>
-    </div>
-  </div>
-
-  <!-- RIGHT COLUMN: KPI summary + Pay-In/Pay-Out -->
-  <div class="col-lg-8 d-flex flex-column gap-3">
-    <!-- KPI Summary -->
-    <div class="card p-3 kpi-card">
-      <div class="row g-3">
-        <div class="col-6 col-lg-3">
+    <!-- KPI layout -->
+    <div class="row g-3 align-items-start">
+      <!-- LEFT COLUMN -->
+      <div class="col-lg-4 d-flex flex-column gap-3">
+        <div class="card p-3 kpi-card">
           <div class="kpi">
-            <div class="ico"><i class="fa-solid fa-receipt"></i></div>
+            <div class="ico"><i class="fa-solid fa-cash-register"></i></div>
             <div>
-              <div class="label">Sales (count)</div>
-              <div id="kpiSalesCnt" class="value mono">0</div>
-              <div class="sub muted">today</div>
+              <div class="label">Cash Drawer (expected)</div>
+              <div id="kpiExpected" class="value mono">₱0.00</div>
+              <div id="kpiExpectedBreak" class="sub"></div>
             </div>
           </div>
         </div>
-        <div class="col-6 col-lg-3">
-          <div class="kpi">
-            <div class="ico"><i class="fa-solid fa-peso-sign"></i></div>
-            <div>
-              <div class="label">Gross Ex-VAT</div>
-              <div id="kpiGross" class="value mono">₱0.00</div>
-            </div>
-          </div>
-        </div>
-        <div class="col-6 col-lg-3">
-          <div class="kpi">
-            <div class="ico"><i class="fa-solid fa-percent"></i></div>
-            <div>
-              <div class="label">VAT</div>
-              <div id="kpiVat" class="value mono">₱0.00</div>
-            </div>
-          </div>
-        </div>
-        <div class="col-6 col-lg-3">
-          <div class="kpi">
-            <div class="ico"><i class="fa-solid fa-wallet"></i></div>
-            <div>
-              <div class="label">Net Cash from Sales</div>
-              <div id="kpiNetCash" class="value mono">₱0.00</div>
-            </div>
-          </div>
+
+        <div class="card p-3">
+          <h5 class="mb-2">Shift Details</h5>
+          <div id="shiftDetails" class="small"></div>
         </div>
       </div>
 
-      <hr class="my-3">
+      <!-- RIGHT COLUMN -->
+      <div class="col-lg-8 d-flex flex-column gap-3">
+        <div class="card p-3 kpi-card">
+          <div class="row g-3">
+            <div class="col-6 col-lg-3">
+              <div class="kpi">
+                <div class="ico"><i class="fa-solid fa-receipt"></i></div>
+                <div>
+                  <div class="label">Sales (count)</div>
+                  <div id="kpiSalesCnt" class="value mono">0</div>
+                  <div class="sub muted">today</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-lg-3">
+              <div class="kpi">
+                <div class="ico"><i class="fa-solid fa-peso-sign"></i></div>
+                <div>
+                  <div class="label">Gross Ex-VAT</div>
+                  <div id="kpiGross" class="value mono">₱0.00</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-lg-3">
+              <div class="kpi">
+                <div class="ico"><i class="fa-solid fa-percent"></i></div>
+                <div>
+                  <div class="label">VAT</div>
+                  <div id="kpiVat" class="value mono">₱0.00</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-lg-3">
+              <div class="kpi">
+                <div class="ico"><i class="fa-solid fa-wallet"></i></div>
+                <div>
+                  <div class="label">Net Cash from Sales</div>
+                  <div id="kpiNetCash" class="value mono">₱0.00</div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-      <div class="row g-3">
-        <div class="col-6 col-lg-3">
-          <div class="label">Discounts</div>
-          <div id="kpiDisc" class="mono">₱0.00</div>
-        </div>
-        <div class="col-6 col-lg-3">
-          <div class="label">Pay-In / Pay-Out</div>
-          <div class="mono">
-            <span id="kpiPin"  class="amt amt-in">₱0.00</span>
-            /
-            <span id="kpiPout" class="amt amt-out">₱0.00</span>
+          <hr class="my-3">
+
+          <div class="row g-3">
+            <div class="col-6 col-lg-3">
+              <div class="label">Discounts</div>
+              <div id="kpiDisc" class="mono">₱0.00</div>
+            </div>
+            <div class="col-6 col-lg-3">
+              <div class="label">Pay-In / Pay-Out</div>
+              <div class="mono">
+                <span id="kpiPin"  class="amt amt-in">₱0.00</span>
+                /
+                <span id="kpiPout" class="amt amt-out">₱0.00</span>
+              </div>
+            </div>
+            <div class="col-6 col-lg-3">
+              <div class="label">Refunds (cash out)</div>
+              <div id="kpiRefund" class="mono amt amt-out">₱0.00</div>
+              <div id="kpiRefundCnt" class="sub muted">0 txns</div>
+            </div>
           </div>
         </div>
-        <div class="col-6 col-lg-3">
-          <div class="label">Refunds (cash out)</div>
-          <div id="kpiRefund" class="mono amt amt-out">₱0.00</div>
-          <div id="kpiRefundCnt" class="sub muted">0 txns</div>
+
+        <!-- Pay-In / Pay-Out table -->
+        <div class="card p-3 smooth" data-section="cash-moves">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="mb-0">Pay-In / Pay-Out</h5>
+            <span class="text-muted small">Most recent first</span>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-modern table-sm table-striped align-middle">
+              <thead>
+                <tr>
+                  <th style="width:190px;">Time</th>
+                  <th style="width:110px;">Type</th>
+                  <th>Reason</th>
+                  <th class="text-end" style="width:140px;">Amount</th>
+                </tr>
+              </thead>
+              <tbody id="movesTbody">
+                <tr><td colspan="4" class="text-center text-muted">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
-
-    <!-- Pay-In / Pay-Out table -->
-    <div class="card p-3 smooth" data-section="cash-moves">
-      <div class="d-flex justify-content-between align-items-center mb-2">
-        <h5 class="mb-0">Pay-In / Pay-Out</h5>
-        <span class="text-muted small">Most recent first</span>
-      </div>
-      <div class="table-responsive">
-        <table class="table table-modern table-sm table-striped align-middle">
-          <thead>
-            <tr>
-              <th style="width:190px;">Time</th>
-              <th style="width:110px;">Type</th>
-              <th>Reason</th>
-              <th class="text-end" style="width:140px;">Amount</th>
-            </tr>
-          </thead>
-          <tbody id="movesTbody">
-            <tr><td colspan="4" class="text-center text-muted">Loading…</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
+    </div><!-- /row -->
+  </div><!-- /.container-fluid -->
+</div><!-- /.content -->
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -539,5 +547,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 <script src="notifications.js"></script>
+<script src="sidebar.js"></script>   <!-- 🔴 ADD THIS LINE -->
 </body>
 </html>

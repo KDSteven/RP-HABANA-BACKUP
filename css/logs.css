@@ -6,7 +6,8 @@ body {
     padding: 0;
 }
 
-.content {
+/* FIX: only style the logs page, not global .content */
+.logs-page .content {
     padding: 20px;
 }
 

@@ -538,6 +538,7 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
 </div>
 
 <!-- Backup & Restore Content -->
+<div class="content">
 <div class="backup-wrap">
   <div class="backup-header">
     <h1>Database Backup & Restore</h1>
