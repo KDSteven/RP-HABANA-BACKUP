@@ -7,9 +7,22 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-$user_id = $_SESSION['user_id'];
-$role = $_SESSION['role'];
+// normalize role to lowercase
+$role      = strtolower($_SESSION['role'] ?? '');
+$user_id   = $_SESSION['user_id'];
 $branch_id = $_SESSION['branch_id'] ?? null;
+
+// Allow only admin and staff
+if (!in_array($role, ['admin', 'staff'], true)) {
+    header('Location: dashboard.php');
+    exit;
+}
+
+// If staff has no branch, mark error (don't redirect, just show message + no data)
+$branchError = false;
+if ($role === 'staff' && !$branch_id) {
+    $branchError = true;
+}
 
 // Pending notifications (only for admin)
 $pending = 0;
@@ -39,10 +52,16 @@ if ($role === 'admin' && !empty($_GET['branch_id']) && ctype_digit($_GET['branch
   $conds[] = "s.branch_id = ?";
   $params[] = $branch_id;
   $types   .= "i";
-} elseif ($role === 'staff' && $branch_id) {
-  $conds[] = "s.branch_id = ?";
-  $params[] = (int)$branch_id;
-  $types   .= "i";
+} elseif ($role === 'staff') {
+  if ($branch_id) {
+      // staff is always limited to their assigned branch
+      $conds[] = "s.branch_id = ?";
+      $params[] = (int)$branch_id;
+      $types   .= "i";
+  } else {
+      // staff without branch: force no results
+      $conds[] = "1 = 0";
+  }
 }
 
 // Keyword search (branch name, refund reason, exact sale_id if numeric)
@@ -146,24 +165,23 @@ if ($types !== '' && $params) {
 }
 $stmt->execute();
 $salesReportResult = $stmt->get_result();
+
+// Pending inventory stuff (admin only)
 $pendingTransfers = 0;
+$pendingStockIns  = 0;
 if ($role === 'admin') {
     $result = $conn->query("SELECT COUNT(*) AS pending FROM transfer_requests WHERE status='pending'");
     if ($result) {
         $row = $result->fetch_assoc();
         $pendingTransfers = (int)($row['pending'] ?? 0);
     }
-}
 
-$pendingStockIns = 0;
-if ($role === 'admin') {
     $result = $conn->query("SELECT COUNT(*) AS pending FROM stock_in_requests WHERE status='pending'");
     if ($result) {
         $row = $result->fetch_assoc();
         $pendingStockIns = (int)($row['pending'] ?? 0);
     }
 }
-
 $pendingTotalInventory = $pendingTransfers + $pendingStockIns;
 
 // Fetch current user's full name
@@ -179,8 +197,20 @@ if (isset($_SESSION['user_id'])) {
     $stmt->close();
 }
 
-?>
+// Fetch current branch name (for label)
+$currentBranchName = '';
+if ($branch_id) {
+    $stmt = $conn->prepare("SELECT branch_name FROM branches WHERE branch_id = ? LIMIT 1");
+    $stmt->bind_param("i", $branch_id);
+    $stmt->execute();
+    $stmt->bind_result($fetchedBranchName);
+    if ($stmt->fetch()) {
+        $currentBranchName = $fetchedBranchName;
+    }
+    $stmt->close();
+}
 
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -191,21 +221,19 @@ if (isset($_SESSION['user_id'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="css/notifications.css">
     <link rel="stylesheet" href="css/sidebar.css">
-    <link rel="stylesheet" href="css/sales.css?>v2">
+    <link rel="stylesheet" href="css/sales.css?v2">
     <audio id="notifSound" src="notif.mp3" preload="auto"></audio>
     <?php $pageTitle = 'Sales'; ?>
-<title><?= htmlspecialchars("RP Habana — $pageTitle") ?></title>
+    <title><?= htmlspecialchars("RP Habana — $pageTitle") ?></title>
 </head>
 <body>
     
 <!-- Sidebar -->
 <div class="sidebar" id="mainSidebar">
-  <!-- Toggle button always visible on the rail -->
   <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
     <i class="fas fa-bars" aria-hidden="true"></i>
   </button>
 
-  <!-- Wrap existing sidebar content so we can hide/show it cleanly -->
   <div class="sidebar-content">
     <h2 class="user-heading">
       <span class="role"><?= htmlspecialchars(strtoupper($role), ENT_QUOTES) ?></span>
@@ -218,140 +246,161 @@ if (isset($_SESSION['user_id'])) {
       </span>
     </h2>
 
-        <!-- Common -->
+    <!-- Common -->
     <a href="dashboard.php"><i class="fas fa-tv"></i> Dashboard</a>
 
     <?php
-// put this once before the sidebar (top of file is fine)
-$self = strtolower(basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)));
-$isArchive = substr($self, 0, 7) === 'archive'; // matches archive.php, archive_view.php, etc.
-$invOpen   = in_array($self, ['inventory.php','physical_inventory.php'], true);
-$toolsOpen = ($self === 'backup_admin.php' || $isArchive);
-?>
+    $self = strtolower(basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)));
+    $isArchive = substr($self, 0, 7) === 'archive';
+    $invOpen   = in_array($self, ['inventory.php','physical_inventory.php'], true);
+    $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
+    ?>
 
-<!-- Admin Links -->
-<?php if ($role === 'admin'): ?>
-
-  <!-- Inventory group (unchanged) -->
-<div class="menu-group has-sub">
-  <button class="menu-toggle" type="button" aria-expanded="<?= $invOpen ? 'true' : 'false' ?>">
-  <span><i class="fas fa-box"></i> Inventory
-    <?php if ($pendingTotalInventory > 0): ?>
-      <span class="badge-pending"><?= $pendingTotalInventory ?></span>
-    <?php endif; ?>
-  </span>
-    <i class="fas fa-chevron-right caret"></i>
-  </button>
-  <div class="submenu" <?= $invOpen ? '' : 'hidden' ?>>
-    <a href="inventory.php#pending-requests" class="<?= $self === 'inventory.php#pending-requests' ? 'active' : '' ?>">
-      <i class="fas fa-list"></i> Inventory List
-        <?php if ($pendingTotalInventory > 0): ?>
-          <span class="badge-pending"><?= $pendingTotalInventory ?></span>
-        <?php endif; ?>
-    </a>
-    <a href="physical_inventory.php" class="<?= $self === 'physical_inventory.php' ? 'active' : '' ?>">
-      <i class="fas fa-warehouse"></i> Physical Inventory
-    </a>
-        <a href="barcode-print.php<?php 
-        $b = (int)($_SESSION['current_branch_id'] ?? 0);
-        echo $b ? ('?branch='.$b) : '';?>" class="<?= $self === 'barcode-print.php' ? 'active' : '' ?>">
-        <i class="fas fa-barcode"></i> Barcode Labels
-    </a>
-  </div>
-</div>
-
-    <a href="services.php" class="<?= $self === 'services.php' ? 'active' : '' ?>">
-      <i class="fa fa-wrench" aria-hidden="true"></i> Services
-    </a>
-
-  <!-- Sales (normal link with active state) -->
-  <a href="sales.php" class="<?= $self === 'sales.php' ? 'active' : '' ?>">
-    <i class="fas fa-receipt"></i> Sales
-  </a>
-
-
-<a href="accounts.php" class="<?= $self === 'accounts.php' ? 'active' : '' ?>">
-  <i class="fas fa-users"></i> Accounts & Branches
-</a>
-
-  <!-- NEW: Backup & Restore group with Archive inside -->
-  <div class="menu-group has-sub">
-    <button class="menu-toggle" type="button" aria-expanded="<?= $toolsOpen ? 'true' : 'false' ?>">
-      <span><i class="fas fa-screwdriver-wrench me-2"></i> Data Tools</span>
-      <i class="fas fa-chevron-right caret"></i>
-    </button>
-    <div class="submenu" <?= $toolsOpen ? '' : 'hidden' ?>>
-      <a href="/config/admin/backup_admin.php" class="<?= $self === 'backup_admin.php' ? 'active' : '' ?>">
-        <i class="fa-solid fa-database"></i> Backup & Restore
-      </a>
-      <a href="archive.php" class="<?= $isArchive ? 'active' : '' ?>">
-        <i class="fas fa-archive"></i> Archive
-      </a>
-    </div>
-  </div>
-
-  <a href="logs.php" class="<?= $self === 'logs.php' ? 'active' : '' ?>">
-    <i class="fas fa-file-alt"></i> Logs
-  </a>
-
-<?php endif; ?>
-
-
-
-   <!-- Stockman Links -->
-  <?php if ($role === 'stockman'): ?>
-    <div class="menu-group has-sub">
-      <button class="menu-toggle" type="button" aria-expanded="<?= $invOpen ? 'true' : 'false' ?>">
-        <span><i class="fas fa-box"></i> Inventory</span>
-        <i class="fas fa-chevron-right caret"></i>
-      </button>
-      <div class="submenu" <?= $invOpen ? '' : 'hidden' ?>>
-        <a href="inventory.php" class="<?= $self === 'inventory.php' ? 'active' : '' ?>">
-          <i class="fas fa-list"></i> Inventory List
-        </a>
-        <a href="physical_inventory.php" class="<?= $self === 'physical_inventory.php' ? 'active' : '' ?>">
-          <i class="fas fa-warehouse"></i> Physical Inventory
-        </a>
-        <!-- Stockman can access Barcode Labels; server forces their branch -->
-        <a href="barcode-print.php" class="<?= $self === 'barcode-print.php' ? 'active' : '' ?>">
-          <i class="fas fa-barcode"></i> Barcode Labels
-        </a>
+    <!-- Admin Links -->
+    <?php if ($role === 'admin'): ?>
+      <div class="menu-group has-sub">
+        <button class="menu-toggle" type="button" aria-expanded="<?= $invOpen ? 'true' : 'false' ?>">
+          <span><i class="fas fa-box"></i> Inventory
+            <?php if ($pendingTotalInventory > 0): ?>
+              <span class="badge-pending"><?= $pendingTotalInventory ?></span>
+            <?php endif; ?>
+          </span>
+          <i class="fas fa-chevron-right caret"></i>
+        </button>
+        <div class="submenu" <?= $invOpen ? '' : 'hidden' ?>>
+          <a href="inventory.php#pending-requests" class="<?= $self === 'inventory.php#pending-requests' ? 'active' : '' ?>">
+            <i class="fas fa-list"></i> Inventory List
+            <?php if ($pendingTotalInventory > 0): ?>
+              <span class="badge-pending"><?= $pendingTotalInventory ?></span>
+            <?php endif; ?>
+          </a>
+          <a href="physical_inventory.php" class="<?= $self === 'physical_inventory.php' ? 'active' : '' ?>">
+            <i class="fas fa-warehouse"></i> Physical Inventory
+          </a>
+          <a href="barcode-print.php<?php 
+            $b = (int)($_SESSION['current_branch_id'] ?? 0);
+            echo $b ? ('?branch='.$b) : '';?>" class="<?= $self === 'barcode-print.php' ? 'active' : '' ?>">
+            <i class="fas fa-barcode"></i> Barcode Labels
+          </a>
+        </div>
       </div>
-    </div>
-  <?php endif; ?>
+
+      <a href="services.php" class="<?= $self === 'services.php' ? 'active' : '' ?>">
+        <i class="fa fa-wrench" aria-hidden="true"></i> Services
+      </a>
+
+      <a href="sales.php" class="<?= $self === 'sales.php' ? 'active' : '' ?>">
+        <i class="fas fa-receipt"></i> Sales
+      </a>
+
+      <a href="accounts.php" class="<?= $self === 'accounts.php' ? 'active' : '' ?>">
+        <i class="fas fa-users"></i> Accounts & Branches
+      </a>
+
+      <div class="menu-group has-sub">
+        <button class="menu-toggle" type="button" aria-expanded="<?= $toolsOpen ? 'true' : 'false' ?>">
+          <span><i class="fas fa-screwdriver-wrench me-2"></i> Data Tools</span>
+          <i class="fas fa-chevron-right caret"></i>
+        </button>
+        <div class="submenu" <?= $toolsOpen ? '' : 'hidden' ?>>
+          <a href="/config/admin/backup_admin.php" class="<?= $self === 'backup_admin.php' ? 'active' : '' ?>">
+            <i class="fa-solid fa-database"></i> Backup & Restore
+          </a>
+          <a href="archive.php" class="<?= $isArchive ? 'active' : '' ?>">
+            <i class="fas fa-archive"></i> Archive
+          </a>
+        </div>
+      </div>
+
+      <a href="logs.php" class="<?= $self === 'logs.php' ? 'active' : '' ?>">
+        <i class="fas fa-file-alt"></i> Logs
+      </a>
+    <?php endif; ?>
+
+    <!-- Stockman Links -->
+    <?php if ($role === 'stockman'): ?>
+      <div class="menu-group has-sub">
+        <button class="menu-toggle" type="button" aria-expanded="<?= $invOpen ? 'true' : 'false' ?>">
+          <span><i class="fas fa-box"></i> Inventory</span>
+          <i class="fas fa-chevron-right caret"></i>
+        </button>
+        <div class="submenu" <?= $invOpen ? '' : 'hidden' ?>>
+          <a href="inventory.php" class="<?= $self === 'inventory.php' ? 'active' : '' ?>">
+            <i class="fas fa-list"></i> Inventory List
+          </a>
+          <a href="physical_inventory.php" class="<?= $self === 'physical_inventory.php' ? 'active' : '' ?>">
+            <i class="fas fa-warehouse"></i> Physical Inventory
+          </a>
+          <a href="barcode-print.php" class="<?= $self === 'barcode-print.php' ? 'active' : '' ?>">
+            <i class="fas fa-barcode"></i> Barcode Labels
+          </a>
+        </div>
+      </div>
+    <?php endif; ?>
+
     <!-- Staff Links -->
     <?php if ($role === 'staff'): ?>
-        <a href="pos.php"><i class="fas fa-cash-register"></i> Point of Sale</a>
-        <a href="history.php"><i class="fas fa-history"></i> Sales History</a>
+        <a href="pos.php" class="<?= $self === 'pos.php' ? 'active' : '' ?>">
+            <i class="fas fa-cash-register"></i> Point of Sale
+        </a>
+
+        <a href="history.php" class="<?= $self === 'history.php' ? 'active' : '' ?>">
+            <i class="fas fa-history"></i> Sales History
+        </a>
+
+        <a href="sales.php" class="<?= $self === 'sales.php' ? 'active' : '' ?>">
+            <i class="fas fa-receipt"></i> Sales Report
+        </a>
+
+        <a href="shift_summary.php" class="<?= $self === 'shift_summary.php' ? 'active' : '' ?>">
+          <i class="fas fa-clipboard-check"></i> Shift Summary
+        </a>
     <?php endif; ?>
 
     <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
-</div>
   </div>
 </div>
-
 
 <div class="content">
 <h1 style="display:flex;align-items:center;gap:8px;">
   <i class="fas fa-chart-line" style="color:#f97316;"></i> Sales Report
 </h1>
 
+<?php if ($role === 'staff' && $currentBranchName !== ''): ?>
+  <p class="text-muted mb-2">
+    Branch: <strong><?= htmlspecialchars($currentBranchName) ?></strong>
+  </p>
+<?php elseif ($role === 'admin'): ?>
+  <p class="text-muted mb-2">
+    Branch: <strong>
+      <?php if ($branch_id && $currentBranchName !== ''): ?>
+        <?= htmlspecialchars($currentBranchName) ?>
+      <?php else: ?>
+        All Branches
+      <?php endif; ?>
+    </strong>
+  </p>
+<?php endif; ?>
+
+<?php if ($role === 'staff' && $branchError): ?>
+  <div class="alert alert-warning">
+    You are logged in as staff but no branch is assigned to your account.  
+    Please ask an admin to assign a branch to you.
+  </div>
+<?php endif; ?>
 
 <!-- Filters -->
 <form method="get" class="mb-3 d-flex align-items-center gap-2">
-    <!-- Report type -->
     <select name="report" onchange="this.form.submit()" class="form-select w-auto">
         <option value="itemized" <?= $reportType==='itemized'?'selected':'' ?>>Itemized</option>
-        <option value="daily" <?= $reportType==='daily'?'selected':'' ?>>Daily</option>
-        <option value="weekly" <?= $reportType==='weekly'?'selected':'' ?>>Weekly</option>
+        <option value="daily"   <?= $reportType==='daily'  ?'selected':'' ?>>Daily</option>
+        <option value="weekly"  <?= $reportType==='weekly' ?'selected':'' ?>>Weekly</option>
         <option value="monthly" <?= $reportType==='monthly'?'selected':'' ?>>Monthly</option>
     </select>
 
-    <!-- Month -->
     <input type="month" name="month" value="<?= htmlspecialchars($selectedMonth) ?>" 
            onchange="this.form.submit()" class="form-control w-auto">
 
-    <!-- Branch selector (admins only) -->
     <?php if ($role === 'admin'): ?>
         <select name="branch_id" onchange="this.form.submit()" class="form-select w-auto">
             <option value="">All Branches</option>
@@ -367,9 +416,7 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
         </select>
     <?php endif; ?>
 
-    <?php
-      $q = trim($_GET['q'] ?? '');
-    ?>
+    <?php $q = trim($_GET['q'] ?? ''); ?>
     <input
       type="text"
       name="q"
@@ -382,7 +429,6 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
     </button>
 </form>
 
-<!-- Table -->
 <div class="table-responsive">
 <table class="table table-bordered">
 <thead>
@@ -421,44 +467,50 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
   }
 
   usort($salesDataArr, fn($a, $b) => strcmp($b['sale_date'], $a['sale_date']));
-
-  foreach ($salesDataArr as $row):
-    $rf = (float)$row['total_refunded'];      // refunded amount
-    $pt = (float)$row['products_total'];      // product-only total
-    $eps = 0.01;                              // rounding tolerance
-
-    if ($pt < $eps) {
-        $status = 'Not Refundable';
-        $badge = 'secondary';
-
-    } elseif ($rf < $eps) {
-        $status = 'Not Refunded';
-        $badge = 'secondary';
-
-    } elseif ($rf >= $pt - $eps) {
-        $status = 'Full';
-        $badge = 'success';
-
-    } else {
-        $status = 'Partial';
-        $badge = 'warning';
-    }
   ?>
-  <tr>
-      <td><?= htmlspecialchars($row['sale_id']) ?></td>
-      <td><?= htmlspecialchars($row['sale_date']) ?></td>
-      <td><?= htmlspecialchars($row['branch_name'] ?? 'N/A') ?></td>
-      <td style="white-space: normal; line-height: 1.5em;"><?= $row['item_list'] ?: '—' ?></td>
-      <td>₱<?= number_format($row['subtotal'], 2) ?></td>
-      <td>₱<?= number_format($row['vat'], 2) ?></td>
-      <td><strong>₱<?= number_format($row['grand_total'], 2) ?></strong></td>
-      <td class="<?= $refunded > 0 ? 'text-danger fw-bold' : 'text-muted' ?>">
-          ₱<?= number_format($rf, 2) ?>
+
+  <?php if (!empty($salesDataArr)): ?>
+    <?php foreach ($salesDataArr as $row):
+      $rf  = (float)$row['total_refunded'];   // refunded amount
+      $pt  = (float)$row['products_total'];   // product-only total
+      $eps = 0.01;                            // rounding tolerance
+
+      if ($pt < $eps) {
+          $status = 'Not Refundable';
+          $badge  = 'secondary';
+      } elseif ($rf < $eps) {
+          $status = 'Not Refunded';
+          $badge  = 'secondary';
+      } elseif ($rf >= $pt - $eps) {
+          $status = 'Full';
+          $badge  = 'success';
+      } else {
+          $status = 'Partial';
+          $badge  = 'warning';
+      }
+    ?>
+    <tr>
+        <td><?= htmlspecialchars($row['sale_id']) ?></td>
+        <td><?= htmlspecialchars($row['sale_date']) ?></td>
+        <td><?= htmlspecialchars($row['branch_name'] ?? 'N/A') ?></td>
+        <td style="white-space: normal; line-height: 1.5em;"><?= $row['item_list'] ?: '—' ?></td>
+        <td>₱<?= number_format($row['subtotal'], 2) ?></td>
+        <td>₱<?= number_format($row['vat'], 2) ?></td>
+        <td><strong>₱<?= number_format($row['grand_total'], 2) ?></strong></td>
+        <td class="<?= $rf > 0 ? 'text-danger fw-bold' : 'text-muted' ?>">
+            ₱<?= number_format($rf, 2) ?>
+        </td>
+        <td><?= htmlspecialchars($row['refund_reason'] ?: '—') ?></td>
+        <td><span class="badge bg-<?= $badge ?>"><?= $status ?></span></td>
+    </tr>
+    <?php endforeach; ?>
+  <?php else: ?>
+    <tr>
+      <td colspan="10" class="text-center text-muted">
+        No Sales Report for this Period
       </td>
-      <td><?= htmlspecialchars($row['refund_reason'] ?: '—') ?></td>
-      <td><span class="badge bg-<?= $badge ?>"><?= $status ?></span></td>
-  </tr>
-  <?php endforeach; ?>
+    </tr>
+  <?php endif; ?>
 
 <?php else: ?>
   <?php if ($salesReportResult && $salesReportResult->num_rows > 0): ?>
@@ -471,24 +523,27 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
       </tr>
     <?php endwhile; ?>
   <?php else: ?>
-    <tr><td colspan="4" class="text-center text-muted">No data available</td></tr>
+    <tr>
+      <td colspan="4" class="text-center text-muted">
+        No Sales Report for this Period
+      </td>
+    </tr>
   <?php endif; ?>
 <?php endif; ?>
 </tbody>
 
 </table>
 </div>
+
 <script src="notifications.js"></script>
 <script>
 (function(){
   const groups = document.querySelectorAll('.menu-group.has-sub');
-
   groups.forEach((g, idx) => {
     const btn = g.querySelector('.menu-toggle');
     const panel = g.querySelector('.submenu');
     if (!btn || !panel) return;
 
-    // Optional: restore last state from localStorage
     const key = 'sidebar-sub-' + idx;
     const saved = localStorage.getItem(key);
     if (saved === 'open') {

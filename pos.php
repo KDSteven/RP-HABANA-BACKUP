@@ -477,6 +477,7 @@ if (isset($_SESSION['user_id'])) {
         <?php if ($role === 'staff'): ?>
             <a href="pos.php" class="active"><i class="fas fa-cash-register"></i> Point of Sale</a>
             <a href="history.php"><i class="fas fa-history"></i> Sales History</a>
+            <a href="sales.php" class="<?= $self === 'sales.php' ? 'active' : '' ?>"><i class="fas fa-receipt"></i> Sales Report</a>
             <a href="shift_summary.php" class="<?= $self === 'shift_summary.php' ? 'active' : '' ?>">
                 <i class="fas fa-clipboard-check"></i> Shift Summary
             </a>

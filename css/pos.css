@@ -169,8 +169,8 @@
     border: none;
 }
 
-.pay-btn { background: #22c55e; color: #fff; }
-.cancel-btn { background: #ef4444; color: #fff; }
+.pay-btn { background: #6B0F0F; color: #fff; }
+.cancel-btn { background: #633333; color: #fff; }
 /* PAYMENT MODAL LANDSCAPE LAYOUT */
 .payment-layout {
     display: flex;

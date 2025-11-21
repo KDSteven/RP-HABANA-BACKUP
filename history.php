@@ -324,13 +324,24 @@ function keep_qs(array $overrides = []): string {
     <?php endif; ?>
 
     <!-- Staff Links -->
-    <?php if ($role === 'staff'): ?>
-        <a href="pos.php"><i class="fas fa-cash-register"></i> Point of Sale</a>
-        <a href="history.php" class="active"><i class="fas fa-history"></i> Sales History</a>
-        <a href="shift_summary.php" class="<?= $self === 'shift_summary.php' ? 'active' : '' ?>">
-          <i class="fa-solid fa-clipboard-check"></i> Shift Summary
-        </a>
-    <?php endif; ?>
+      <?php if ($role === 'staff'): ?>
+          <a href="pos.php" class="<?= $self === 'pos.php' ? 'active' : '' ?>">
+              <i class="fas fa-cash-register"></i> Point of Sale
+          </a>
+
+          <a href="history.php" class="<?= $self === 'history.php' ? 'active' : '' ?>">
+              <i class="fas fa-history"></i> Sales History
+          </a>
+
+          <!-- NEW: Sales Report for staff -->
+          <a href="sales.php" class="<?= $self === 'sales.php' ? 'active' : '' ?>">
+              <i class="fas fa-receipt"></i> Sales Report
+          </a>
+
+          <a href="shift_summary.php" class="<?= $self === 'shift_summary.php' ? 'active' : '' ?>">
+              <i class="fas fa-clipboard-check"></i> Shift Summary
+          </a>
+      <?php endif; ?>
 
     <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
   </div>

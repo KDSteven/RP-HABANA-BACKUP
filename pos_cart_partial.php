@@ -1,6 +1,7 @@
 <?php
 // pos_cart_partial.php (with qty +/- and remove buttons)
 if (!isset($_SESSION)) session_start();
+if (!isset($cartItems)) $cartItems = $_SESSION['cart'] ?? [];
 include 'config/db.php';
 require_once 'functions.php';
 
@@ -132,27 +133,35 @@ $grandTotal = $displaySubtotal + $displayVAT;
             <td class="text-end">₱<?= number_format($price, 2) ?></td>
 
             <!-- Qty with +/- controls -->
-            <td class="text-center">
-              <div class="btn-group btn-group-sm" role="group" aria-label="qty">
-                <button
-                  type="button"
-                  class="btn btn-outline-secondary btn-decrease"
-                  data-type="<?= $typeAttr ?>"
-                  data-id="<?= $idAttr ?>"
-                  title="Decrease">
-                  −
-                </button>
-                <span class="px-2 d-inline-block" style="min-width:32px;"><?= $qty ?></span>
-                <button
-                  type="button"
-                  class="btn btn-outline-secondary btn-increase"
-                  data-type="<?= $typeAttr ?>"
-                  data-id="<?= $idAttr ?>"
-                  title="Increase">
-                  +
-                </button>
-              </div>
-            </td>
+            <?php if (!$isProduct): ?>
+
+                <!-- SERVICE — REMOVE QTY CELL COMPLETELY -->
+                <td class="text-center">—</td>
+
+            <?php else: ?>
+
+                <!-- PRODUCT — NORMAL QTY BUTTONS -->
+                <td class="text-center">
+                  <div class="btn-group btn-group-sm" role="group" aria-label="qty">
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary btn-decrease"
+                      data-type="product"
+                      data-id="<?= $idAttr ?>"
+                      title="Decrease">−</button>
+
+                    <span class="px-2 d-inline-block" style="min-width:32px;"><?= $qty ?></span>
+
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary btn-increase"
+                      data-type="product"
+                      data-id="<?= $idAttr ?>"
+                      title="Increase">+</button>
+                  </div>
+                </td>
+
+            <?php endif; ?>
 
             <td class="text-end">₱<?= number_format($lineVAT, 2) ?></td>
             <td class="text-end">₱<?= number_format($lineGrand, 2) ?></td>

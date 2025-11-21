@@ -1128,26 +1128,29 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
             </div>
 
         <!-- CATEGORY -->
-  <div class="col-md-6">
-    <label for="category" class="form-label">Category</label>
-    <div class="field-inline d-flex gap-2">
-      <select class="form-select" id="category" name="category_id" required>
-        <?php
-          $categories = $conn->query("SELECT category_id, category_name FROM categories WHERE active=1 ORDER BY category_name");
-          echo '<option value="">-- Select Category --</option>';
-          while ($c = $categories->fetch_assoc()) {
-            echo "<option value='{$c['category_id']}'>".htmlspecialchars($c['category_name'])."</option>";
-          }
-        ?>
-      </select>
-      <?php if ($role === 'admin'): ?>
-        <button type="button" class="btn btn-outline-danger btn-manage"
-                data-bs-toggle="modal" data-bs-target="#manageCategoryModal">
-          Manage
-        </button>
-      <?php endif; ?>
-    </div>
-  </div>
+        <div class="col-md-6">
+          <label for="category" class="form-label">Category</label>
+          <div class="field-inline d-flex gap-2">
+            <select class="form-select" id="category" name="category_id" required>
+              <?php
+                $categories = $conn->query("SELECT category_id, category_name, has_expiration FROM categories WHERE active=1 ORDER BY category_name");
+                echo '<option value="">-- Select Category --</option>';
+                while ($c = $categories->fetch_assoc()) {
+                  $exp = (int)$c['has_expiration']; // 0 or 1
+                  echo "<option value='{$c['category_id']}' data-expirable='{$exp}'>"
+                      . htmlspecialchars($c['category_name'])
+                      . "</option>";
+                }
+              ?>
+            </select>
+            <?php if ($role === 'admin'): ?>
+              <button type="button" class="btn btn-outline-danger btn-manage"
+                      data-bs-toggle="modal" data-bs-target="#manageCategoryModal">
+                Manage
+              </button>
+            <?php endif; ?>
+          </div>
+        </div>
 </div>
 
             <!-- Price & Markup -->
@@ -1194,11 +1197,9 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
                     step="0.01" min="0" inputmode="decimal" required>
             </div>
 
-
-            <div class="col-md-6">
+            <div class="col-md-6" id="expiration-group" style="display:none;">
               <label for="expiration" class="form-label">Expiration Date</label>
               <input type="date" class="form-control" id="expiration" name="expiration_date">
-              <div class="form-text">Leave blank if none</div>
             </div>
 
             <div class="col-md-6">
@@ -1713,7 +1714,9 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
       </div>
     </div>
   </div>
-</div><div class="modal fade" id="manageBrandModal" tabindex="-1" aria-hidden="true">
+</div>
+
+<div class="modal fade" id="manageBrandModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header bg-danger text-white">
@@ -1785,61 +1788,87 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
         <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
 
-      <div class="modal-body">
-        <!-- Create new category -->
-        <div class="card mb-3">
-          <div class="card-body">
-            <form id="categoryCreateForm" class="d-flex gap-2">
-              <input type="text" name="category_name" class="form-control" placeholder="New category name" required>
-              <button class="btn btn-success" type="submit">Add</button>
-            </form>
-          </div>
+<div class="modal-body">
+  <!-- Create new category -->
+  <div class="card mb-3">
+    <div class="card-body">
+      <form id="categoryCreateForm" class="d-flex gap-2 align-items-center">
+        <input type="text" name="category_name" class="form-control"
+              placeholder="New category name" required>
+
+        <!-- ✅ Checkbox for expiry -->
+        <div class="form-check ms-2">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="create_has_expiration"
+            name="has_expiration"
+            value="1">
+          <label class="form-check-label" for="create_has_expiration">
+            Has expiry
+          </label>
         </div>
 
-        <!-- pick category -->
-        <div class="mb-3">
-          <label class="form-label">Existing Category</label>
-          <select id="mc_category" class="form-select">
-            <?php
-              $c1 = $conn->query("SELECT category_id, category_name FROM categories WHERE active=1 ORDER BY category_name");
-              while ($c = $c1->fetch_assoc()):
-            ?>
-              <option value="<?= $c['category_id'] ?>"><?= htmlspecialchars($c['category_name']) ?></option>
-            <?php endwhile; ?>
-          </select>
-        </div>
+        <button class="btn btn-success" type="submit">Add</button>
+      </form>
+    </div>
+  </div>
 
-        <!-- action -->
-        <div class="mb-3">
-          <label class="form-label">Action</label>
-          <select id="mc_mode" class="form-select">
-            <option value="deactivate">Deactivate (archive)</option>
-            <option value="restrict">Hard delete (only if unused)</option>
-            <option value="reassign">Reassign all products then delete</option>
-          </select>
-        </div>
+  <!-- pick category -->
+  <div class="mb-3">
+    <label class="form-label">Existing Category</label>
+    <select id="mc_category" class="form-select">
+      <?php
+        $c1 = $conn->query("SELECT category_id, category_name FROM categories WHERE active=1 ORDER BY category_name");
+        while ($c = $c1->fetch_assoc()):
+      ?>
+        <option value="<?= $c['category_id'] ?>"><?= htmlspecialchars($c['category_name']) ?></option>
+      <?php endwhile; ?>
+    </select>
+  </div>
 
-        <!-- reassign target -->
-        <div id="mc_reassign_wrap" class="mb-3 d-none">
-          <label class="form-label">Reassign to</label>
-          <select id="mc_reassign_to" class="form-select">
-            <?php
-              $c2 = $conn->query("SELECT category_id, category_name FROM categories WHERE active=1 ORDER BY category_name");
-              while ($c = $c2->fetch_assoc()):
-            ?>
-              <option value="<?= $c['category_id'] ?>"><?= htmlspecialchars($c['category_name']) ?></option>
-            <?php endwhile; ?>
-          </select>
-          <div class="form-text">All products under the selected category will be moved here before deletion.</div>
-        </div>
-      </div>
+  <!-- action -->
+  <div class="mb-3">
+    <label class="form-label">Action</label>
+    <select id="mc_mode" class="form-select">
+      <option value="deactivate">Deactivate (archive)</option>
+      <option value="restrict">Hard delete (only if unused)</option>
+      <option value="reassign">Reassign all products then delete</option>
+      <option value="update_expiry">Change expiry behaviour only</option>
+    </select>
+  </div>
 
-      <div class="modal-footer">
-        <button id="mc_submit" class="btn btn-danger">Proceed</button>
-      </div>
+  <!-- reassign target -->
+  <div id="mc_reassign_wrap" class="mb-3 d-none">
+    <label class="form-label">Reassign to</label>
+    <select id="mc_reassign_to" class="form-select">
+      <?php
+        $c2 = $conn->query("SELECT category_id, category_name FROM categories WHERE active=1 ORDER BY category_name");
+        while ($c = $c2->fetch_assoc()):
+      ?>
+        <option value="<?= $c['category_id'] ?>"><?= htmlspecialchars($c['category_name']) ?></option>
+      <?php endwhile; ?>
+    </select>
+    <div class="form-text">All products under the selected category will be moved here before deletion.</div>
+  </div>
+
+  <!-- CHANGE EXPIRY for existing category -->
+  <div id="mc_update_wrap" class="mb-3 d-none">
+    <label class="form-label">Expiry behaviour</label>
+    <select id="mc_update_has_exp" class="form-select">
+      <option value="0">No expiry</option>
+      <option value="1">Has expiry</option>
+    </select>
+    <div class="form-text">
+      This only toggles whether this category requires an expiry date.
     </div>
   </div>
 </div>
+
+<div class="modal-footer">
+  <button id="mc_submit" class="btn btn-danger">Proceed</button>
+</div>
+
 
 <!-- Toast container -->
 <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:1100">
@@ -2507,6 +2536,27 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const modeSelect      = document.getElementById('mc_mode');
+  const reassignWrap    = document.getElementById('mc_reassign_wrap');
+  const updateWrap      = document.getElementById('mc_update_wrap');
+  const submitBtn       = document.getElementById('mc_submit');
+  const categorySelect  = document.getElementById('mc_category');
+  const createForm      = document.getElementById('categoryCreateForm');
+
+  function toggleExtraBlocks() {
+    const mode = modeSelect.value;
+    reassignWrap.classList.toggle('d-none', mode !== 'reassign');
+    updateWrap.classList.toggle('d-none', mode !== 'update_expiry');
+  }
+
+  if (modeSelect) {
+    modeSelect.addEventListener('change', toggleExtraBlocks);
+    toggleExtraBlocks();
+  }
+});
+</script>
 <!-- dropdown script -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -2965,11 +3015,13 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
 
       const name = categoryCreateForm.category_name.value.trim();
+      const hasExp = categoryCreateForm.has_expiration.checked ? 1 : 0;
       if (!name) return;
 
       const res = await postJSON('category_action.php', {
         action:'create',
-        category_name:name
+        category_name:name,
+        has_expiration: hasExp   // ← 🔥 ADD THIS
       });
 
       if (res.ok){
@@ -3084,9 +3136,44 @@ document.addEventListener('hidden.bs.modal', function () {
         });
     });
 });
-
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const categorySelect   = document.getElementById('category');
+  const expirationGroup  = document.getElementById('expiration-group');
+  const expirationInput  = document.getElementById('expiration');
 
+  if (!categorySelect || !expirationGroup) return;
+
+  function updateExpirationVisibility() {
+    const opt = categorySelect.options[categorySelect.selectedIndex];
+    const expirable = opt ? opt.getAttribute('data-expirable') : '0';
+
+    if (expirable === '1') {
+      // Category has expiration
+      expirationGroup.style.display = '';
+    } else {
+      // Category has no expiration
+      expirationGroup.style.display = 'none';
+      if (expirationInput) {
+        expirationInput.value = '';
+      }
+    }
+  }
+
+  // When category changes
+  categorySelect.addEventListener('change', updateExpirationVisibility);
+
+  // Also update when modal is shown (Bootstrap v5 event)
+  const addProductModal = document.getElementById('addProductModal');
+  if (addProductModal) {
+    addProductModal.addEventListener('shown.bs.modal', updateExpirationVisibility);
+  }
+
+  // Initial state
+  updateExpirationVisibility();
+});
+</script>
 <!-- Bootstrap 5.3.2 JS -->
 <!-- REQUIRED Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
