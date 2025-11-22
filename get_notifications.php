@@ -1,10 +1,4 @@
 <?php
-ini_set("log_errors", 1);
-ini_set("error_log", __DIR__ . "/debug_notifications.log");
-
-// Debug marker
-error_log("DEBUG START: " . date('Y-m-d H:i:s'));
-
 session_start();
 
 // Ensure PHP uses Manila time (fixes expiry miscalculations)

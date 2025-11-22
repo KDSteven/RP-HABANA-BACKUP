@@ -99,11 +99,19 @@ switch ($action) {
 
         $idx = findCartIndex('product', $pid);
 
-        if ($idx >= 0) {
-            $currentQty = (int)$_SESSION['cart'][$idx]['qty'];
-            $newQty = min($currentQty + $qty, $stock);
-            $_SESSION['cart'][$idx]['qty'] = $newQty;
-            $_SESSION['cart'][$idx]['stock'] = $stock;
+    if ($idx >= 0) {
+        $currentQty = (int)$_SESSION['cart'][$idx]['qty'];
+
+        // ‼️ If adding this exceeds stock → block and send toast message
+        if ($currentQty + $qty > $stock) {
+            $response['success'] = false;
+            $response['message'] = "Only {$stock} left in stock.";
+            break;
+        }
+
+        $_SESSION['cart'][$idx]['qty'] = $currentQty + $qty;
+        $_SESSION['cart'][$idx]['stock'] = $stock;
+
         } else {
             $_SESSION['cart'][] = [
                 'type'         => 'product',
