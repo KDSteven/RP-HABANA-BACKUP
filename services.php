@@ -116,6 +116,7 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="css/sidebar.css">
+  <link rel="stylesheet" href="css/services.css">
   <link rel="stylesheet" href="css/notifications.css">
   <link rel="stylesheet" href="css/inventory.css?=v2"><!-- reuse styles -->
   <audio id="notifSound" src="notif.mp3" preload="auto"></audio>
@@ -316,29 +317,35 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
                   <td><?= number_format((float)$service['price'], 2) ?></td>
                   <td><?= $service['description'] !== '' ? htmlspecialchars($service['description']) : '<em>No description</em>' ?></td>
                   <td class="text-center">
-                    <div class="action-buttons">
+                  <div class="action-buttons">
+
+                      <!-- EDIT -->
                       <button class="btn-edit"
-                              onclick='openEditServiceModal(<?= json_encode([
-                                "service_id"   => (int)$service["service_id"],
-                                "service_name" => $service["service_name"],
-                                "price"        => (float)$service["price"],
-                                "description"  => $service["description"],
-                              ], JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT) ?>)'>
-                        <i class="fas fa-edit"></i>
+                          onclick='openEditServiceModal(<?= json_encode([
+                              "service_id"   => (int)$service["service_id"],
+                              "service_name" => $service["service_name"],
+                              "price"        => (float)$service["price"],
+                              "description"  => $service["description"],
+                          ]) ?>)'>
+                          <i class="fas fa-edit"></i>
                       </button>
 
+                      <!-- MATERIALS BUTTON -->
+                      <button class="btn btn-secondary btn-sm"
+                              onclick="openMaterialsModal(<?= (int)$service['service_id'] ?>, <?= (int)$service['branch_id'] ?>)">
+                          <i class="fa-solid fa-boxes"></i>
+                      </button>
+
+                      <!-- ARCHIVE -->
                       <form id="archiveServiceForm-<?= (int)$service['service_id'] ?>" method="POST" style="display:inline-block;">
-                        <input type="hidden" name="service_id" value="<?= (int)$service['service_id'] ?>">
-                        <input type="hidden" name="archive_service" value="1">
-                        <button type="button"
-                                name="archive_service_btn"
-                                class="btn-archive-unique"
-                                data-archive-type="service"
-                                data-archive-name="<?= htmlspecialchars($service['service_name']) ?>">
-                          <i class="fas fa-archive"></i>
-                        </button>
+                          <input type="hidden" name="service_id" value="<?= (int)$service['service_id'] ?>">
+                          <input type="hidden" name="archive_service" value="1">
+                          <button type="button" class="btn-archive-unique"
+                                  data-archive-name="<?= htmlspecialchars($service['service_name']) ?>">
+                              <i class="fas fa-archive"></i>
+                          </button>
                       </form>
-                    </div>
+                  </div>
                   </td>
                 </tr>
               <?php endwhile; ?>
@@ -500,6 +507,55 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
   </div>
 </div>
 
+<!-- MATERIALS MODAL -->
+<div class="modal fade theme-modal" id="manageMaterialsModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Manage Materials for Service</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <input type="hidden" id="mat_service_id">
+        <input type="hidden" id="mat_branch_id">
+
+        <div class="row g-2">
+          <div class="col-7">
+            <label class="fw-bold">Select Material</label>
+            <select id="mat_product" class="form-select"></select>
+          </div>
+          <div class="col-3">
+            <label class="fw-bold">Qty Needed</label>
+            <input type="number" id="mat_qty" class="form-control" min="1" value="1">
+          </div>
+          <div class="col-2">
+            <label>&nbsp;</label>
+            <button class="btn btn-success w-100" onclick="addMaterial()">Add</button>
+          </div>
+        </div>
+
+        <hr>
+
+        <h6 class="fw-bold">Materials Used</h6>
+        <table class="table table-sm table-striped">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th width="120">Qty</th>
+              <th width="80"></th>
+            </tr>
+          </thead>
+          <tbody id="materialsList"></tbody>
+        </table>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <!-- ======================= SCRIPTS ======================= -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js" referrerpolicy="no-referrer"></script>
 <script src="notifications.js"></script>
@@ -598,6 +654,76 @@ document.addEventListener('DOMContentLoaded', function () {
   const cleanUrl = url.pathname + (qp.toString() ? '?' + qp.toString() : '');
   history.replaceState({}, '', cleanUrl);
 });
+
+function openMaterialsModal(serviceId, branchId) {
+    document.getElementById("mat_service_id").value = serviceId;
+    document.getElementById("mat_branch_id").value = branchId;
+
+    loadMaterials();
+    loadProductsByBranch(branchId);
+
+    new bootstrap.Modal(document.getElementById('manageMaterialsModal')).show();
+}
+
+// LOAD AVAILABLE PRODUCTS
+function loadProductsByBranch(branchId){
+    fetch("service_materials.php?action=load_products&branch_id="+branchId)
+    .then(res=>res.json())
+    .then(products=>{
+        let sel = document.getElementById("mat_product");
+        sel.innerHTML = "";
+        products.forEach(p=>{
+            sel.innerHTML += `<option value="${p.product_id}">${p.product_name}</option>`;
+        });
+    });
+}
+
+// LOAD CURRENT MATERIALS
+function loadMaterials(){
+    let sid = document.getElementById("mat_service_id").value;
+
+    fetch("service_materials.php?action=list&service_id="+sid)
+    .then(res=>res.json())
+    .then(rows=>{
+        let tbody = document.getElementById("materialsList");
+        tbody.innerHTML = "";
+
+        rows.forEach(r=>{
+            tbody.innerHTML += `
+                <tr>
+                    <td>${r.product_name}</td>
+                    <td>${r.qty_needed}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="deleteMaterial(${r.id})">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>`;
+        });
+    });
+}
+
+// ADD MATERIAL
+function addMaterial(){
+    let sid  = document.getElementById("mat_service_id").value;
+    let pid  = document.getElementById("mat_product").value;
+    let qty  = document.getElementById("mat_qty").value;
+
+    fetch("service_materials.php", {
+        method:"POST",
+        headers:{ "Content-Type":"application/x-www-form-urlencoded" },
+        body:`action=add&service_id=${sid}&product_id=${pid}&qty=${qty}`
+    })
+    .then(res=>res.text())
+    .then(()=> loadMaterials());
+}
+
+// DELETE MATERIAL
+function deleteMaterial(id){
+    fetch("service_materials.php?action=delete&id="+id)
+    .then(res=>res.text())
+    .then(()=> loadMaterials());
+}
 </script>
 
 <script>

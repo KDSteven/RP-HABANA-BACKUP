@@ -165,40 +165,52 @@ $grand_total = $subtotal;     // VAT removed
 
         // --- Insert items & update inventory ---
         foreach ($_SESSION['cart'] as $item) {
-            if ($item['type'] === 'product') {
-                $pid = (int)$item['product_id'];
-                $qty = (int)$item['qty'];
-                $price = (float)$item['calculated_price'];
-                $vat = (float)$item['calculated_vat'];
 
-                // Update inventory
-                $upd = $conn->prepare("UPDATE inventory SET stock = stock - ? WHERE branch_id=? AND product_id=? AND stock >= ?");
-                $upd->bind_param("iiii", $qty, $branch_id, $pid, $qty);
-                $upd->execute();
-                if ($upd->affected_rows === 0) {
-                    $conn->rollback();
-                    throw new Exception("Not enough stock for product ID {$pid}.");
-                }
-                $upd->close();
+          if ($item['type'] === 'product') {
 
-                // Insert sale item
-                $ins = $conn->prepare("INSERT INTO sales_items (sale_id, product_id, quantity, price) VALUES (?, ?, ?, ?)");
-                $ins->bind_param("iiid", $sale_id, $pid, $qty, $price);
-                $ins->execute();
-                $ins->close();
+              $pid = (int)$item['product_id'];
+              $qty = (int)$item['qty'];
+              $price = (float)$item['calculated_price'];
 
-            } else { // service
-                $sid = (int)$item['service_id'];
-                $price = (float)$item['calculated_price'];
-                $vat = (float)$item['calculated_vat'];
+              // Deduct product stock
+              $upd = $conn->prepare("
+                  UPDATE inventory 
+                  SET stock = stock - ? 
+                  WHERE branch_id = ? AND product_id = ? AND stock >= ?
+              ");
+              $upd->bind_param("iiii", $qty, $branch_id, $pid, $qty);
+              $upd->execute();
 
-                $ins = $conn->prepare("INSERT INTO sales_services (sale_id, service_id, price) VALUES (?, ?, ?)");
-                $ins->bind_param("iid", $sale_id, $sid, $price);
-                $ins->execute();
-                $ins->close();
-            }
-        }
+              if ($upd->affected_rows === 0) {
+                  $conn->rollback();
+                  throw new Exception("Not enough stock for product ID {$pid}.");
+              }
+              $upd->close();
 
+              // Insert sale item
+              $ins = $conn->prepare("
+                  INSERT INTO sales_items (sale_id, product_id, quantity, price)
+                  VALUES (?, ?, ?, ?)
+              ");
+              $ins->bind_param("iiid", $sale_id, $pid, $qty, $price);
+              $ins->execute();
+              $ins->close();
+
+          } else { 
+              // SERVICE
+              $sid = (int)$item['service_id'];
+              $price = (float)$item['calculated_price'];
+
+              // Insert sale service line
+              $ins = $conn->prepare("
+                  INSERT INTO sales_services (sale_id, service_id, price)
+                  VALUES (?, ?, ?)
+              ");
+              $ins->bind_param("iid", $sale_id, $sid, $price);
+              $ins->execute();
+              $ins->close();
+          } // END if service or product
+      } // END foreach
         $conn->commit();
         $_SESSION['cart'] = []; // clear cart
 

@@ -1,0 +1,41 @@
+/* === Match modal to dark-maroon theme === */
+.theme-modal .modal-header {
+    background-color: #6a0f14;      /* lighter maroon */
+    color: white;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.theme-modal .modal-footer {
+    background-color: #5a0c10;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.theme-modal .btn {
+    border-radius: 8px !important;
+}
+
+/* Green Add Button */
+.theme-modal .btn-success {
+    background-color: #28a745 !important;
+    border: none;
+}
+
+/* Close X button */
+.btn-close {
+    color: white;
+}
+
+/* Inputs */
+.theme-modal input,
+.theme-modal select {
+    background-color: #ffffff;
+    color: #000;
+    border-radius: 6px;
+}
+
+/* Table area */
+.theme-modal table {
+    background-color: #ffffff;
+    color: #000;
+    border-radius: 6px;
+}

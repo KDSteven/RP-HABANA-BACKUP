@@ -122,46 +122,100 @@ switch ($action) {
     }
 
     /* ============================
-       ADD SERVICE (LIMIT 1 ONLY)
-    ============================ */
-    case 'add_service': {
+   ADD SERVICE + MATERIALS
+============================ */
+case 'add_service': {
 
-        $sid = (int)($post['service_id'] ?? 0);
-        if ($sid <= 0) {
-            $response['message'] = "Invalid service.";
-            break;
-        }
-
-        foreach ($_SESSION['cart'] as $item) {
-            if ($item['type'] === 'service' && (int)$item['service_id'] === $sid) {
-                $response['success'] = false;
-                $response['message'] = "This service is already in the cart. Only 1 allowed.";
-                break 2;
-            }
-        }
-
-        $stmt = $conn->prepare("SELECT service_name, price FROM services WHERE service_id=? LIMIT 1");
-        $stmt->bind_param("i", $sid);
-        $stmt->execute();
-        $srv = $stmt->get_result()->fetch_assoc();
-        $stmt->close();
-
-        if (!$srv) {
-            $response['message'] = "Service not found.";
-            break;
-        }
-
-        $_SESSION['cart'][] = [
-            'type'       => 'service',
-            'service_id' => $sid,
-            'name'       => $srv['service_name'],
-            'qty'        => 1,
-            'price'      => (float)$srv['price']
-        ];
-
-        $response['success'] = true;
+    $sid = (int)($post['service_id'] ?? 0);
+    if ($sid <= 0) {
+        $response['message'] = "Invalid service.";
         break;
     }
+
+    // Prevent duplication (only 1 service allowed)
+    foreach ($_SESSION['cart'] as $item) {
+        if ($item['type'] === 'service' && (int)$item['service_id'] === $sid) {
+            $response['success'] = false;
+            $response['message'] = "This service is already in the cart. Only 1 allowed.";
+            break 2;
+        }
+    }
+
+    // Load service info
+    $stmt = $conn->prepare("SELECT service_name, price FROM services WHERE service_id=? LIMIT 1");
+    $stmt->bind_param("i", $sid);
+    $stmt->execute();
+    $srv = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
+    if (!$srv) {
+        $response['message'] = "Service not found.";
+        break;
+    }
+
+    // ADD SERVICE TO CART
+    $_SESSION['cart'][] = [
+        'type'       => 'service',
+        'service_id' => $sid,
+        'name'       => $srv['service_name'],
+        'qty'        => 1,
+        'price'      => (float)$srv['price']
+    ];
+    
+
+    /* ===========================================
+       LOAD MATERIALS FOR THIS SERVICE
+    ============================================ */
+
+    $q = $conn->prepare("
+        SELECT sm.product_id, sm.qty_needed, 
+               p.product_name, p.price, p.markup_price, 
+               i.stock, p.expiration_date, p.category
+        FROM service_materials sm
+        JOIN products p ON p.product_id = sm.product_id
+        JOIN inventory i ON i.product_id = p.product_id
+        WHERE sm.service_id = ? AND i.branch_id = ?
+    ");
+    $q->bind_param("ii", $sid, $_SESSION['branch_id']);
+    $q->execute();
+    $materials = $q->get_result();
+    $q->close();
+
+    while ($m = $materials->fetch_assoc()) {
+
+        $pid        = (int)$m['product_id'];
+        $qty_needed = (int)$m['qty_needed'];
+        $stock      = (int)$m['stock'];
+
+        if ($stock <= 0) continue; // skip if no stock
+
+        // Calculate selling price
+        $price = finalPrice($m['price'], $m['markup_price']);
+
+        // Check if material already exists in cart
+        $idx = findCartIndex('product', $pid);
+
+        if ($idx >= 0) {
+            // add qty_needed
+            $_SESSION['cart'][$idx]['qty'] += $qty_needed;
+        } else {
+            // add new product line
+            $_SESSION['cart'][] = [
+                'type'         => 'product',
+                'product_id'   => $pid,
+                'product_name' => $m['product_name'],
+                'qty'          => $qty_needed,
+                'price'        => $price,
+                'stock'        => $stock,
+                'expiration'   => $m['expiration_date'],
+                'category'     => $m['category'],
+            ];
+        }
+    }
+
+    $response['success'] = true;
+    break;
+}
 
     /* ============================
        UPDATE QTY
