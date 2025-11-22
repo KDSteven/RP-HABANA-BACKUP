@@ -219,6 +219,7 @@ if ($branch_id) {
     <link rel="icon" href="img/R.P.png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="css/notifications.css">
     <link rel="stylesheet" href="css/sidebar.css">
     <link rel="stylesheet" href="css/sales.css?v2">
@@ -429,6 +430,28 @@ if ($branch_id) {
     </button>
 </form>
 
+<div class="row g-4">
+
+    <div class="col-12 col-lg-6">
+        <div class="card shadow-sm p-3 revenue-card">
+            <h4 class="mb-3 fw-semibold">Product Revenue
+            </h4>
+            <canvas id="productRevenueChart" class="revenue-chart"></canvas>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+        <div class="card shadow-sm p-3 revenue-card">
+            <h4 class="mb-3 fw-semibold">Service Revenue
+            </h4>
+            <canvas id="serviceRevenueChart" class="revenue-chart"></canvas>
+        </div>
+    </div>
+
+</div>
+
+
+
 <div class="table-responsive">
 <table class="table table-bordered">
 <thead>
@@ -559,6 +582,116 @@ if ($branch_id) {
     });
   });
 })();
+</script>
+<script>
+let productChart, serviceChart;
+
+function loadRevenueCharts() {
+
+let branch = document.querySelector("select[name='branch_id']")?.value || "";
+let month  = document.querySelector("input[name='month']")?.value || "<?= date('Y-m') ?>";
+
+    fetch(`sales_revenue_api.php?branch=${branch}&month=${month}`)
+        .then(res => res.json())
+        .then(data => {
+            drawProductChart(data.products);
+            drawServiceChart(data.services);
+        });
+}
+
+function drawProductChart(rows) {
+    if (productChart) productChart.destroy();
+
+    productChart = new Chart(
+        document.getElementById("productRevenueChart"),
+        {
+            type: "bar",
+            data: {
+                labels: rows.map(r => r.date),
+                datasets: [{
+                    label: "Product Revenue",
+                    data: rows.map(r => r.total),
+                    backgroundColor: "#E26B2A", 
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: "#eee" },
+                        ticks: { callback: (v) => "₱" + v.toLocaleString() }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        }
+    );
+}
+
+function drawServiceChart(rows) {
+    if (serviceChart) serviceChart.destroy();
+
+    serviceChart = new Chart(
+        document.getElementById("serviceRevenueChart"),
+        {
+            type: "bar",
+            data: {
+                labels: rows.map(r => r.date),
+                datasets: [{
+                    label: "Service Revenue",
+                    data: rows.map(r => r.total),
+                    backgroundColor: "#E26B2A",
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: "#eee" },
+                        ticks: { callback: (v) => "₱" + v.toLocaleString() }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        }
+    );
+}
+
+document.addEventListener("DOMContentLoaded", loadRevenueCharts);
+
+document.querySelectorAll("select[name='branch_id'], select[name='report'], input[name='month']")
+.forEach(el => el.addEventListener("change", loadRevenueCharts));
+
+// refresh when filters change
+document.querySelectorAll("select,input").forEach(el => {
+    el.addEventListener("change", loadRevenueCharts);
+});
+
+document.querySelector("select[name='report']")
+  ?.addEventListener("change", loadRevenueCharts);
+
+document.querySelector("input[name='month']")
+  ?.addEventListener("change", loadRevenueCharts);
+
+document.querySelector("select[name='branch_id']")
+  ?.addEventListener("change", loadRevenueCharts);
+
 </script>
 
 <script src="sidebar.js"></script>
