@@ -277,17 +277,8 @@ if (isset($_SESSION['user_id'])) {
               <div class="kpi">
                 <div class="ico"><i class="fa-solid fa-peso-sign"></i></div>
                 <div>
-                  <div class="label">Gross Ex-VAT</div>
+                  <div class="label">Gross Sales</div>
                   <div id="kpiGross" class="value mono">₱0.00</div>
-                </div>
-              </div>
-            </div>
-            <div class="col-6 col-lg-3">
-              <div class="kpi">
-                <div class="ico"><i class="fa-solid fa-percent"></i></div>
-                <div>
-                  <div class="label">VAT</div>
-                  <div id="kpiVat" class="value mono">₱0.00</div>
                 </div>
               </div>
             </div>
@@ -367,7 +358,7 @@ function fmtDate(s){
 function setText(id, text){ const el = document.getElementById(id); if (el) el.textContent = text; }
 function setHTML(id, html){ const el = document.getElementById(id); if (el) el.innerHTML = html; }
 
-let __prev = { expected:0, salesCnt:0, gross:0, vat:0, net:0, disc:0, pin:0, pout:0, refund:0 };
+let __prev = { expected:0, salesCnt:0, gross:0, net:0, disc:0, pin:0, pout:0, refund:0 };
 let __refreshTimer = null;
 
 /* animate numbers (money-safe) */
@@ -447,7 +438,6 @@ function clearUI(){
   setText('kpiExpected','₱0.00');
   setText('kpiSalesCnt','0');
   setText('kpiGross','₱0.00');
-  setText('kpiVat','₱0.00');
   setText('kpiNetCash','₱0.00');
   setText('kpiDisc','₱0.00');
   setText('kpiPin','₱0.00');
@@ -486,7 +476,6 @@ animateNumber(document.getElementById('kpiSalesCnt'), __prev.salesCnt, Number(sa
 __prev.salesCnt = Number(sales.sale_count||0);
 
 updateMoney('kpiGross',   Number(sales.gross_total_ex_vat||0), 'gross');
-updateMoney('kpiVat',     Number(sales.vat_total||0),          'vat');
 updateMoney('kpiNetCash', Number(netCash||0),                  'net');
 updateMoney('kpiDisc',    Number(sales.discount_total||0),     'disc');
 updateMoney('kpiPin',     Number(payInTot||0),                 'pin');

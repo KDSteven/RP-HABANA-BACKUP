@@ -48,7 +48,7 @@ $markupPrice   = (float)($_POST['markup_price'] ?? 0);
 $retailPrice   = $price + ($price * $markupPrice / 100);
 $ceilingPoint  = (int)($_POST['ceiling_point'] ?? 0);
 $criticalPoint = (int)($_POST['critical_point'] ?? 0);
-$vat           = (float)($_POST['vat'] ?? 0);
+// $vat           = (float)($_POST['vat'] ?? 0);
 $stocks        = (int)($_POST['stocks'] ?? 0);
 $branchId      = (int)($_POST['branch_id'] ?? 0);
 $brandName     = trim($_POST['brand_name'] ?? '');
@@ -60,7 +60,7 @@ if ($productName === '' || $categoryId <= 0 || $branchId <= 0) {
     header('Location: inventory.php?ap=error');
     exit;
 }
-if ($price < 0 || $markupPrice < 0 || $retailPrice < 0 || $ceilingPoint < 0 || $criticalPoint < 0 || $stocks < 0 || $vat < 0) {
+if ($price < 0 || $markupPrice < 0 || $retailPrice < 0 || $ceilingPoint < 0 || $criticalPoint < 0 || $stocks < 0) {
     $_SESSION['stock_message'] = "❌ Numeric fields cannot be negative.";
     header('Location: inventory.php?ap=error');
     exit;
@@ -152,26 +152,26 @@ try {
 
     $stmt = $conn->prepare("
         INSERT INTO products 
-            (barcode, product_name, category, price, markup_price, retail_price,
-             ceiling_point, critical_point, vat, expiration_date, expiry_required, brand_name)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+        (barcode, product_name, category, price, markup_price, retail_price,
+        ceiling_point, critical_point, expiration_date, expiry_required, brand_name)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?)
     ");
-    // Types: s,s,s,d,d,d,i,i,d,s,i,s  -> "sssdddiidsis"
+
     $stmt->bind_param(
-        "sssdddiidsis",
-        $barcodeParam,     // s
-        $productName,      // s
-        $categoryName,     // s
-        $price,            // d
-        $markupPrice,      // d
-        $retailPrice,      // d
-        $ceilingPoint,     // i
-        $criticalPoint,    // i
-        $vat,              // d
-        $expirationParam,  // s (nullable)
-        $expiryRequired,   // i (0/1)
-        $brandName         // s
+        "sssdddiisis",
+        $barcodeParam,
+        $productName,
+        $categoryName,
+        $price,
+        $markupPrice,
+        $retailPrice,
+        $ceilingPoint,
+        $criticalPoint,
+        $expirationParam,
+        $expiryRequired,
+        $brandName
     );
+
     $stmt->execute();
     $productId = (int)$conn->insert_id;
     $stmt->close();

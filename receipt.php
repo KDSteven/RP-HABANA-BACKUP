@@ -13,7 +13,7 @@ $sale_id = (int)$_GET['sale_id'];
 // ========================
 $stmt = $conn->prepare("
     SELECT s.sale_id, s.sale_date, s.total, s.payment, s.change_given, 
-           s.discount, s.discount_type, s.vat,
+           s.discount, s.discount_type,
            b.branch_name, b.branch_location, b.branch_contact, b.branch_email,
            u.username AS staff_name
     FROM sales s
@@ -279,16 +279,9 @@ if (isset($_SESSION['user_id'])) {
   </tr>
   <?php endif; ?>
 
-  <?php if ($sale['vat'] > 0): ?>
-  <tr>
-    <td colspan="3">VAT</td>
-    <td>₱<?= number_format($sale['vat'], 2) ?></td>
-  </tr>
-  <?php endif; ?>
-
   <tr>
     <td colspan="3"><strong>GRAND TOTAL</strong></td>
-    <td><strong>₱<?= number_format($sale['total'] + $sale['vat'] - $sale['discount'], 2) ?></strong></td>
+    <td><strong>₱<?= number_format($sale['total'] - $sale['discount'], 2) ?></strong></td>
   </tr>
 </tfoot>
 

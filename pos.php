@@ -59,6 +59,7 @@ function finalPrice($price, $markup) {
 
 /** Server-side, trustworthy subtotal (used for initial render + fallback for JS) */
 $cartSubtotal = 0.0;
+$cartGrandTotal = $cartSubtotal; // YOU MUST ADD THIS
 foreach ($_SESSION['cart'] as $item) {
     if (($item['type'] ?? '') === 'product') {
         if (isset($item['price'])) {
@@ -90,37 +91,34 @@ function checkoutCart($conn, $user_id, $branch_id, $payment, $discount = 0, $dis
     $shift_id = (int)$active['shift_id'];
 
 
-    // ---------- 1. CALCULATE SUBTOTAL ----------
-  $subtotal = 0.0;
-$totalVat = 0.0;
+// ---------- 1. CALCULATE SUBTOTAL (NO VAT) ----------
+$subtotal = 0.0;
 
 foreach ($_SESSION['cart'] as $i => $item) {
+
     if ($item['type'] === 'product') {
-        $stmt = $conn->prepare("SELECT price, markup_price, vat FROM products WHERE product_id=?");
+        $stmt = $conn->prepare("SELECT price, markup_price FROM products WHERE product_id=?");
         $stmt->bind_param("i", $item['product_id']);
         $stmt->execute();
         $prod = $stmt->get_result()->fetch_assoc();
         $stmt->close();
 
-        $price  = finalPrice($prod['price'] ?? 0, $prod['markup_price'] ?? 0);
-        $vatRate = (float)($prod['vat'] ?? 0);
+        $price = finalPrice($prod['price'] ?? 0, $prod['markup_price'] ?? 0);
+
     } else {
-        $price  = (float)$item['price'];
-        $vatRate = (float)($item['vat'] ?? 0);
+        $price = (float)$item['price'];
     }
 
-    $qty          = (int)$item['qty'];
+    $qty = (int)$item['qty'];
     $lineSubtotal = $price * $qty;
-    $lineVat      = $lineSubtotal * ($vatRate / 100);
 
-    // write back without references
     $_SESSION['cart'][$i]['calculated_price'] = $price;
-    $_SESSION['cart'][$i]['calculated_vat']   = $lineVat;
 
     $subtotal += $lineSubtotal;
-    $totalVat += $lineVat;
 }
 
+$totalVat = 0;                // ALWAYS 0
+$grand_total = $subtotal;     // VAT removed
 
     // ---------- 2. APPLY DISCOUNT ----------
     $discount_value = 0.0;
@@ -132,7 +130,7 @@ foreach ($_SESSION['cart'] as $i => $item) {
     $after_discount = $subtotal - $discount_value;
 
     // ---------- 3. GRAND TOTAL ----------
-    $grand_total = $after_discount + $totalVat;
+    $grand_total = $after_discount;
 
     // ---------- 4. CHECK PAYMENT ----------
     if ($payment < $grand_total) {
@@ -143,15 +141,23 @@ foreach ($_SESSION['cart'] as $i => $item) {
     // ---------- 5. BEGIN TRANSACTION ----------
     $conn->begin_transaction();
     try {
-        // --- Insert sale ---
+       // --- Insert sale ---
         $stmt = $conn->prepare("
-        INSERT INTO sales 
-        (branch_id, shift_id, total, discount, discount_type, vat, payment, change_given, processed_by, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'completed')
-      ");
+            INSERT INTO sales 
+            (branch_id, shift_id, total, discount, discount_type, payment, change_given, processed_by, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'completed')
+        ");
+
         $stmt->bind_param(
-          "iiddsdddi",
-          $branch_id, $shift_id, $subtotal, $discount_value, $discount_type, $totalVat, $payment, $change, $user_id
+          "iiddsddi",
+          $branch_id,
+          $shift_id,
+          $subtotal,
+          $discount_value,
+          $discount_type,
+          $payment,    // corrected
+          $change,
+          $user_id
         );
         $stmt->execute();
         $sale_id = $conn->insert_id;
@@ -176,8 +182,8 @@ foreach ($_SESSION['cart'] as $i => $item) {
                 $upd->close();
 
                 // Insert sale item
-                $ins = $conn->prepare("INSERT INTO sales_items (sale_id, product_id, quantity, price, vat) VALUES (?, ?, ?, ?, ?)");
-                $ins->bind_param("iiidd", $sale_id, $pid, $qty, $price, $vat);
+                $ins = $conn->prepare("INSERT INTO sales_items (sale_id, product_id, quantity, price) VALUES (?, ?, ?, ?)");
+                $ins->bind_param("iiid", $sale_id, $pid, $qty, $price);
                 $ins->execute();
                 $ins->close();
 
@@ -186,8 +192,8 @@ foreach ($_SESSION['cart'] as $i => $item) {
                 $price = (float)$item['calculated_price'];
                 $vat = (float)$item['calculated_vat'];
 
-                $ins = $conn->prepare("INSERT INTO sales_services (sale_id, service_id, price, vat) VALUES (?, ?, ?, ?)");
-                $ins->bind_param("iidd", $sale_id, $sid, $price, $vat);
+                $ins = $conn->prepare("INSERT INTO sales_services (sale_id, service_id, price) VALUES (?, ?, ?)");
+                $ins->bind_param("iid", $sale_id, $sid, $price);
                 $ins->execute();
                 $ins->close();
             }
@@ -614,7 +620,7 @@ if (isset($_SESSION['user_id'])) {
       <form method="POST" id="paymentForm">
       <div class="modal-body payment-layout" id="paymentModalBody"
           data-subtotal="<?= number_format($cartSubtotal, 2, '.', '') ?>"
-          data-vat="<?= number_format($totalVat, 2, '.', '') ?>"
+          data-vat="0.00"
           data-grandtotal="<?= number_format($cartGrandTotal, 2, '.', '') ?>">
 
           <!-- LEFT SIDE -->
@@ -1162,17 +1168,29 @@ document.addEventListener('DOMContentLoaded', () => {
     return { subtotal, vat };
   }
 
-  function syncPaymentModalTotals() {
+function syncPaymentModalTotals() {
+    const cart = document.querySelector('#cartSection');
+    if (!cart) return;
+
+    // YOUR CART HAS ONLY .grand — NO .subtotal
+    const grandEl = cart.querySelector('.grand');
+
+    const grand = parseFloat(grandEl?.dataset.value || "0");
+
     const body = document.getElementById('paymentModalBody');
     const totalDueText = document.getElementById('totalDueText');
-    const { subtotal, vat } = readTotalsFromDOMOrFallback();
-    if (body) {
-      body.dataset.subtotal = (subtotal || 0).toFixed(2);
-      body.dataset.vat      = (vat || 0).toFixed(2);
-    }
-    if (totalDueText) totalDueText.textContent = `Total Due: ₱${((subtotal||0)+(vat||0)).toFixed(2)}`;
+
+    // Set dataset (subtotal = grand because VAT = 0)
+    body.dataset.subtotal    = grand.toFixed(2);
+    body.dataset.vat         = "0.00";
+    body.dataset.grandtotal  = grand.toFixed(2);
+
+    // Update modal text
+    totalDueText.textContent = `Total Due: ₱${grand.toFixed(2)}`;
+
     updatePaymentComputed();
-  }
+}
+
 
   function resetPaymentModal() {
     const body = document.getElementById('paymentModalBody');

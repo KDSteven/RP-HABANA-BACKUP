@@ -1191,12 +1191,6 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
                     step="1" min="0" inputmode="numeric" required>
             </div>
 
-            <div class="col-md-6">
-              <label for="vat" class="form-label">VAT (%)</label>
-              <input type="number" class="form-control" id="vat" name="vat"
-                    step="0.01" min="0" inputmode="decimal" required>
-            </div>
-
             <div class="col-md-6" id="expiration-group" style="display:none;">
               <label for="expiration" class="form-label">Expiration Date</label>
               <input type="date" class="form-control" id="expiration" name="expiration_date">
@@ -1516,13 +1510,6 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
               <label class="form-label">Critical Point</label>
               <input type="number" step="1" min="0" inputmode="numeric"
                     class="form-control" id="edit_critical_point" name="critical_point" required>
-            </div>
-
-            <!-- VAT -->
-            <div class="col-md-6">
-              <label class="form-label">VAT (%)</label>
-              <input type="number" step="0.01" min="0" inputmode="decimal"
-                    class="form-control" id="edit_vat" name="vat" required>
             </div>
 
             <div class="col-md-6">

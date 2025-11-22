@@ -7,7 +7,7 @@ if (!isset($_SESSION['cart'])) $_SESSION['cart'] = [];
 
 /* ========= Helpers ========= */
 function finalPrice($price, $markup) {
-    $p = (float)$price; 
+    $p = (float)$price;
     $m = (float)$markup;
     return $p + ($p * ($m / 100));
 }
@@ -23,30 +23,21 @@ function findCartIndex(string $type, $id): int {
 
 function computeTotals(): array {
     $subtotal = 0.0;
-    $totalVat = 0.0;
 
     foreach ($_SESSION['cart'] as $item) {
-        $qty     = max(0, (int)($item['qty'] ?? 0));
-        $price   = (float)($item['price'] ?? 0);
-        $vatPerc = (float)($item['vat'] ?? 0);
-
-        $lineSub = $price * $qty;
-        $lineVat = $lineSub * ($vatPerc / 100.0);
-
-        $subtotal += $lineSub;
-        $totalVat += $lineVat;
+        $qty   = max(0, (int)($item['qty'] ?? 0));
+        $price = (float)($item['price'] ?? 0);
+        $subtotal += ($price * $qty);
     }
 
     return [
         'raw' => [
             'subtotal' => $subtotal,
-            'vat'      => $totalVat,
-            'grand'    => $subtotal + $totalVat
+            'grand'    => $subtotal  // grand total is now same as subtotal
         ],
         'display' => [
             'subtotal' => number_format($subtotal, 2),
-            'vat'      => number_format($totalVat, 2),
-            'grand'    => number_format($subtotal + $totalVat, 2),
+            'grand'    => number_format($subtotal, 2),
         ],
     ];
 }
@@ -83,7 +74,7 @@ switch ($action) {
         $stmt = $conn->prepare("
             SELECT p.product_name, p.price, p.markup_price,
                    IFNULL(i.stock,0) AS stock,
-                   p.expiration_date, p.category, p.vat
+                   p.expiration_date, p.category
             FROM products p
             JOIN inventory i ON p.product_id = i.product_id
             WHERE p.product_id = ? AND i.branch_id = ?
@@ -94,13 +85,12 @@ switch ($action) {
         $prod = $stmt->get_result()->fetch_assoc();
         $stmt->close();
 
-        if (!$prod) { 
+        if (!$prod) {
             $response['message'] = "Product not found.";
             break;
         }
 
-        $stock      = (int)$prod['stock'];
-        $vatPercent = (float)($prod['vat'] ?? 0);
+        $stock = (int)$prod['stock'];
 
         if ($stock <= 0) {
             $response['message'] = "Product out of stock.";
@@ -114,7 +104,6 @@ switch ($action) {
             $newQty = min($currentQty + $qty, $stock);
             $_SESSION['cart'][$idx]['qty'] = $newQty;
             $_SESSION['cart'][$idx]['stock'] = $stock;
-            $_SESSION['cart'][$idx]['vat']   = $vatPercent;
         } else {
             $_SESSION['cart'][] = [
                 'type'         => 'product',
@@ -122,7 +111,6 @@ switch ($action) {
                 'product_name' => $prod['product_name'],
                 'qty'          => min($qty, $stock),
                 'price'        => finalPrice($prod['price'], $prod['markup_price']),
-                'vat'          => $vatPercent,
                 'stock'        => $stock,
                 'expiration'   => $prod['expiration_date'],
                 'category'     => $prod['category'],
@@ -144,7 +132,6 @@ switch ($action) {
             break;
         }
 
-        // Check if service already exists — LIMIT to ONE
         foreach ($_SESSION['cart'] as $item) {
             if ($item['type'] === 'service' && (int)$item['service_id'] === $sid) {
                 $response['success'] = false;
@@ -168,9 +155,8 @@ switch ($action) {
             'type'       => 'service',
             'service_id' => $sid,
             'name'       => $srv['service_name'],
-            'qty'        => 1,        // 🔥 ALWAYS 1
-            'price'      => (float)$srv['price'],
-            'vat'        => 0
+            'qty'        => 1,
+            'price'      => (float)$srv['price']
         ];
 
         $response['success'] = true;
@@ -191,27 +177,20 @@ switch ($action) {
             break;
         }
 
-        // 🔥 Services CAN'T change qty
         if ($type === 'service') {
-
             $idx = findCartIndex('service', $id);
-            if ($idx >= 0) {
-                $_SESSION['cart'][$idx]['qty'] = 1; // force back to 1
-            }
+            if ($idx >= 0) $_SESSION['cart'][$idx]['qty'] = 1;
 
-            // send response now
             ob_start();
             include 'pos_cart_partial.php';
             $response['cart_html'] = ob_get_clean();
-            $response['totals']    = computeTotals();
-            $response['success']   = true;
-            $response['message']   = "Service quantity cannot be changed.";
-
+            $response['totals'] = computeTotals();
+            $response['success'] = true;
+            $response['message'] = "Service quantity cannot be changed.";
             echo json_encode($response);
             exit;
         }
 
-        // PRODUCT UPDATE
         $idx = findCartIndex($type, $id);
         if ($idx < 0) {
             $response['message'] = "Item not found.";
@@ -221,14 +200,13 @@ switch ($action) {
         $curQty = (int)$_SESSION['cart'][$idx]['qty'];
         $reqQty = $curQty + $delta;
 
-        // Refetch stock live
         $stmt = $conn->prepare("SELECT IFNULL(stock,0) AS stock FROM inventory WHERE branch_id=? AND product_id=?");
         $stmt->bind_param("ii", $_SESSION['branch_id'], $id);
         $stmt->execute();
         $row = $stmt->get_result()->fetch_assoc();
         $stmt->close();
-        $liveStock = (int)$row['stock'];
 
+        $liveStock = (int)$row['stock'];
         $newQty = max(0, min($reqQty, $liveStock));
 
         if ($newQty <= 0) {
@@ -264,15 +242,12 @@ switch ($action) {
     ============================ */
     case 'cancel_order': {
         $_SESSION['cart'] = [];
-
         $response['success'] = true;
 
-        // Return clean empty cart immediately
         ob_start();
         include 'pos_cart_partial.php';
         $response['cart_html'] = ob_get_clean();
         $response['totals'] = computeTotals();
-
         echo json_encode($response);
         exit;
     }
@@ -280,7 +255,6 @@ switch ($action) {
     default:
         $response['message'] = "Invalid action.";
 }
-
 
 /* ========= Build Cart HTML ========= */
 ob_start();

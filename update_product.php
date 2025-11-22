@@ -19,14 +19,13 @@ $markup        = isset($_POST['markup_price']) ? (float)$_POST['markup_price'] :
 // Don't trust client retail; recompute
 $ceiling       = isset($_POST['ceiling_point']) ? (int)$_POST['ceiling_point'] : null;
 $critical      = isset($_POST['critical_point']) ? (int)$_POST['critical_point'] : null;
-$vat           = isset($_POST['vat']) ? (float)$_POST['vat'] : null;
+// $vat           = isset($_POST['vat']) ? (float)$_POST['vat'] : null;
 
 $nums = [
   'price'          => $price,
   'markup_price'   => $markup,
   'ceiling_point'  => $ceiling,
   'critical_point' => $critical,
-  'vat'            => $vat,
 ];
 
 foreach ($nums as $k => $v) {
@@ -53,13 +52,13 @@ if (!is_finite($retail) || $retail < 0) {
 $stmt = $conn->prepare("
   UPDATE products
   SET product_name = ?, category = ?, price = ?, markup_price = ?,
-      ceiling_point = ?, critical_point = ?, vat = ?
+      ceiling_point = ?, critical_point = ?
   WHERE product_id = ?
   LIMIT 1
 ");
 $stmt->bind_param(
   "ssddiiii",
-  $name, $category, $price, $markup, $ceiling, $critical, $vat, $product_id
+  $name, $category, $price, $markup, $ceiling, $critical, $product_id
 );
 $ok = $stmt->execute();
 $stmt->close();
@@ -90,7 +89,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ceiling_point = intval($_POST['ceiling_point']);
     $critical_point = intval($_POST['critical_point']);
     $stock = intval($_POST['stock']);
-    $vat = floatval($_POST['vat']);
     $expiration_date = $_POST['expiration_date'] ?: null;
 
     if ($stock > $ceiling_point) {
@@ -99,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Fetch old product data for logging
-    $stmtOld = $conn->prepare("SELECT product_name, category, price, markup_price, retail_price, ceiling_point, critical_point, vat, expiration_date FROM products WHERE product_id = ?");
+    $stmtOld = $conn->prepare("SELECT product_name, category, price, markup_price, retail_price, ceiling_point, critical_point, expiration_date FROM products WHERE product_id = ?");
     $stmtOld->bind_param("i", $product_id);
     $stmtOld->execute();
     $oldResult = $stmtOld->get_result();
@@ -119,12 +117,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         retail_price = ?, 
                         ceiling_point = ?, 
                         critical_point = ?, 
-                        vat = ?, 
                         expiration_date = ?
                     WHERE product_id = ?";
     $stmt1 = $conn->prepare($product_sql);
     $stmt1->bind_param(
-        'ssdddiissi',
+        'ssdddii si',
         $product_name,
         $category,
         $price,
@@ -132,7 +129,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $retail_price,
         $ceiling_point,
         $critical_point,
-        $vat,
         $expiration_date,
         $product_id
     );
@@ -157,7 +153,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'retail_price' => $retail_price,
         'ceiling_point' => $ceiling_point,
         'critical_point' => $critical_point,
-        'vat' => $vat,
         'expiration_date' => $expiration_date,
         'stock' => $stock,
     ];
