@@ -174,6 +174,14 @@ try {
 
     $stmt->execute();
     $productId = (int)$conn->insert_id;
+    // fetch product creation date for correct initial stock dating
+$pc = $conn->prepare("SELECT created_at FROM products WHERE product_id = ?");
+$pc->bind_param("i", $productId);
+$pc->execute();
+$pcres = $pc->get_result();
+$productCreatedAt = $pcres->fetch_assoc()['created_at'] ?? date("Y-m-d H:i:s");
+$pc->close();
+
     $stmt->close();
 
     // Auto-generate barcode if blank
@@ -205,6 +213,50 @@ try {
     $stmt2->bind_param("iii", $productId, $branchId, $stocks);
     $stmt2->execute();
     $stmt2->close();
+
+// --- Create auto-approved STOCK IN movement for initial stock --- //
+if ($stocks > 0) {
+
+    // Get valid user id for foreign keys
+    $userId = $_SESSION['user_id'] ?? 1;
+
+    // Ensure userId exists
+    $ucheck = $conn->prepare("SELECT id FROM users WHERE id = ? LIMIT 1");
+    $ucheck->bind_param("i", $userId);
+    $ucheck->execute();
+    if ($ucheck->get_result()->num_rows === 0) {
+        $userId = 1; // fallback admin
+    }
+    $ucheck->close();
+
+    $initNote = "Initial stock on product creation";
+
+    $stmt3 = $conn->prepare("
+        INSERT INTO stock_in_requests 
+    (product_id, branch_id, quantity, request_date, status, remarks,
+     requested_by, decided_by, decision_date, initial, archived)
+VALUES (?, ?, ?, ?, 'approved', ?, ?, ?, ?, 1, 0)
+
+    ");
+
+  $stmt3->bind_param(
+    "iiississ",
+    $productId,        // i
+    $branchId,         // i
+    $stocks,           // i
+    $productCreatedAt, // s  (datetime string)
+    $initNote,         // s  (remarks)
+    $userId,           // i
+    $userId,           // i
+    $productCreatedAt  // s  (decision_date)
+);
+
+
+    $stmt3->execute();
+    $stmt3->close();
+}
+
+
 
     // OPTIONAL: seed initial lot if we have both opening stock and an expiration
     if ($stocks > 0 && $expiryRequired === 1 && !empty($expirationParam)) {

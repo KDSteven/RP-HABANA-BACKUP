@@ -8,7 +8,7 @@ $role      = $_SESSION["role"] ?? "";
 $branch_id = $_SESSION["branch_id"] ?? null;
 
 
-$from = $_GET["from"] ?? date("Y-m-01");
+$from = $_GET["from"] ?? date("Y-m-d");
 $to   = $_GET["to"]   ?? date("Y-m-d");
 
 $pidFilter = "";
@@ -52,7 +52,9 @@ SELECT * FROM (
     JOIN products p ON p.product_id=i.product_id
     JOIN branches b ON b.branch_id=i.branch_id
     WHERE i.status='approved'
-      AND i.request_date BETWEEN '$from' AND '$to'
+      AND i.initial = 0
+      AND i.request_date >= '$from'
+      AND i.request_date < DATE_ADD('$to', INTERVAL 1 DAY)
 
     UNION ALL
 
@@ -69,7 +71,6 @@ SELECT * FROM (
         si.quantity,
         s.sale_id AS ref,
 
-        /* SALES FIELDS */
         s.sale_id,
         s.shift_id,
         s.total,
@@ -84,7 +85,8 @@ SELECT * FROM (
     JOIN sales s ON s.sale_id=si.sale_id
     JOIN products p ON p.product_id=si.product_id
     JOIN branches b ON b.branch_id=s.branch_id
-    WHERE s.sale_date BETWEEN '$from' AND '$to'
+    WHERE s.sale_date >= '$from'
+      AND s.sale_date < DATE_ADD('$to', INTERVAL 1 DAY)
 
     UNION ALL
 
@@ -114,7 +116,8 @@ SELECT * FROM (
     JOIN sales s ON s.sale_id=ss.sale_id
     JOIN products p ON p.product_id=ss.service_id
     JOIN branches b ON b.branch_id=s.branch_id
-    WHERE s.sale_date BETWEEN '$from' AND '$to'
+    WHERE s.sale_date >= '$from'
+      AND s.sale_date < DATE_ADD('$to', INTERVAL 1 DAY)
 
     UNION ALL
 
@@ -138,7 +141,8 @@ SELECT * FROM (
     JOIN branches sb ON sb.branch_id=t.source_branch
     JOIN branches db ON db.branch_id=t.destination_branch
     WHERE t.status='approved'
-      AND t.decision_date BETWEEN '$from' AND '$to'
+      AND t.decision_date >= '$from'
+      AND t.decision_date < DATE_ADD('$to', INTERVAL 1 DAY)
 
     UNION ALL
 
@@ -162,7 +166,8 @@ SELECT * FROM (
     JOIN branches sb ON sb.branch_id=t.source_branch
     JOIN branches db ON db.branch_id=t.destination_branch
     WHERE t.status='approved'
-      AND t.decision_date BETWEEN '$from' AND '$to'
+      AND t.decision_date >= '$from'
+      AND t.decision_date < DATE_ADD('$to', INTERVAL 1 DAY)
 
 ) AS m
 WHERE 1=1
@@ -170,6 +175,7 @@ $pidFilter
 $branchScope
 ORDER BY m.date DESC
 ";
+
 
 $movements = $conn->query($movementSQL)->fetch_all(MYSQLI_ASSOC);
 
@@ -214,14 +220,18 @@ FROM (
 
     /* STOCK IN */
     SELECT 
-        product_id,
-        branch_id,
-        SUM(quantity) AS qty,
-        'IN' AS movement_type
-    FROM stock_in_requests
-    WHERE status='approved'
-      AND request_date < '$from'
-    GROUP BY product_id, branch_id
+    product_id,
+    branch_id,
+    SUM(quantity) AS qty,
+    'IN' AS movement_type
+FROM stock_in_requests
+WHERE status='approved'
+  AND (
+        initial = 1         -- Always count initial stock
+        OR DATE(request_date) < '$from'
+      )
+GROUP BY product_id, branch_id
+
 
     UNION ALL
 
@@ -233,12 +243,12 @@ FROM (
         'SALE' AS movement_type
     FROM sales_items si
     JOIN sales s ON s.sale_id = si.sale_id
-    WHERE s.sale_date < '$from'
+    WHERE DATE(s.sale_date) <= '$from'
     GROUP BY si.product_id, s.branch_id
 
     UNION ALL
 
-    /* SERVICE USED */
+    /* SERVICE */
     SELECT
         ss.service_id AS product_id,
         s.branch_id,
@@ -246,7 +256,7 @@ FROM (
         'SERVICE' AS movement_type
     FROM sales_services ss
     JOIN sales s ON s.sale_id = ss.sale_id
-    WHERE s.sale_date < '$from'
+    WHERE DATE(s.sale_date) <= '$from'
     GROUP BY ss.service_id, s.branch_id
 
     UNION ALL
@@ -259,7 +269,7 @@ FROM (
         'TIN' AS movement_type
     FROM transfer_requests
     WHERE status='approved'
-      AND decision_date < '$from'
+      AND DATE(decision_date) <= '$from'
     GROUP BY product_id, destination_branch
 
     UNION ALL
@@ -272,9 +282,8 @@ FROM (
         'TOUT' AS movement_type
     FROM transfer_requests
     WHERE status='approved'
-      AND decision_date < '$from'
+      AND DATE(decision_date) <= '$from'
     GROUP BY product_id, source_branch
-
 
 ) AS x
 GROUP BY product_id, branch_id, movement_type
@@ -343,25 +352,29 @@ foreach ($beginRows as $b) {
     $key = $b["product_id"]."-".$b["branch_id"];
 
     if (!isset($summary[$key])) {
-    // SKIP if product or branch no longer exists
-    if (!isset($productNames[$b['product_id']])) continue;
-    if (!isset($branchNames[$b['branch_id']])) continue;
 
-    $summary[$key] = [
-        "product_id"=>$b["product_id"],
-        "product"=>$productNames[$b["product_id"]],
-        "branch_id"=>$b["branch_id"],
-        "branch"=>$branchNames[$b["branch_id"]],
-        "begin"=>0,
-        "stockIn"=>0,
-        "sales"=>0,
-        "serviceUsed"=>0,
-        "transferIn"=>0,
-        "transferOut"=>0,
-        "ending"=>0
-    ];
-}
+        // Fetch names directly from DB
+        $p = $conn->query("SELECT product_name FROM products WHERE product_id = {$b['product_id']} LIMIT 1")->fetch_assoc();
+        $productName = $p["product_name"] ?? "Unknown";
 
+        $br = $conn->query("SELECT branch_name FROM branches WHERE branch_id = {$b['branch_id']} LIMIT 1")->fetch_assoc();
+        $branchName = $br["branch_name"] ?? "Unknown";
+
+        $summary[$key] = [
+            "product_id"  => $b["product_id"],
+            "product"     => $productName,
+            "branch_id"   => $b["branch_id"],
+            "branch"      => $branchName,
+
+            "begin"       => 0,
+            "stockIn"     => 0,
+            "sales"       => 0,
+            "serviceUsed" => 0,
+            "transferIn"  => 0,
+            "transferOut" => 0,
+            "ending"      => 0
+        ];
+    }
 
     switch ($b["movement_type"]) {
         case "IN":     $summary[$key]["begin"] += $b["qty"]; break;
@@ -369,36 +382,27 @@ foreach ($beginRows as $b) {
         case "SERVICE":$summary[$key]["begin"] -= $b["qty"]; break;
         case "TIN":    $summary[$key]["begin"] += $b["qty"]; break;
         case "TOUT":   $summary[$key]["begin"] -= $b["qty"]; break;
-        case "ADJ":    $summary[$key]["begin"] += $b["qty"]; break;
     }
 }
+
 
 /* =============================================================================
    4. FINAL ENDING BALANCE
 ============================================================================= */
+// REMOVE rows that have NO MOVEMENT inside the selected date range
 foreach ($summary as $k => $s) {
+    $hasMovement =
+        $s['stockIn'] != 0 ||
+        $s['sales'] != 0 ||
+        $s['serviceUsed'] != 0 ||
+        $s['transferIn'] != 0 ||
+        $s['transferOut'] != 0;
 
-    // Fix missing product/branch names
-    if (empty($s['product']) && isset($productNames[$s['product_id']])) {
-        $summary[$k]['product'] = $productNames[$s['product_id']];
-    }
-
-    if (empty($s['branch']) && isset($branchNames[$s['branch_id']])) {
-        $summary[$k]['branch'] = $branchNames[$s['branch_id']];
-    }
-
-    // REMOVE rows with absolutely ZERO HISTORY
-    if (
-        $s['begin'] == 0 &&
-        $s['stockIn'] == 0 &&
-        $s['sales'] == 0 &&
-        $s['serviceUsed'] == 0 &&
-        $s['transferIn'] == 0 &&
-        $s['transferOut'] == 0
-    ) {
-        unset($summary[$k]);
+    if (!$hasMovement) {
+        unset($summary[$k]);  // Hide products with no activity inside the date range
     }
 }
+
 
 // Now compute ENDING (AFTER filtering)
 foreach ($summary as $k => $s) {
