@@ -254,7 +254,7 @@ button.btn-archive-unique:hover {
 .accounts-page th {
     position: sticky;
     top: 0;
-    background: linear-gradient(135deg, #f7931e, #ffb84d);
+    background: #6b0f0f;
     color: #fff;
     font-weight: 600;
     text-align: left;

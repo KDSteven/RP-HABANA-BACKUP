@@ -863,6 +863,7 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
                     type="button"
                     class="btn-archive-unique"
                     data-archive-type="product"
+                    data-archive-type="product"
                     data-archive-name="<?= htmlspecialchars($row['product_name']) ?>"
                   >
                     <i class="fas fa-archive" aria-hidden="true"></i>
@@ -1389,7 +1390,31 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
         </div>
       </div>
     </div>
-
+<!-- Archive Product Modal -->
+<div class="modal fade" id="archiveProductModal" tabindex="-1" aria-labelledby="archiveProductLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header bg-danger text-white" id="archiveProductHead">
+        <h5 class="modal-title" id="archiveProductLabel">
+          <i class="fa-solid fa-box-archive me-2"></i> Archive Product
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        You’re about to archive <strong id="archiveProductName">this product</strong> for this branch.
+        <div class="small text-muted mt-2">
+          This hides the product from inventory operations for this branch but keeps history/logs.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmArchiveProductBtn">
+          <i class="fa-solid fa-archive me-1"></i> Yes, Archive
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- Edit Product Modal -->
 <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
@@ -1783,33 +1808,7 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
     </div>
   </div>
 </div>
-
-<!-- Archive Product Modal -->
-<div class="modal fade" id="archiveProductModal" tabindex="-1" aria-labelledby="archiveProductLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow-lg">
-      <div class="modal-header bg-danger text-white" id="archiveProductHead">
-        <h5 class="modal-title" id="archiveProductLabel">
-          <i class="fa-solid fa-box-archive me-2"></i> Archive Product
-        </h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        You’re about to archive <strong id="archiveProductName">this product</strong> for this branch.
-        <div class="small text-muted mt-2">
-          This hides the product from inventory operations for this branch but keeps history/logs.
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-danger" id="confirmArchiveProductBtn">
-          <i class="fa-solid fa-archive me-1"></i> Yes, Archive
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   const USER_ROLE   = "<?= $_SESSION['role'] ?>"; 
   const USER_BRANCH = "<?= $_SESSION['branch_id'] ?>";
@@ -2615,45 +2614,43 @@ document.addEventListener('DOMContentLoaded', function () {
   const url = new URL(window.location.href);
   const qp  = url.searchParams;
 
-  // Map query params -> [message, type]
   const flashMap = {
-    stock: {
-      added: ['Successfully added stock.', 'success'],
-       exceeded: ['❌ Cannot add stock. Final stock exceeds ceiling point.', 'danger'],
-    },
-    sir: {
-      requested: ['Stock-In request submitted.', 'success'],
-      approved:  ['Stock-In request approved.', 'success'],
-      rejected:  ['Stock-In request rejected.', 'danger'],
-      error:     ['There was an error approving stock-in.', 'danger'],
-    },
-    transfer: {
-      requested: ['Transfer request submitted.', 'success'],
-    },
-    tr: {
-      approved: ['Transfer request approved.', 'success'],
-      rejected: ['Transfer request rejected.', 'danger'],
-    },
-    archived: {
-      success:  ['Product archived for this branch.', 'success'],
-    
-    },
-    
-    // 👇 Add these two blocks
-    ap: { // add product
-      added: ['Product added successfully.', 'success'],
-      error: ['There was an error adding the product.', 'danger'],
-    },
+  stock: {
+    added: ['Successfully added stock.', 'success'],
+    exceeded: ['❌ Cannot add stock. Final stock exceeds ceiling point.', 'danger'],
+  },
+  sir: {
+    requested: ['Stock-In request submitted.', 'success'],
+    approved:  ['Stock-In request approved.', 'success'],
+    rejected:  ['Stock-In request rejected.', 'danger'],
+    error:     ['There was an error approving stock-in.', 'danger'],
+  },
+  transfer: {
+    requested: ['Transfer request submitted.', 'success'],
+  },
+  tr: {
+    approved: ['Transfer request approved.', 'success'],
+    rejected: ['Transfer request rejected.', 'danger'],
+  },
+  archived: {
+    success: ['Product archived for this branch.', 'success'],
+  },
 
-    },
-    up: { // update product
-  updated: ['Product updated successfully.', 'success'],
-  error:   ['There was an error updating the product.', 'danger'],
-    },
-    
-  };
+  // 👇 Add product
+  ap: {
+    added: ['Product added successfully.', 'success'],
+    error: ['There was an error adding the product.', 'danger'],
+  },
 
-  // Show toast for the first matching param
+  // 👇 Update product
+  up: {
+    updated: ['Product updated successfully.', 'success'],
+    error: ['There was an error updating the product.', 'danger'],
+  },
+};
+
+
+  // Show toast for first matching param
   for (const key in flashMap) {
     const val = qp.get(key);
     if (!val) continue;
@@ -2664,9 +2661,9 @@ document.addEventListener('DOMContentLoaded', function () {
       showToast(msg, type);
     }
 
-    // Clean URL
     qp.delete(key);
   }
+
   const cleanUrl = url.pathname + (qp.toString() ? '?' + qp.toString() : '');
   history.replaceState({}, '', cleanUrl);
 });
@@ -2681,9 +2678,8 @@ async function refreshExpiryVisibility({ productId = null, barcode = '' } = {}) 
   try {
     const res = await fetch('get_product_meta.php?' + params.toString(), { cache: 'no-store' });
     const data = await res.json();
-
     const input = document.getElementById('expiry_date');
-    const hint  = document.getElementById('expiryHint');
+    const hint = document.getElementById('expiryHint');
 
     if (data.ok && data.expiry_required) {
       input.setAttribute('required', 'required');
@@ -2995,7 +2991,6 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 <!-- Bootstrap 5.3.2 JS -->
 <!-- REQUIRED Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script src="sidebar.js"></script>
 <script src="notifications.js"></script>

@@ -383,7 +383,7 @@ if (isset($_SESSION['user_id'])) {
 
 /* Table styling like reference */
 .table-container{background:#fff;border-radius:5px;box-shadow:0 4px 12px rgba(0, 0, 0, 0.57);overflow:hidden}
-.table thead th{background:linear-gradient(90deg,#f7931e,#ffb347);color:#fff;text-align:left;font-size:13px;padding:10px}
+.table thead th{background:#6b0f0f;color:#fff;text-align:left;font-size:13px;padding:10px}
 .table tbody tr:nth-child(even){background:#f9fafb}
 .table tbody td{padding:8px 10px;vertical-align:middle;font-size:14px}
 .td-actions a{margin-left:6px}
