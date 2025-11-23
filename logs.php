@@ -203,6 +203,7 @@ if (isset($_SESSION['user_id'])) {
             <i class="fas fa-chevron-right caret"></i>
         </button>
         <div class="submenu" <?= $invOpen?'':'hidden' ?>>
+            <a href="inventory_reports.php"><i class="fas fa-chart-line"></i> Inventory Reports</a>
             <a href="inventory.php" class="<?= $self==='inventory.php'?'active':'' ?>"><i class="fas fa-list"></i> Inventory List</a>
             <a href="physical_inventory.php" class="<?= $self==='physical_inventory.php'?'active':'' ?>"><i class="fas fa-warehouse"></i> Physical Inventory</a>
             <a href="barcode-print.php" class="<?= $self==='barcode-print.php'?'active':'' ?>"><i class="fas fa-barcode"></i> Barcode Labels</a>

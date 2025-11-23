@@ -790,6 +790,9 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
           <span class="badge-pending"><?= $pendingTotalInventory ?></span>
         <?php endif; ?>
     </a>
+    <a href="inventory_reports.php" class="<?= $self === 'inventory_reports.php' ? 'active' : '' ?>">
+      <i class="fas fa-chart-line"></i> Inventory Reports
+    </a>
     <a href="physical_inventory.php" class="<?= $self === 'physical_inventory.php' ? 'active' : '' ?>">
       <i class="fas fa-warehouse"></i> Physical Inventory
     </a>

@@ -299,9 +299,11 @@ body{
                 <span><i class="fas fa-box"></i> Inventory</span>
                 <i class="fas fa-chevron-right caret"></i>
             </button>
+            
 
             <div class="submenu" <?= $invOpen?'':'hidden' ?>>
                 <a href="inventory.php"><i class="fas fa-list"></i> Inventory List</a>
+                <a href="inventory_reports.php"><i class="fas fa-chart-line"></i> Inventory Reports</a>
                 <a href="physical_inventory.php"><i class="fas fa-warehouse"></i> Physical Inventory</a>
                 <a href="barcode-print.php" class="active"><i class="fas fa-barcode"></i> Barcode Labels</a>
             </div>

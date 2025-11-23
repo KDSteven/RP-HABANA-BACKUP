@@ -1,0 +1,91 @@
+/* ============================================================
+   INVENTORY REPORTS PAGE FIXES
+   Ensures full-width layout + removes giant empty space
+   ============================================================ */
+
+body.inventory-reports-page {
+    
+    color: #000000;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden !important;
+    width: 100%;
+}
+
+/* MAIN CONTENT WRAPPER */
+.main-content {
+    margin-left: 260px;  /* sidebar width */
+    padding: 20px 30px;
+    max-width: calc(100% - 260px);
+    width: calc(100% - 260px);
+}
+
+/* When sidebar is collapsed */
+.sidebar.collapsed + .main-content {
+    margin-left: 80px;
+    max-width: calc(100% - 80px);
+    width: calc(100% - 80px);
+}
+
+/* TABLE FIXES */
+.table {
+    width: 100% !important;
+    margin: 0;
+}
+
+.table-dark td, 
+.table-dark th {
+    color: #fff !important;
+}
+
+/* Section titles */
+.report-section h2 {
+    margin-top: 20px;
+    margin-bottom: 5px;
+    color: #fff;
+}
+
+/* Fix summary table spacing */
+.report-section {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Remove left weird gap */
+html, body {
+    scroll-behavior: smooth;
+    width: 100%;
+}
+
+/* Ensure content does NOT shift right */
+.container,
+.main-content,
+.report-section {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* Fix tables overflowing vertically */
+table.table-light {
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+/* Fix Apply filter row layout */
+form.d-flex {
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+form.d-flex .form-control {
+    min-width: 180px;
+}
+
+/* Stop long sidebar from pushing content */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+}
+

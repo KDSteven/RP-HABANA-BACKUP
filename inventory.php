@@ -165,43 +165,6 @@ if (isset($_POST['archive_product'])) {
     }
 }
 
-
-// Determine current branch for services
-$current_branch_id = $_GET['branch'] ?? $_SESSION['current_branch_id'] ?? $branch_id ?? 0;
-$_SESSION['current_branch_id'] = $current_branch_id;
-
-// Fetch services for the current branch
-$services_stmt = $conn->prepare("
-    SELECT service_id, service_name, price, description, branch_id
-    FROM services
-    WHERE branch_id = ? AND archived = 0
-    ORDER BY service_name ASC
-");
-$services_stmt->bind_param("i", $current_branch_id);
-$services_stmt->execute();
-$services_result = $services_stmt->get_result();
-
-// Handle archive service
-if (isset($_POST['archive_service'])) {
-    $service_id = (int) $_POST['service_id'];
-
-    $stmt = $conn->prepare("SELECT service_name, branch_id FROM services WHERE service_id = ?");
-    $stmt->bind_param("i", $service_id);
-    $stmt->execute();
-    $stmt->bind_result($service_name, $service_branch_id);
-    $stmt->fetch();
-    $stmt->close();
-
-    $stmt = $conn->prepare("UPDATE services SET archived = 1 WHERE service_id = ?");
-    $stmt->bind_param("i", $service_id);
-    $stmt->execute();
-    $stmt->close();
-
-    logAction($conn, "Archive Service", "Archived service: $service_name (ID: $service_id)", null, $service_branch_id);
-    header("Location: inventory.php?archived=service");
-    exit;
-}
-
 // ===== Add Stock or Stock-In Request (same modal, role decides) =====
 // Form posts: op=add_stock, product_id (optional if barcode finds it), branch_id, stock_amount, (optional) remarks
 if (isset($_POST['op']) && $_POST['op'] === 'add_stock') {
@@ -638,6 +601,9 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
         <?php if ($pendingTotalInventory > 0): ?>
           <span class="badge-pending"><?= $pendingTotalInventory ?></span>
         <?php endif; ?>
+    </a>
+     <a href="inventory_reports.php" class="<?= $self === 'inventory_reports.php' ? 'active' : '' ?>">
+      <i class="fas fa-chart-line"></i> Inventory Reports
     </a>
     <a href="physical_inventory.php" class="<?= $self === 'physical_inventory.php' ? 'active' : '' ?>">
       <i class="fas fa-warehouse"></i> Physical Inventory
@@ -1552,60 +1518,6 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
     </div>
   </div>
 </div>
-<!-- ======================= EDIT SERVICE MODAL ======================= -->
-<div class="modal fade" id="editServiceModal" tabindex="-1" aria-labelledby="editServiceModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow-lg">
-      <form id="editServiceForm" action="update_service.php" method="POST">
-        <div class="modal-header bg-warning text-dark">
-          <h5 class="modal-title fw-bold" id="editServiceModalLabel">
-            <i class="bi bi-pencil-square me-2"></i> Edit Service
-          </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-
-        <!-- Hidden input for service ID -->
-        <input type="hidden" name="service_id" id="edit_service_id">
-       <input type="hidden" name="branch_id" value="<?= htmlspecialchars($current_branch_id) ?>">
-
-
-        <div class="modal-body p-4">
-          <div class="mb-3">
-            <label for="editServiceName" class="form-label fw-semibold">Service Name</label>
-            <input type="text" name="service_name" id="editServiceName" class="form-control" placeholder="Enter service name" required>
-          </div>
-
-          <div class="mb-3">
-            <label for="editServicePrice" class="form-label fw-semibold">Price (₱)</label>
-            <input type="number" step="0.01" name="price" id="editServicePrice" class="form-control" placeholder="Enter price" required>
-          </div>
-
-          <div class="mb-3">
-            <label for="editServiceDescription" class="form-label fw-semibold">Description</label>
-            <textarea name="description" id="editServiceDescription" class="form-control" rows="3" placeholder="Optional"></textarea>
-          </div>
-
-          <!-- Inline confirmation area -->
-          <div id="confirmSectionEditService" class="alert alert-warning mt-3 d-none">
-            <p id="confirmMessageEditService">Are you sure you want to save changes to this service?</p>
-            <div class="d-flex justify-content-end gap-2">
-              <button type="button" class="btn btn-secondary btn-sm" id="cancelConfirmEditService">Cancel</button>
-              <button type="submit" class="btn btn-success btn-sm">Yes, Save Changes</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="modal-footer border-top-0">
-          <!-- Trigger confirmation -->
-          <button type="button" id="openConfirmEditService" class="btn btn-success fw-semibold">
-            <i class="bi bi-save me-1"></i> Save Changes
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
 
 <!-- Toast container -->
 <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:1100">
@@ -1872,32 +1784,6 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
   </div>
 </div>
 
-<!-- Archive Service Modal -->
-<div class="modal fade" id="archiveServiceModal" tabindex="-1" aria-labelledby="archiveServiceLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow-lg">
-      <div class="modal-header bg-danger text-white">
-        <h5 class="modal-title" id="archiveServiceLabel">
-          <i class="fa-solid fa-box-archive me-2"></i> Archive Service
-        </h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        You’re about to archive <strong id="archiveServiceName">this service</strong> for this branch.
-        <div class="small text-muted mt-2">
-          This hides the service from selection but keeps history/logs.
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-danger" id="confirmArchiveServiceBtn">
-          <i class="fa-solid fa-archive me-1"></i> Yes, Archive
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- Archive Product Modal -->
 <div class="modal fade" id="archiveProductModal" tabindex="-1" aria-labelledby="archiveProductLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -1960,7 +1846,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   setupConfirm("openConfirmStock", "addStockForm", "confirmSection", "confirmMessage", "cancelConfirm", "Stock");
   setupConfirm("openConfirmProduct", "addProductForm", "confirmSectionProduct", "confirmMessageProduct", "cancelConfirmProduct", "Product");
-  setupConfirm("openConfirmService", "addServiceForm", "confirmSectionService", "confirmMessageService", "cancelConfirmService", "Service");
 });
 
 </script>
@@ -2055,44 +1940,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const ids = [
     "edit_price","edit_markup","edit_retail_price",
-    "edit_ceiling_point","edit_critical_point","edit_vat"
+    "edit_ceiling_point","edit_critical_point"
   ];
   ids.forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
     el.addEventListener("keydown", blockKeys);
   });
-});
-</script>
-
-<script>
-// Accept a single service object
-function openEditServiceModal(service) {
-  console.log(service); // Debug: check values
-
-  document.getElementById('edit_service_id').value = service.service_id;
-  document.getElementById('editServiceName').value = service.service_name;
-  document.getElementById('editServicePrice').value = service.price;
-  document.getElementById('editServiceDescription').value = service.description;
-
-  const editModal = new bootstrap.Modal(document.getElementById('editServiceModal'));
-  editModal.show();
-}
-
-// Confirmation logic for Edit Service
-document.addEventListener("DOMContentLoaded", function () {
-  const openBtn = document.getElementById('openConfirmEditService');
-  const cancelBtn = document.getElementById('cancelConfirmEditService');
-  const confirmSection = document.getElementById('confirmSectionEditService');
-
-  if (openBtn && cancelBtn && confirmSection) {
-    openBtn.addEventListener('click', function () {
-      confirmSection.classList.remove('d-none');
-    });
-    cancelBtn.addEventListener('click', function () {
-      confirmSection.classList.add('d-none');
-    });
-  }
 });
 </script>
 
@@ -2609,8 +2463,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Confirm buttons submit the stored form
   const confirmProductBtn = document.getElementById('confirmArchiveProductBtn');
-  const confirmServiceBtn = document.getElementById('confirmArchiveServiceBtn');
-
+  
   if (confirmProductBtn) {
     confirmProductBtn.addEventListener('click', () => {
       if (pendingArchiveForm && pendingArchiveType === 'product') {
@@ -2626,21 +2479,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
-
-  if (confirmServiceBtn) {
-    confirmServiceBtn.addEventListener('click', () => {
-      if (pendingArchiveForm && pendingArchiveType === 'service') {
-        if (!pendingArchiveForm.querySelector('[name="archive_service"]')) {
-          const hidden = document.createElement('input');
-          hidden.type = 'hidden';
-          hidden.name = 'archive_service';
-          hidden.value = '1';
-          pendingArchiveForm.appendChild(hidden);
-        }
-        pendingArchiveForm.submit();
-      }
-    });
-  }
+  
 })();
 </script>
 
@@ -2726,7 +2565,6 @@ document.addEventListener("DOMContentLoaded", () => {
 })();
 </script>
 
-
 <script>
 (function(){
   const groups = document.querySelectorAll('.menu-group.has-sub');
@@ -2798,7 +2636,7 @@ document.addEventListener('DOMContentLoaded', function () {
     },
     archived: {
       success:  ['Product archived for this branch.', 'success'],
-      service:  ['Service archived for this branch.', 'success'],
+    
     },
     
     // 👇 Add these two blocks
@@ -2806,17 +2644,11 @@ document.addEventListener('DOMContentLoaded', function () {
       added: ['Product added successfully.', 'success'],
       error: ['There was an error adding the product.', 'danger'],
     },
-    as: { // add service
-      added: ['Service added successfully.', 'success'],
-      error: ['There was an error adding the service.', 'danger'],
+
     },
     up: { // update product
   updated: ['Product updated successfully.', 'success'],
   error:   ['There was an error updating the product.', 'danger'],
-    },
-    us: { // update service
-      updated: ['Service updated successfully.', 'success'],
-      error:   ['There was an error updating the service.', 'danger'],
     },
     
   };
