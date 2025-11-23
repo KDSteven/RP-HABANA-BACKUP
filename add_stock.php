@@ -65,7 +65,7 @@ if ($role !== 'admin' || $AUTO_APPROVE_ADMIN === false) {
     logAction($conn, "Stock-In Request", "Requested +$stock_amount for $product_name (ID:$product_id)$extra", null, $branch_id);
   }
 
-  $_SESSION['stock_message'] = "📝 Stock-in request submitted for approval.";
+  $_SESSION['stock_message'] = " Stock-in request submitted for approval.";
   header("Location: inventory.php?stock=success"); exit;
 }
 
@@ -153,7 +153,7 @@ try {
 
 } catch (Throwable $e) {
     $conn->rollback();
-    $_SESSION['stock_message'] = "❌ Add stock failed: " . $e->getMessage();
+    $_SESSION['stock_message'] = " Add stock failed: " . $e->getMessage();
     header("Location: inventory.php?stock=error");
     exit;
 } catch (Throwable $e) {

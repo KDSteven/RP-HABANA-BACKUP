@@ -139,7 +139,7 @@
   position: sticky;
   top: 0;
   z-index: 20;
-  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  background: #6b0f0f !important;
   color: #fff;
   font-weight: 600;
 }
@@ -150,7 +150,7 @@
   position: sticky;
   left: 0;
   z-index: 22;                     /* keep above row cells */
-  background: var(--brand);
+  background: #6b0f0f !important;
   color: #fff;
   font-weight: 600;
   border-right: 1px solid #ddd;

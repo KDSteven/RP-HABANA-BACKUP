@@ -3,6 +3,20 @@ session_start();
 if (!isset($_SESSION['user_id'])) { header("Location: index.html"); exit; }
 include "config/db.php";
 
+// Load all product names
+$productNames = [];
+$res = $conn->query("SELECT product_id, product_name FROM products");
+while ($r = $res->fetch_assoc()) {
+    $productNames[$r["product_id"]] = $r["product_name"];
+}
+
+// Load all branch names
+$branchNames = [];
+$res = $conn->query("SELECT branch_id, branch_name FROM branches");
+while ($r = $res->fetch_assoc()) {
+    $branchNames[$r["branch_id"]] = $r["branch_name"];
+}
+
 $user_id   = $_SESSION["user_id"];
 $role      = $_SESSION["role"] ?? "";
 $branch_id = $_SESSION["branch_id"] ?? null;
@@ -10,6 +24,9 @@ $branch_id = $_SESSION["branch_id"] ?? null;
 
 $from = $_GET["from"] ?? date("Y-m-d");
 $to   = $_GET["to"]   ?? date("Y-m-d");
+
+// FIX: include the whole last day (important for DATETIME fields)
+$toEnd = $to . " 23:59:59";
 
 $pidFilter = "";
 if (!empty($_GET["product"])) {
@@ -27,7 +44,8 @@ if ($branch_id) {
 ============================================================================= */
 $movementSQL = "
 SELECT * FROM (
-    /* ================= STOCK IN ================= */
+
+    /* ===================== STOCK IN ===================== */
     SELECT 
         i.request_date AS date,
         i.product_id,
@@ -38,136 +56,120 @@ SELECT * FROM (
         NULL AS to_branch,
         'STOCK IN' AS type,
         i.quantity AS qty,
-        i.id AS ref,
-        NULL AS sale_id,
-        NULL AS shift_id,
-        NULL AS total,
-        NULL AS payment,
-        NULL AS change_given,
-        NULL AS processed_by,
-        NULL AS sale_status,
-        NULL AS discount,
-        NULL AS discount_type
+        i.id AS ref
+
     FROM stock_in_requests i
-    JOIN products p ON p.product_id=i.product_id
-    JOIN branches b ON b.branch_id=i.branch_id
+    JOIN products p ON p.product_id = i.product_id
+    JOIN branches b ON b.branch_id = i.branch_id
     WHERE i.status='approved'
-      AND i.initial = 0
-      AND i.request_date >= '$from'
-      AND i.request_date < DATE_ADD('$to', INTERVAL 1 DAY)
+      AND i.request_date BETWEEN '$from' AND '$toEnd'
+
 
     UNION ALL
 
-    /* ================= SALES ================= */
+
+    /* ==========================================================
+       SALES — EXCLUDE ITEMS THAT ARE USED IN A SERVICE
+       ========================================================== */
     SELECT
-        s.sale_date,
+        s.sale_date AS date,
         si.product_id,
         p.product_name,
         s.branch_id,
         b.branch_name,
-        NULL,
-        NULL,
-        'SALE',
-        si.quantity,
-        s.sale_id AS ref,
-
-        s.sale_id,
-        s.shift_id,
-        s.total,
-        s.payment,
-        s.change_given,
-        s.processed_by,
-        s.status AS sale_status,
-        s.discount,
-        s.discount_type
+        NULL AS from_branch,
+        NULL AS to_branch,
+        'SALE' AS type,
+        SUM(si.quantity) AS qty,
+        s.sale_id AS ref
 
     FROM sales_items si
-    JOIN sales s ON s.sale_id=si.sale_id
-    JOIN products p ON p.product_id=si.product_id
-    JOIN branches b ON b.branch_id=s.branch_id
-    WHERE s.sale_date >= '$from'
-      AND s.sale_date < DATE_ADD('$to', INTERVAL 1 DAY)
+    JOIN sales s ON s.sale_id = si.sale_id
+    JOIN products p ON p.product_id = si.product_id
+    JOIN branches b ON b.branch_id = s.branch_id
+    LEFT JOIN (
+        SELECT ss.sale_id, sm.product_id
+        FROM sales_services ss
+        JOIN service_materials sm ON sm.service_id = ss.service_id
+    ) srv ON srv.sale_id = s.sale_id AND srv.product_id = si.product_id
+
+    WHERE srv.product_id IS NULL
+      AND s.sale_date BETWEEN '$from' AND '$toEnd'
+
+    GROUP BY s.sale_id, si.product_id
+
 
     UNION ALL
 
-    /* ================= SERVICE USED ================= */
+
+    /* ==========================================================
+       SERVICE USED — MATERIALS PER SALE
+       ========================================================== */
     SELECT
-        s.sale_date,
-        ss.service_id AS product_id,
+        s.sale_date AS date,
+        sm.product_id,
         p.product_name,
         s.branch_id,
         b.branch_name,
-        NULL,NULL,
-        'SERVICE USED',
-        1 AS qty,
-        ss.id AS ref,
-
-        s.sale_id,
-        s.shift_id,
-        s.total,
-        s.payment,
-        s.change_given,
-        s.processed_by,
-        s.status AS sale_status,
-        s.discount,
-        s.discount_type
+        NULL AS from_branch,
+        NULL AS to_branch,
+        'SERVICE USED' AS type,
+        SUM(sm.qty_needed) AS qty,
+        s.sale_id AS ref
 
     FROM sales_services ss
-    JOIN sales s ON s.sale_id=ss.sale_id
-    JOIN products p ON p.product_id=ss.service_id
-    JOIN branches b ON b.branch_id=s.branch_id
-    WHERE s.sale_date >= '$from'
-      AND s.sale_date < DATE_ADD('$to', INTERVAL 1 DAY)
+    JOIN sales s ON s.sale_id = ss.sale_id
+    JOIN service_materials sm ON sm.service_id = ss.service_id
+    JOIN products p ON p.product_id = sm.product_id
+    JOIN branches b ON b.branch_id = s.branch_id
+
+    WHERE s.sale_date BETWEEN '$from' AND '$toEnd'
+    GROUP BY s.sale_id, sm.product_id
+
 
     UNION ALL
 
-    /* ================= TRANSFER OUT ================= */
+
+    /* ===================== TRANSFERS ===================== */
     SELECT 
-        t.decision_date,
+        t.decision_date AS date,
         t.product_id,
         p.product_name,
         t.source_branch AS branch_id,
         sb.branch_name,
-        sb.branch_name,
-        db.branch_name,
-        'TRANSFER OUT',
-        t.quantity,
-        t.request_id,
-
-        NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+        sb.branch_name AS from_branch,
+        db.branch_name AS to_branch,
+        'TRANSFER OUT' AS type,
+        t.quantity AS qty,
+        t.request_id AS ref
 
     FROM transfer_requests t
-    JOIN products p ON p.product_id=t.product_id
-    JOIN branches sb ON sb.branch_id=t.source_branch
-    JOIN branches db ON db.branch_id=t.destination_branch
+    JOIN products p ON p.product_id = t.product_id
+    JOIN branches sb ON sb.branch_id = t.source_branch
+    JOIN branches db ON db.branch_id = t.destination_branch
     WHERE t.status='approved'
-      AND t.decision_date >= '$from'
-      AND t.decision_date < DATE_ADD('$to', INTERVAL 1 DAY)
+      AND t.decision_date BETWEEN '$from' AND '$toEnd'
 
     UNION ALL
 
-    /* ================= TRANSFER IN ================= */
     SELECT 
-        t.decision_date,
+        t.decision_date AS date,
         t.product_id,
         p.product_name,
         t.destination_branch AS branch_id,
         db.branch_name,
-        sb.branch_name,
-        db.branch_name,
-        'TRANSFER IN',
-        t.quantity,
-        t.request_id,
-
-        NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+        sb.branch_name AS from_branch,
+        db.branch_name AS to_branch,
+        'TRANSFER IN' AS type,
+        t.quantity AS qty,
+        t.request_id AS ref
 
     FROM transfer_requests t
-    JOIN products p ON p.product_id=t.product_id
-    JOIN branches sb ON sb.branch_id=t.source_branch
-    JOIN branches db ON db.branch_id=t.destination_branch
+    JOIN products p ON p.product_id = t.product_id
+    JOIN branches sb ON sb.branch_id = t.source_branch
+    JOIN branches db ON db.branch_id = t.destination_branch
     WHERE t.status='approved'
-      AND t.decision_date >= '$from'
-      AND t.decision_date < DATE_ADD('$to', INTERVAL 1 DAY)
+      AND t.decision_date BETWEEN '$from' AND '$toEnd'
 
 ) AS m
 WHERE 1=1
@@ -215,78 +217,88 @@ foreach ($movements as $m) {
    3. BEGINNING STOCK ENGINE
 ============================================================================= */
 $beginSQL = "
-SELECT product_id, branch_id, movement_type, SUM(qty) AS qty
-FROM (
-
-    /* STOCK IN */
-    SELECT 
+SELECT 
     product_id,
     branch_id,
-    SUM(quantity) AS qty,
-    'IN' AS movement_type
-FROM stock_in_requests
-WHERE status='approved'
-  AND (
-        initial = 1         -- Always count initial stock
-        OR DATE(request_date) < '$from'
-      )
-GROUP BY product_id, branch_id
+    SUM(begin_qty) AS qty
+FROM (
+
+    /* ========== BASE INITIAL STOCK ========== */
+    SELECT 
+        p.product_id,
+        i.branch_id,
+        p.initial_stock AS begin_qty
+    FROM products p
+    JOIN inventory i ON i.product_id = p.product_id
 
 
     UNION ALL
 
-    /* SALES */
+    /* ========== STOCK-IN BEFORE DATE RANGE ========== */
+    SELECT
+        product_id,
+        branch_id,
+        SUM(quantity) AS begin_qty
+    FROM stock_in_requests
+    WHERE status='approved'
+      AND request_date < '$from'
+    GROUP BY product_id, branch_id
+
+
+    UNION ALL
+
+    /* ========== SALES BEFORE DATE RANGE (subtract) ========== */
     SELECT
         si.product_id,
         s.branch_id,
-        SUM(si.quantity),
-        'SALE' AS movement_type
+        -SUM(si.quantity) AS begin_qty
     FROM sales_items si
     JOIN sales s ON s.sale_id = si.sale_id
-    WHERE DATE(s.sale_date) <= '$from'
+    WHERE s.sale_date < '$from'
     GROUP BY si.product_id, s.branch_id
 
+
     UNION ALL
 
-    /* SERVICE */
+    /* ========== SERVICE USED BEFORE DATE RANGE (subtract) ========== */
     SELECT
-        ss.service_id AS product_id,
+        sm.product_id,
         s.branch_id,
-        COUNT(*),
-        'SERVICE' AS movement_type
+        -SUM(sm.qty_needed) AS begin_qty
     FROM sales_services ss
     JOIN sales s ON s.sale_id = ss.sale_id
-    WHERE DATE(s.sale_date) <= '$from'
-    GROUP BY ss.service_id, s.branch_id
+    JOIN service_materials sm ON sm.service_id = ss.service_id
+    WHERE s.sale_date < '$from'
+    GROUP BY sm.product_id, s.branch_id
+
 
     UNION ALL
 
-    /* TRANSFER IN */
+    /* ========== TRANSFER IN BEFORE DATE RANGE ========== */
     SELECT
         product_id,
         destination_branch AS branch_id,
-        SUM(quantity),
-        'TIN' AS movement_type
+        SUM(quantity) AS begin_qty
     FROM transfer_requests
     WHERE status='approved'
-      AND DATE(decision_date) <= '$from'
+      AND decision_date < '$from'
     GROUP BY product_id, destination_branch
+
 
     UNION ALL
 
-    /* TRANSFER OUT */
+    /* ========== TRANSFER OUT BEFORE DATE RANGE (subtract) ========== */
     SELECT
         product_id,
         source_branch AS branch_id,
-        SUM(quantity),
-        'TOUT' AS movement_type
+        -SUM(quantity) AS begin_qty
     FROM transfer_requests
     WHERE status='approved'
-      AND DATE(decision_date) <= '$from'
+      AND decision_date < '$from'
     GROUP BY product_id, source_branch
 
 ) AS x
-GROUP BY product_id, branch_id, movement_type
+GROUP BY product_id, branch_id
 ";
 
 
@@ -349,23 +361,17 @@ if (isset($_GET['debug_begin'])) {
 }
 */
 foreach ($beginRows as $b) {
-    $key = $b["product_id"]."-".$b["branch_id"];
+    $key = $b["product_id"] . "-" . $b["branch_id"];
 
     if (!isset($summary[$key])) {
-
-        // Fetch names directly from DB
-        $p = $conn->query("SELECT product_name FROM products WHERE product_id = {$b['product_id']} LIMIT 1")->fetch_assoc();
-        $productName = $p["product_name"] ?? "Unknown";
-
-        $br = $conn->query("SELECT branch_name FROM branches WHERE branch_id = {$b['branch_id']} LIMIT 1")->fetch_assoc();
-        $branchName = $br["branch_name"] ?? "Unknown";
+        if (!isset($productNames[$b['product_id']])) continue;
+        if (!isset($branchNames[$b['branch_id']])) continue;
 
         $summary[$key] = [
             "product_id"  => $b["product_id"],
-            "product"     => $productName,
+            "product"     => $productNames[$b["product_id"]],
             "branch_id"   => $b["branch_id"],
-            "branch"      => $branchName,
-
+            "branch"      => $branchNames[$b["branch_id"]],
             "begin"       => 0,
             "stockIn"     => 0,
             "sales"       => 0,
@@ -376,14 +382,10 @@ foreach ($beginRows as $b) {
         ];
     }
 
-    switch ($b["movement_type"]) {
-        case "IN":     $summary[$key]["begin"] += $b["qty"]; break;
-        case "SALE":   $summary[$key]["begin"] -= $b["qty"]; break;
-        case "SERVICE":$summary[$key]["begin"] -= $b["qty"]; break;
-        case "TIN":    $summary[$key]["begin"] += $b["qty"]; break;
-        case "TOUT":   $summary[$key]["begin"] -= $b["qty"]; break;
-    }
+    // NEW: qty already has + or - sign applied in SQL
+    $summary[$key]["begin"] += $b["qty"];
 }
+
 
 
 /* =============================================================================
@@ -417,7 +419,12 @@ foreach ($summary as $k => $s) {
 /* =============================================================================
    5. LOAD PRODUCTS LIST FOR DROPDOWN
 ============================================================================= */
-$allProducts = $conn->query("SELECT product_id, product_name FROM products ORDER BY product_name ASC");
+$allProducts = $conn->query("
+    SELECT product_id, product_name
+    FROM products
+    WHERE archived = 0
+    ORDER BY product_name ASC
+");
 
 /* =============================================================================
    6. HTML + UI
@@ -448,7 +455,7 @@ if (isset($_SESSION['user_id'])) {
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Inventory Reports — MODEL-B</title>
+<title>Inventory Reports</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="img/R.P.png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
@@ -598,7 +605,7 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
 
 
 <div class="main-content">
-<h2>Inventory Reports (MODEL-B)</h2>
+<h2>Inventory Reports</h2>
 
 <form method="get" class="row g-3 mb-4">
     <div class="col-md-3">
@@ -637,34 +644,37 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
 
 <!-- MOVEMENT TABLE -->
 <h3>Movement Details</h3>
-<table class="table table-light table-striped">
-<thead>
-<tr>
-<th>Date</th><th>Product</th><th>Branch</th>
-<th>From</th><th>To</th><th>Type</th><th>Qty</th><th>Ref</th>
-</tr>
-</thead>
-<tbody>
-<?php if (!empty($movements)): foreach($movements as $m): ?>
+<div class="table-scroll">
+  <table class="table table-light table-striped">
+  <thead>
+  <tr>
+  <th>Date</th><th>Product</th><th>Branch</th>
+  <th>From</th><th>To</th><th>Type</th><th>Qty</th><th>Ref</th>
+  </tr>
+  </thead>
+  <tbody>
+  <?php if (!empty($movements)): foreach($movements as $m): ?>
 
-<tr>
-<td><?=date("M d, Y", strtotime($m['date']))?></td>
-<td><?=$m['product_name']?></td>
-<td><?=$m['branch']?></td>
-<td><?=$m['from_branch'] ?: "-"?></td>
-<td><?=$m['to_branch'] ?: "-"?></td>
-<td><?=$m['type']?></td>
-<td><?=$m['qty']?></td>
-<td><?=$m['ref']?></td>
-</tr>
-<?php endforeach; else: ?>
-<tr><td colspan="8" class="text-center text-muted">No movements found</td></tr>
-<?php endif; ?>
-</tbody>
-</table>
+  <tr>
+  <td><?=date("M d, Y", strtotime($m['date']))?></td>
+  <td><?=$m['product_name']?></td>
+  <td><?=$m['branch']?></td>
+  <td><?=$m['from_branch'] ?: "-"?></td>
+  <td><?=$m['to_branch'] ?: "-"?></td>
+  <td><?=$m['type']?></td>
+  <td><?=$m['qty']?></td>
+  <td><?=$m['ref']?></td>
+  </tr>
+  <?php endforeach; else: ?>
+  <tr><td colspan="8" class="text-center text-muted">No movements found</td></tr>
+  <?php endif; ?>
+  </tbody>
+  </table>
+  </div>
 
 <!-- SUMMARY TABLE -->
 <h3 class="mt-4">Summary Report</h3>
+<div class="table-scroll">
 <table class="table table-light table-striped">
 <thead>
 <tr>
@@ -693,8 +703,8 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
     </tr>
 <?php endif; ?>
 </tbody>
-
 </table>
+</div>
 
 </div>
 </div>
