@@ -75,7 +75,7 @@
 
 /* Sticky header for scrollable tables */
 .table-container th {
-    background: linear-gradient(135deg, #f7931e, #ffb84d);
+    background: #6b0f0f;
     color: white;
     font-weight: 600;
     position: sticky;

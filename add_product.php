@@ -153,12 +153,13 @@ try {
     $stmt = $conn->prepare("
         INSERT INTO products 
         (barcode, product_name, category, price, markup_price, retail_price,
-        ceiling_point, critical_point, expiration_date, expiry_required, brand_name)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?)
+        ceiling_point, critical_point, expiration_date, expiry_required, brand_name,
+        initial_stock)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
     ");
 
     $stmt->bind_param(
-        "sssdddiisis",
+    "sssdddiisisi",
         $barcodeParam,
         $productName,
         $categoryName,
@@ -169,7 +170,8 @@ try {
         $criticalPoint,
         $expirationParam,
         $expiryRequired,
-        $brandName
+        $brandName,
+        $stocks   // THIS SAVES INITIAL STOCK!!!
     );
 
     $stmt->execute();

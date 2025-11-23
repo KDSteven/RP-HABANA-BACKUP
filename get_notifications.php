@@ -70,58 +70,50 @@ $q2 = "
 SELECT 
     p.product_name,
     b.branch_name,
-    MIN(il.expiry_date) AS nearest_expiry,
-    SUM(il.qty) AS total_qty
+    il.expiry_date,
+    il.qty
 FROM inventory_lots il
 JOIN products p ON p.product_id = il.product_id
 JOIN branches b ON b.branch_id = il.branch_id
 WHERE il.qty > 0
   AND il.expiry_date IS NOT NULL
   $BRANCH_CONDITION_LOTS
-GROUP BY p.product_name, b.branch_name
-ORDER BY nearest_expiry ASC
+ORDER BY il.expiry_date ASC
 ";
 
 $res2 = $conn->query($q2);
 
 while ($row = $res2->fetch_assoc()) {
 
-  $expiryDt = DateTime::createFromFormat('Y-m-d', $row['nearest_expiry']);
-if (!$expiryDt) {
-    error_log("BAD EXPIRY FORMAT: " . $row['nearest_expiry']);
-    continue;
-}
+    $expiryDt = DateTime::createFromFormat('Y-m-d', $row['expiry_date']);
+    if (!$expiryDt) {
+        error_log("BAD EXPIRY FORMAT: " . $row['expiry_date']);
+        continue;
+    }
 
-$days = (int)$today->diff($expiryDt)->format('%r%a');
-
-/* DEBUG LOG */
-error_log("EXPIRY CHECK → product={$row['product_name']}, today={$today->format('Y-m-d')}, expiry={$expiryDt->format('Y-m-d')}, days_diff={$days}");
-
+    $days = (int)$today->diff($expiryDt)->format('%r%a');
 
     if ($days < 0) {
-    // Truly expired in the past
-    $category = "expired";
-} 
-elseif ($days == 0) {
-    // Today OR tomorrow — check actual date
-    if ($expiryDt->format('Y-m-d') === $today->format('Y-m-d')) {
-        $category = "expired"; // expires today
-    } else {
-        $category = "expiry"; // expires tomorrow = near expiry
+        $category = "expired";
+    } 
+    elseif ($days == 0) {
+        if ($expiryDt->format('Y-m-d') === $today->format('Y-m-d')) {
+            $category = "expired";
+        } else {
+            $category = "expiry";
+        }
     }
-}
-elseif ($days <= $EXPIRY_SOON_DAYS) {
-    // Within configured soon-to-expire window
-    $category = "expiry";
-} 
-else {
-    continue; // beyond expiry watch window
-}
+    elseif ($days <= $EXPIRY_SOON_DAYS) {
+        $category = "expiry";
+    } 
+    else {
+        continue;
+    }
 
     $items[] = [
         'product_name'    => $row['product_name'],
-        'stock'           => (int)$row['total_qty'],
-        'expiration_date' => $row['nearest_expiry'],
+        'stock'           => (int)$row['qty'],         // 👈 per-lot qty
+        'expiration_date' => $row['expiry_date'],      // 👈 correct field
         'branch'          => $row['branch_name'],
         'category'        => $category
     ];
