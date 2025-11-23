@@ -89,3 +89,58 @@ form.d-flex .form-control {
     height: 100%;
 }
 
+.table-scroll {
+    max-height: 400px;   /* adjustable */
+    overflow-y: auto;    /* vertical scroll */
+    overflow-x: auto;    /* horizontal scroll if needed */
+    border: 1px solid #ddd;
+}
+
+.table-scroll table {
+    margin-bottom: 0 !important; /* remove spacing inside scroll container */
+}
+
+/* ====== TABLE WRAPPER (scrollable) ====== */
+.table-scroll {
+    max-height: 450px;        /* Adjust height */
+    overflow-y: auto;
+    overflow-x: auto;
+    border: 1px solid #c9c9c9;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+/* ====== TABLE BASE STYLE ====== */
+.table-scroll table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* ====== HEADER STYLE (MATCHES SALES HISTORY PAGE) ====== */
+.table-scroll thead th {
+    background-color: #7b0000 !important; /* dark red */
+    color: white !important;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 2px solid #550000;
+}
+
+/* ====== TABLE BODY ====== */
+.table-scroll tbody td {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e2e2;
+    padding: 10px;
+}
+
+/* Zebra stripes like your screenshot */
+.table-scroll tbody tr:nth-child(even) td {
+    background: #f7f7f7;
+}
+
+/* Hover effect (optional) */
+.table-scroll tbody tr:hover td {
+    background: #ffecec;
+}

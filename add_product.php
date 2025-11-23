@@ -56,23 +56,34 @@ $expiration    = $_POST['expiration_date'] ?? null; // may be '' or null
 
 /* ---------- Basic validations ---------- */
 if ($productName === '' || $categoryId <= 0 || $branchId <= 0) {
-    $_SESSION['stock_message'] = "❌ Missing required fields.";
-    header('Location: inventory.php?ap=error');
+    echo json_encode([
+        "status" => "error",
+        "message" => "Please fill in all required fields: Product Name, Category, and Branch."
+    ]);
     exit;
 }
+
 if ($price < 0 || $markupPrice < 0 || $retailPrice < 0 || $ceilingPoint < 0 || $criticalPoint < 0 || $stocks < 0) {
-    $_SESSION['stock_message'] = "❌ Numeric fields cannot be negative.";
-    header('Location: inventory.php?ap=error');
+    echo json_encode([
+        "status" => "error",
+        "message" => "Numeric values cannot be negative. Please check Price, Markup, Stock, and Threshold fields."
+    ]);
     exit;
 }
+
 if ($criticalPoint > $ceilingPoint) {
-    $_SESSION['stock_message'] = "❌ Critical Point cannot be greater than Ceiling Point.";
-    header('Location: inventory.php?ap=error');
+    echo json_encode([
+        "status" => "error",
+        "message" => "Critical Point cannot be higher than Ceiling Point."
+    ]);
     exit;
 }
+
 if ($stocks > $ceilingPoint) {
-    $_SESSION['stock_message'] = "❌ Stocks cannot be greater than Ceiling Point.";
-    header('Location: inventory.php?ap=error');
+    echo json_encode([
+        "status" => "error",
+        "message" => "Initial stock exceeds the Ceiling Point. Please lower the stock amount."
+    ]);
     exit;
 }
 
@@ -98,7 +109,6 @@ $expiryRequired = !empty($expiration) ? 1 : 0;
 if (!empty($expiration)) {
     $dt = DateTime::createFromFormat('Y-m-d', $expiration);
     if (!($dt && $dt->format('Y-m-d') === $expiration)) {
-        $_SESSION['stock_message'] = "❌ Invalid expiration date. Use YYYY-MM-DD.";
         header("Location: inventory.php?ap=error");
         exit;
     }
@@ -114,7 +124,7 @@ if ($barcode !== '') {
     $check->execute();
     $check->store_result();
     if ($check->num_rows > 0) {
-        $_SESSION['stock_message'] = "❌ This barcode already exists. Please use a unique barcode.";
+        $_SESSION['stock_message'] = "This barcode already exists. Please use a unique barcode.";
         $check->close();
         header("Location: inventory.php?ap=error");
         exit;
@@ -134,7 +144,7 @@ if ($barcode !== '') {
     $check->execute();
     $check->store_result();
     if ($check->num_rows > 0) {
-        $_SESSION['stock_message'] = "❌ This product already exists in this branch.";
+        $_SESSION['stock_message'] = "This product already exists in this branch.";
         $check->close();
         header("Location: inventory.php?ap=error");
         exit();
@@ -225,7 +235,7 @@ try {
     logAction($conn, "Add Product", "Added product '$productName' (ID: $productId) with stock $stocks to branch $branchId");
     $conn->commit();
 
-    $_SESSION['stock_message'] = "✅ Product '$productName' added successfully with stock: $stocks (Branch ID: $branchId)"
+    $_SESSION['stock_message'] = "Product '$productName' added successfully with stock: $stocks (Branch ID: $branchId)"
         . ($expiryRequired ? " — expiry tracking enabled" : "");
 
     header('Location: inventory.php?ap=added');
@@ -233,7 +243,10 @@ try {
 
 } catch (mysqli_sql_exception $e) {
     $conn->rollback();
-    $_SESSION['stock_message'] = "❌ Database error: " . $e->getMessage();
-    header("Location: inventory.php?ap=error");
+    $_SESSION['stock_message'] = "Database error: " . $e->getMessage();
+        echo json_encode([
+        "status" => "error",
+        "message" => "Ayaw"
+    ]);
     exit;
 }

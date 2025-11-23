@@ -674,34 +674,37 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
 
 <!-- MOVEMENT TABLE -->
 <h3>Movement Details</h3>
-<table class="table table-light table-striped">
-<thead>
-<tr>
-<th>Date</th><th>Product</th><th>Branch</th>
-<th>From</th><th>To</th><th>Type</th><th>Qty</th><th>Ref</th>
-</tr>
-</thead>
-<tbody>
-<?php if (!empty($movements)): foreach($movements as $m): ?>
+<div class="table-scroll">
+  <table class="table table-light table-striped">
+  <thead>
+  <tr>
+  <th>Date</th><th>Product</th><th>Branch</th>
+  <th>From</th><th>To</th><th>Type</th><th>Qty</th><th>Ref</th>
+  </tr>
+  </thead>
+  <tbody>
+  <?php if (!empty($movements)): foreach($movements as $m): ?>
 
-<tr>
-<td><?=date("M d, Y", strtotime($m['date']))?></td>
-<td><?=$m['product_name']?></td>
-<td><?=$m['branch']?></td>
-<td><?=$m['from_branch'] ?: "-"?></td>
-<td><?=$m['to_branch'] ?: "-"?></td>
-<td><?=$m['type']?></td>
-<td><?=$m['qty']?></td>
-<td><?=$m['ref']?></td>
-</tr>
-<?php endforeach; else: ?>
-<tr><td colspan="8" class="text-center text-muted">No movements found</td></tr>
-<?php endif; ?>
-</tbody>
-</table>
+  <tr>
+  <td><?=date("M d, Y", strtotime($m['date']))?></td>
+  <td><?=$m['product_name']?></td>
+  <td><?=$m['branch']?></td>
+  <td><?=$m['from_branch'] ?: "-"?></td>
+  <td><?=$m['to_branch'] ?: "-"?></td>
+  <td><?=$m['type']?></td>
+  <td><?=$m['qty']?></td>
+  <td><?=$m['ref']?></td>
+  </tr>
+  <?php endforeach; else: ?>
+  <tr><td colspan="8" class="text-center text-muted">No movements found</td></tr>
+  <?php endif; ?>
+  </tbody>
+  </table>
+  </div>
 
 <!-- SUMMARY TABLE -->
 <h3 class="mt-4">Summary Report</h3>
+<div class="table-scroll">
 <table class="table table-light table-striped">
 <thead>
 <tr>
@@ -730,8 +733,8 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
     </tr>
 <?php endif; ?>
 </tbody>
-
 </table>
+</div>
 
 </div>
 </div>

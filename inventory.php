@@ -230,7 +230,6 @@ if (isset($_POST['op']) && $_POST['op'] === 'add_stock') {
         // 🚫 Block if final stock exceeds ceiling
         if ($final_stock > $ceiling_point) {
             $conn->rollback();
-            $_SESSION['stock_message'] = "❌ Cannot add {$qty} stock. Final stock ({$final_stock}) exceeds ceiling point ({$ceiling_point}).";
             header("Location: inventory.php?stock=exceeded");
             exit;
         }
@@ -252,13 +251,13 @@ if (isset($_POST['op']) && $_POST['op'] === 'add_stock') {
 
         $conn->commit();
 
-        $_SESSION['stock_message'] = "✅ Successfully added {$qty} stock(s). Final stock: {$final_stock} / Ceiling: {$ceiling_point}";
+        $_SESSION['stock_message'] = "Successfully added {$qty} stock(s). Final stock: {$final_stock} / Ceiling: {$ceiling_point}";
         header("Location: inventory.php?stock=added");
         exit;
 
     } catch (Throwable $e) {
         $conn->rollback();
-        $_SESSION['stock_message'] = "❌ Add stock failed: " . $e->getMessage();
+        $_SESSION['stock_message'] = "Add stock failed: " . $e->getMessage();
         header("Location: inventory.php");
         exit;
     }
@@ -1815,7 +1814,7 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
 </script>
 
 <script> console.log("🔥 TEST SCRIPT RUNNING 1"); </script>
-<script>
+<!-- <script>
 document.addEventListener("DOMContentLoaded", function () {
   function setupConfirm(openBtnId, formId, sectionId, messageId, cancelBtnId, label) {
     const openBtn = document.getElementById(openBtnId);
@@ -1830,7 +1829,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const requiredFields = form.querySelectorAll("input[required], select[required], textarea[required]");
       const emptyField = Array.from(requiredFields).some(f => !f.value.trim());
       if (emptyField) {
-        alert("Please fill in all required fields.");
+        // alert("Please fill in all required fields.");
         return;
       }
       const values = Array.from(requiredFields).map(f => f.value.trim());
@@ -1843,9 +1842,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  setupConfirm("openConfirmStock", "addStockForm", "confirmSection", "confirmMessage", "cancelConfirm", "Stock");
+  // setupConfirm("openConfirmStock", "addStockForm", "confirmSection", "confirmMessage", "cancelConfirm", "Stock");
   setupConfirm("openConfirmProduct", "addProductForm", "confirmSectionProduct", "confirmMessageProduct", "cancelConfirmProduct", "Product");
-});
+}); -->
 
 </script>
 <script> console.log("🔥 TEST SCRIPT RUNNING2"); </script>
@@ -1865,7 +1864,7 @@ window.onclick = function(event) {
 
 </script> -->
 
-<script>
+<!-- <script>
 document.addEventListener('DOMContentLoaded', function () {
   const ceilingInput = document.getElementById('ceiling_point');
   const criticalInput = document.getElementById('critical_point');
@@ -1877,14 +1876,13 @@ document.addEventListener('DOMContentLoaded', function () {
       const critical = parseFloat(criticalInput.value);
       if (!isNaN(ceiling) && !isNaN(critical) && critical > ceiling) {
         e.preventDefault();
-        alert("❌ Critical Point cannot be greater than Ceiling Point.");
         criticalInput.focus();
       }
     });
   }
 });
 
-</script>
+</script> -->
 <!-- EDIT Modal -->
 <script>
 function openEditModal(
@@ -2031,7 +2029,6 @@ document.addEventListener('DOMContentLoaded', function () {
       const crit = Number((document.getElementById("criticalPoint")||{}).value || 0);
       const ceil = Number((document.getElementById("ceilingPoint")||{}).value || 0);
       if (crit > ceil) {
-        alert("❌ Critical Point cannot be greater than Ceiling Point.");
         (document.getElementById("criticalPoint")||{}).focus?.();
         throw new Error("Blocked invalid thresholds");
       }
@@ -2617,7 +2614,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const flashMap = {
   stock: {
     added: ['Successfully added stock.', 'success'],
-    exceeded: ['❌ Cannot add stock. Final stock exceeds ceiling point.', 'danger'],
+    exceeded: ['annot add stock. Final stock exceeds ceiling point.', 'danger'],
   },
   sir: {
     requested: ['Stock-In request submitted.', 'success'],
@@ -2989,8 +2986,51 @@ document.addEventListener('DOMContentLoaded', function () {
   updateExpirationVisibility();
 });
 </script>
-<!-- Bootstrap 5.3.2 JS -->
-<!-- REQUIRED Bootstrap JS -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("addProductForm");
+  const saveBtn = document.getElementById("openConfirmProduct");
+
+  saveBtn.addEventListener("click", function (e) {
+    e.preventDefault();
+
+    if (!form.reportValidity()) return;
+
+    const fd = new FormData(form);
+
+    fetch("add_product.php", {
+      method: "POST",
+      body: fd
+    })
+    .then(r => r.json())
+    .then(d => {
+
+      if (d.status === "error") {
+        showToast(d.message, "danger"); // ← your toast
+        return; // DO NOT CLOSE
+      }
+
+      if (d.status === "success") {
+        showToast(d.message, "success");
+
+        // close modal
+        const modal = bootstrap.Modal.getInstance(
+          document.getElementById('addProductModal')
+        );
+        modal.hide();
+
+        form.reset();
+      }
+
+    })
+    .catch(err => {
+      showToast("Unexpected error occurred.", "danger");
+    });
+  });
+});
+</script>
+
+
 
 <script src="sidebar.js"></script>
 <script src="notifications.js"></script>
