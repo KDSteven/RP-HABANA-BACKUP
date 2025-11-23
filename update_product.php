@@ -57,7 +57,7 @@ $stmt = $conn->prepare("
   LIMIT 1
 ");
 $stmt->bind_param(
-  "ssddiiii",
+  "ssddiii",
   $name, $category, $price, $markup, $ceiling, $critical, $product_id
 );
 $ok = $stmt->execute();
