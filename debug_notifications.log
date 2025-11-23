@@ -1966,6 +1966,7 @@
 [20-Nov-2025 13:52:28 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
 [20-Nov-2025 13:52:28 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
 [20-Nov-2025 13:52:28 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+<<<<<<< Updated upstream
 [20-Nov-2025 06:53:53 Europe/Berlin] DEBUG START: 2025-11-20 06:53:53
 [20-Nov-2025 13:53:53 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
 [20-Nov-2025 13:53:53 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
@@ -4979,10 +4980,245 @@
 [20-Nov-2025 15:58:46 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
 [20-Nov-2025 15:58:46 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
 [20-Nov-2025 15:58:46 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+=======
+[20-Nov-2025 07:31:04 Europe/Berlin] DEBUG START: 2025-11-20 07:31:04
+[20-Nov-2025 14:31:04 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:04 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:04 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 07:31:09 Europe/Berlin] DEBUG START: 2025-11-20 07:31:09
+[20-Nov-2025 14:31:10 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:10 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1808
+[20-Nov-2025 14:31:10 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 07:31:11 Europe/Berlin] DEBUG START: 2025-11-20 07:31:11
+[20-Nov-2025 14:31:11 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:11 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:11 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 07:31:14 Europe/Berlin] DEBUG START: 2025-11-20 07:31:14
+[20-Nov-2025 14:31:14 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:14 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:14 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 07:31:19 Europe/Berlin] DEBUG START: 2025-11-20 07:31:19
+[20-Nov-2025 14:31:19 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:19 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:19 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 07:31:26 Europe/Berlin] DEBUG START: 2025-11-20 07:31:26
+[20-Nov-2025 14:31:26 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:26 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:26 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 07:31:31 Europe/Berlin] DEBUG START: 2025-11-20 07:31:31
+[20-Nov-2025 14:31:31 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:31 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:32 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 07:31:34 Europe/Berlin] DEBUG START: 2025-11-20 07:31:34
+[20-Nov-2025 14:31:34 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:34 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:34 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 07:31:37 Europe/Berlin] DEBUG START: 2025-11-20 07:31:37
+[20-Nov-2025 14:31:37 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:37 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:37 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 07:31:39 Europe/Berlin] DEBUG START: 2025-11-20 07:31:39
+[20-Nov-2025 14:31:39 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:39 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:39 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 07:31:44 Europe/Berlin] DEBUG START: 2025-11-20 07:31:44
+[20-Nov-2025 14:31:44 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:44 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:44 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 07:31:49 Europe/Berlin] DEBUG START: 2025-11-20 07:31:49
+[20-Nov-2025 14:31:49 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:49 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:50 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 07:31:54 Europe/Berlin] DEBUG START: 2025-11-20 07:31:54
+[20-Nov-2025 14:31:54 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:54 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:55 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 07:31:59 Europe/Berlin] DEBUG START: 2025-11-20 07:31:59
+[20-Nov-2025 14:31:59 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:59 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:31:59 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 07:32:04 Europe/Berlin] DEBUG START: 2025-11-20 07:32:04
+[20-Nov-2025 14:32:04 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:32:04 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:32:05 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 07:32:09 Europe/Berlin] DEBUG START: 2025-11-20 07:32:09
+[20-Nov-2025 14:32:09 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:32:09 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:32:10 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 07:32:14 Europe/Berlin] DEBUG START: 2025-11-20 07:32:14
+[20-Nov-2025 14:32:14 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:32:14 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:32:15 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 07:32:17 Europe/Berlin] DEBUG START: 2025-11-20 07:32:17
+[20-Nov-2025 14:32:17 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:32:17 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 14:32:17 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:07:53 Europe/Berlin] DEBUG START: 2025-11-20 08:07:53
+[20-Nov-2025 15:07:53 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:07:53 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:07:53 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:07:58 Europe/Berlin] DEBUG START: 2025-11-20 08:07:58
+[20-Nov-2025 15:07:58 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:07:58 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:07:58 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:08:00 Europe/Berlin] DEBUG START: 2025-11-20 08:08:00
+[20-Nov-2025 15:08:00 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:00 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:00 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:08:02 Europe/Berlin] DEBUG START: 2025-11-20 08:08:02
+[20-Nov-2025 15:08:02 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:02 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:02 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:08:03 Europe/Berlin] DEBUG START: 2025-11-20 08:08:03
+[20-Nov-2025 15:08:03 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:03 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:03 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:08:06 Europe/Berlin] DEBUG START: 2025-11-20 08:08:06
+[20-Nov-2025 15:08:06 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:06 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:06 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:08:06 Europe/Berlin] DEBUG START: 2025-11-20 08:08:06
+[20-Nov-2025 15:08:06 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:06 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:07 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:08:07 Europe/Berlin] DEBUG START: 2025-11-20 08:08:07
+[20-Nov-2025 15:08:07 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:07 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:07 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:08:07 Europe/Berlin] DEBUG START: 2025-11-20 08:08:07
+[20-Nov-2025 15:08:07 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:07 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:07 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:08:08 Europe/Berlin] DEBUG START: 2025-11-20 08:08:08
+[20-Nov-2025 15:08:08 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:08 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:08 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:08:08 Europe/Berlin] DEBUG START: 2025-11-20 08:08:08
+[20-Nov-2025 15:08:08 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:08 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:08 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:08:09 Europe/Berlin] DEBUG START: 2025-11-20 08:08:09
+[20-Nov-2025 15:08:09 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:09 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:09 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:08:09 Europe/Berlin] DEBUG START: 2025-11-20 08:08:09
+[20-Nov-2025 15:08:09 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:09 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:09 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:08:10 Europe/Berlin] DEBUG START: 2025-11-20 08:08:10
+[20-Nov-2025 15:08:10 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:10 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:10 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:08:10 Europe/Berlin] DEBUG START: 2025-11-20 08:08:10
+[20-Nov-2025 15:08:10 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:10 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:10 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:08:11 Europe/Berlin] DEBUG START: 2025-11-20 08:08:11
+[20-Nov-2025 15:08:11 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:11 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:11 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:08:14 Europe/Berlin] DEBUG START: 2025-11-20 08:08:14
+[20-Nov-2025 15:08:14 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:14 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:14 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:08:14 Europe/Berlin] DEBUG START: 2025-11-20 08:08:14
+[20-Nov-2025 15:08:14 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:14 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:14 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:08:15 Europe/Berlin] DEBUG START: 2025-11-20 08:08:15
+[20-Nov-2025 15:08:15 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:15 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:15 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:08:16 Europe/Berlin] DEBUG START: 2025-11-20 08:08:16
+[20-Nov-2025 15:08:16 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:16 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:16 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:08:17 Europe/Berlin] DEBUG START: 2025-11-20 08:08:17
+[20-Nov-2025 15:08:17 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:17 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:17 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:08:18 Europe/Berlin] DEBUG START: 2025-11-20 08:08:18
+[20-Nov-2025 15:08:18 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:18 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:18 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:08:58 Europe/Berlin] DEBUG START: 2025-11-20 08:08:58
+[20-Nov-2025 15:08:58 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:58 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:08:58 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:13:48 Europe/Berlin] DEBUG START: 2025-11-20 08:13:48
+[20-Nov-2025 15:13:48 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:13:48 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:13:48 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:13:53 Europe/Berlin] DEBUG START: 2025-11-20 08:13:53
+[20-Nov-2025 15:13:53 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:13:53 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:13:53 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:26:33 Europe/Berlin] DEBUG START: 2025-11-20 08:26:33
+[20-Nov-2025 15:26:33 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:26:33 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:26:33 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:56:27 Europe/Berlin] DEBUG START: 2025-11-20 08:56:27
+[20-Nov-2025 15:56:27 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:56:27 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:56:27 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:56:29 Europe/Berlin] DEBUG START: 2025-11-20 08:56:29
+[20-Nov-2025 15:56:29 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:56:29 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:56:30 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:56:34 Europe/Berlin] DEBUG START: 2025-11-20 08:56:34
+[20-Nov-2025 15:56:35 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:56:35 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1808
+[20-Nov-2025 15:56:35 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 08:56:39 Europe/Berlin] DEBUG START: 2025-11-20 08:56:39
+[20-Nov-2025 15:56:40 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:56:40 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1808
+[20-Nov-2025 15:56:40 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 08:56:44 Europe/Berlin] DEBUG START: 2025-11-20 08:56:44
+[20-Nov-2025 15:56:45 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:56:45 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1808
+[20-Nov-2025 15:56:45 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 08:56:49 Europe/Berlin] DEBUG START: 2025-11-20 08:56:49
+[20-Nov-2025 15:56:50 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:56:50 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1808
+[20-Nov-2025 15:56:50 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 08:56:54 Europe/Berlin] DEBUG START: 2025-11-20 08:56:54
+[20-Nov-2025 15:56:55 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:56:55 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1808
+[20-Nov-2025 15:56:55 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 08:56:59 Europe/Berlin] DEBUG START: 2025-11-20 08:56:59
+[20-Nov-2025 15:57:00 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:57:00 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1808
+[20-Nov-2025 15:57:00 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 08:57:01 Europe/Berlin] DEBUG START: 2025-11-20 08:57:01
+[20-Nov-2025 15:57:01 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:57:01 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:57:01 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:57:06 Europe/Berlin] DEBUG START: 2025-11-20 08:57:06
+[20-Nov-2025 15:57:06 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:57:06 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:57:06 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:57:07 Europe/Berlin] DEBUG START: 2025-11-20 08:57:07
+[20-Nov-2025 15:57:07 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:57:07 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:57:07 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:57:08 Europe/Berlin] DEBUG START: 2025-11-20 08:57:08
+[20-Nov-2025 15:57:09 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:57:09 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1808
+[20-Nov-2025 15:57:09 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 08:58:48 Europe/Berlin] DEBUG START: 2025-11-20 08:58:48
+[20-Nov-2025 15:58:48 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:58:48 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:58:48 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:58:53 Europe/Berlin] DEBUG START: 2025-11-20 08:58:53
+[20-Nov-2025 15:58:53 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:58:53 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:58:53 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+>>>>>>> Stashed changes
 [20-Nov-2025 08:58:54 Europe/Berlin] DEBUG START: 2025-11-20 08:58:54
 [20-Nov-2025 15:58:54 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
 [20-Nov-2025 15:58:54 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
 [20-Nov-2025 15:58:54 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+<<<<<<< Updated upstream
 [20-Nov-2025 08:59:04 Europe/Berlin] DEBUG START: 2025-11-20 08:59:04
 [20-Nov-2025 15:59:04 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
 [20-Nov-2025 15:59:04 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
@@ -5875,10 +6111,81 @@
 [20-Nov-2025 16:35:38 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
 [20-Nov-2025 16:35:38 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
 [20-Nov-2025 16:35:38 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+=======
+[20-Nov-2025 08:58:55 Europe/Berlin] DEBUG START: 2025-11-20 08:58:55
+[20-Nov-2025 15:58:55 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:58:55 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:58:55 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:58:56 Europe/Berlin] DEBUG START: 2025-11-20 08:58:56
+[20-Nov-2025 15:58:56 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:58:56 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:58:56 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:58:57 Europe/Berlin] DEBUG START: 2025-11-20 08:58:57
+[20-Nov-2025 15:58:57 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:58:57 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:58:57 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:58:58 Europe/Berlin] DEBUG START: 2025-11-20 08:58:58
+[20-Nov-2025 15:58:58 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:58:58 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:58:58 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 08:59:03 Europe/Berlin] DEBUG START: 2025-11-20 08:59:03
+[20-Nov-2025 15:59:04 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:59:04 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1808
+[20-Nov-2025 15:59:04 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 08:59:08 Europe/Berlin] DEBUG START: 2025-11-20 08:59:08
+[20-Nov-2025 15:59:09 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 15:59:09 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1808
+[20-Nov-2025 15:59:09 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 09:35:04 Europe/Berlin] DEBUG START: 2025-11-20 09:35:04
+[20-Nov-2025 16:35:04 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:35:04 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:35:04 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 09:35:07 Europe/Berlin] DEBUG START: 2025-11-20 09:35:07
+[20-Nov-2025 16:35:07 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:35:07 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:35:07 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 09:35:08 Europe/Berlin] DEBUG START: 2025-11-20 09:35:08
+[20-Nov-2025 16:35:08 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:35:08 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:35:09 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 09:35:09 Europe/Berlin] DEBUG START: 2025-11-20 09:35:09
+[20-Nov-2025 16:35:09 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:35:09 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:35:09 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 09:35:10 Europe/Berlin] DEBUG START: 2025-11-20 09:35:10
+[20-Nov-2025 16:35:10 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:35:10 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:35:10 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 09:35:10 Europe/Berlin] DEBUG START: 2025-11-20 09:35:10
+[20-Nov-2025 16:35:10 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:35:10 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:35:10 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 09:35:15 Europe/Berlin] DEBUG START: 2025-11-20 09:35:15
+[20-Nov-2025 16:35:16 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:35:16 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1808
+[20-Nov-2025 16:35:16 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 09:35:20 Europe/Berlin] DEBUG START: 2025-11-20 09:35:20
+[20-Nov-2025 16:35:21 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:35:21 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1808
+[20-Nov-2025 16:35:21 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 09:35:25 Europe/Berlin] DEBUG START: 2025-11-20 09:35:25
+[20-Nov-2025 16:35:26 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:35:26 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1808
+[20-Nov-2025 16:35:26 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 09:35:30 Europe/Berlin] DEBUG START: 2025-11-20 09:35:30
+[20-Nov-2025 16:35:30 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:35:30 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:35:30 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 09:35:35 Europe/Berlin] DEBUG START: 2025-11-20 09:35:35
+[20-Nov-2025 16:35:36 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:35:36 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1808
+[20-Nov-2025 16:35:36 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+>>>>>>> Stashed changes
 [20-Nov-2025 09:35:43 Europe/Berlin] DEBUG START: 2025-11-20 09:35:43
 [20-Nov-2025 16:35:43 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
 [20-Nov-2025 16:35:43 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
 [20-Nov-2025 16:35:43 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+<<<<<<< Updated upstream
 [20-Nov-2025 09:35:48 Europe/Berlin] DEBUG START: 2025-11-20 09:35:48
 [20-Nov-2025 16:35:48 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
 [20-Nov-2025 16:35:48 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
@@ -6747,10 +7054,33 @@
 [20-Nov-2025 17:02:44 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
 [20-Nov-2025 17:02:44 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
 [20-Nov-2025 17:02:44 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+=======
+[20-Nov-2025 09:35:45 Europe/Berlin] DEBUG START: 2025-11-20 09:35:45
+[20-Nov-2025 16:35:45 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:35:45 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:35:45 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 09:35:50 Europe/Berlin] DEBUG START: 2025-11-20 09:35:50
+[20-Nov-2025 16:35:50 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:35:50 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:35:51 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 09:35:55 Europe/Berlin] DEBUG START: 2025-11-20 09:35:55
+[20-Nov-2025 16:35:55 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:35:55 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:35:56 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 09:36:00 Europe/Berlin] DEBUG START: 2025-11-20 09:36:00
+[20-Nov-2025 16:36:00 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:36:01 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:36:01 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 09:48:59 Europe/Berlin] DEBUG START: 2025-11-20 09:48:59
+[20-Nov-2025 16:48:59 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:48:59 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 16:48:59 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+>>>>>>> Stashed changes
 [20-Nov-2025 10:02:49 Europe/Berlin] DEBUG START: 2025-11-20 10:02:49
 [20-Nov-2025 17:02:49 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
 [20-Nov-2025 17:02:49 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
 [20-Nov-2025 17:02:49 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+<<<<<<< Updated upstream
 [20-Nov-2025 10:02:54 Europe/Berlin] DEBUG START: 2025-11-20 10:02:54
 [20-Nov-2025 17:02:54 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
 [20-Nov-2025 17:02:54 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
@@ -14284,3 +14614,265 @@
 [22-Nov-2025 17:17:43 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-22, expiry=2030-11-02, days_diff=1805
 [22-Nov-2025 17:17:43 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-22, expiry=2030-11-02, days_diff=1805
 [22-Nov-2025 17:17:43 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-22, expiry=2030-11-03, days_diff=1806
+=======
+[20-Nov-2025 10:02:50 Europe/Berlin] DEBUG START: 2025-11-20 10:02:50
+[20-Nov-2025 17:02:50 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:02:50 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:02:50 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:08:52 Europe/Berlin] DEBUG START: 2025-11-20 10:08:52
+[20-Nov-2025 17:08:52 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:08:52 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:08:52 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:10:10 Europe/Berlin] DEBUG START: 2025-11-20 10:10:10
+[20-Nov-2025 17:10:10 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:10:11 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:10:11 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 10:20:58 Europe/Berlin] DEBUG START: 2025-11-20 10:20:58
+[20-Nov-2025 17:20:59 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:20:59 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1808
+[20-Nov-2025 17:20:59 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 10:21:00 Europe/Berlin] DEBUG START: 2025-11-20 10:21:00
+[20-Nov-2025 17:21:00 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:21:01 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:21:01 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 10:21:01 Europe/Berlin] DEBUG START: 2025-11-20 10:21:01
+[20-Nov-2025 17:21:02 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:21:02 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1808
+[20-Nov-2025 17:21:02 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 10:21:02 Europe/Berlin] DEBUG START: 2025-11-20 10:21:02
+[20-Nov-2025 17:21:02 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:21:02 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:21:02 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:21:08 Europe/Berlin] DEBUG START: 2025-11-20 10:21:08
+[20-Nov-2025 17:21:08 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:21:08 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:21:08 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:21:12 Europe/Berlin] DEBUG START: 2025-11-20 10:21:12
+[20-Nov-2025 17:21:12 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:21:12 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:21:12 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:21:17 Europe/Berlin] DEBUG START: 2025-11-20 10:21:17
+[20-Nov-2025 17:21:17 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:21:17 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:21:17 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:21:25 Europe/Berlin] DEBUG START: 2025-11-20 10:21:25
+[20-Nov-2025 17:21:26 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:21:26 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1808
+[20-Nov-2025 17:21:26 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 10:21:30 Europe/Berlin] DEBUG START: 2025-11-20 10:21:30
+[20-Nov-2025 17:21:31 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:21:31 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1808
+[20-Nov-2025 17:21:31 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 10:21:31 Europe/Berlin] DEBUG START: 2025-11-20 10:21:31
+[20-Nov-2025 17:21:31 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:21:31 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:21:32 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:21:36 Europe/Berlin] DEBUG START: 2025-11-20 10:21:36
+[20-Nov-2025 17:21:37 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:21:37 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1808
+[20-Nov-2025 17:21:37 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 10:21:46 Europe/Berlin] DEBUG START: 2025-11-20 10:21:46
+[20-Nov-2025 17:21:46 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:21:46 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:21:46 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:21:48 Europe/Berlin] DEBUG START: 2025-11-20 10:21:48
+[20-Nov-2025 17:21:48 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:21:48 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:21:48 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:21:50 Europe/Berlin] DEBUG START: 2025-11-20 10:21:50
+[20-Nov-2025 17:21:50 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:21:50 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:21:50 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:21:55 Europe/Berlin] DEBUG START: 2025-11-20 10:21:55
+[20-Nov-2025 17:21:55 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:21:55 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:21:55 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:22:00 Europe/Berlin] DEBUG START: 2025-11-20 10:22:00
+[20-Nov-2025 17:22:00 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:22:00 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:22:00 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:22:01 Europe/Berlin] DEBUG START: 2025-11-20 10:22:01
+[20-Nov-2025 17:22:01 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:22:01 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:22:01 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:22:06 Europe/Berlin] DEBUG START: 2025-11-20 10:22:06
+[20-Nov-2025 17:22:06 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:22:06 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:22:06 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:22:11 Europe/Berlin] DEBUG START: 2025-11-20 10:22:11
+[20-Nov-2025 17:22:11 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:22:11 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:22:11 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:22:16 Europe/Berlin] DEBUG START: 2025-11-20 10:22:16
+[20-Nov-2025 17:22:16 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:22:16 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:22:16 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:22:21 Europe/Berlin] DEBUG START: 2025-11-20 10:22:21
+[20-Nov-2025 17:22:21 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:22:21 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:22:21 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:22:25 Europe/Berlin] DEBUG START: 2025-11-20 10:22:25
+[20-Nov-2025 17:22:25 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:22:25 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:22:25 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:23:14 Europe/Berlin] DEBUG START: 2025-11-20 10:23:14
+[20-Nov-2025 17:23:14 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:23:14 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:23:14 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:23:19 Europe/Berlin] DEBUG START: 2025-11-20 10:23:19
+[20-Nov-2025 17:23:19 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:23:19 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:23:19 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:23:24 Europe/Berlin] DEBUG START: 2025-11-20 10:23:24
+[20-Nov-2025 17:23:24 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:23:24 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:23:25 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:23:25 Europe/Berlin] DEBUG START: 2025-11-20 10:23:25
+[20-Nov-2025 17:23:25 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:23:25 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:23:25 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:24:00 Europe/Berlin] DEBUG START: 2025-11-20 10:24:00
+[20-Nov-2025 17:24:00 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:24:00 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:24:00 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:24:05 Europe/Berlin] DEBUG START: 2025-11-20 10:24:05
+[20-Nov-2025 17:24:05 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:24:05 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:24:05 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:26:09 Europe/Berlin] DEBUG START: 2025-11-20 10:26:09
+[20-Nov-2025 17:26:09 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:26:09 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:26:09 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:26:10 Europe/Berlin] DEBUG START: 2025-11-20 10:26:10
+[20-Nov-2025 17:26:10 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:26:10 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:26:10 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:28:15 Europe/Berlin] DEBUG START: 2025-11-20 10:28:15
+[20-Nov-2025 17:28:15 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:28:15 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:28:15 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:28:16 Europe/Berlin] DEBUG START: 2025-11-20 10:28:16
+[20-Nov-2025 17:28:16 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:28:16 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:28:16 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:29:13 Europe/Berlin] DEBUG START: 2025-11-20 10:29:13
+[20-Nov-2025 17:29:13 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:29:13 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:29:13 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:29:14 Europe/Berlin] DEBUG START: 2025-11-20 10:29:14
+[20-Nov-2025 17:29:14 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:29:14 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:29:14 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:29:19 Europe/Berlin] DEBUG START: 2025-11-20 10:29:19
+[20-Nov-2025 17:29:19 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:29:20 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:29:20 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 10:29:21 Europe/Berlin] DEBUG START: 2025-11-20 10:29:21
+[20-Nov-2025 17:29:21 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:29:22 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:29:22 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 10:29:46 Europe/Berlin] DEBUG START: 2025-11-20 10:29:46
+[20-Nov-2025 17:29:47 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:29:47 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1808
+[20-Nov-2025 17:29:47 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 10:29:49 Europe/Berlin] DEBUG START: 2025-11-20 10:29:49
+[20-Nov-2025 17:29:49 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:29:49 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:29:49 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:29:54 Europe/Berlin] DEBUG START: 2025-11-20 10:29:54
+[20-Nov-2025 17:29:54 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:29:54 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:29:54 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:29:55 Europe/Berlin] DEBUG START: 2025-11-20 10:29:55
+[20-Nov-2025 17:29:55 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:29:55 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:29:55 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:30:16 Europe/Berlin] DEBUG START: 2025-11-20 10:30:16
+[20-Nov-2025 17:30:16 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:30:16 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:30:17 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:30:20 Europe/Berlin] DEBUG START: 2025-11-20 10:30:20
+[20-Nov-2025 17:30:20 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:30:21 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:30:21 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 10:30:25 Europe/Berlin] DEBUG START: 2025-11-20 10:30:25
+[20-Nov-2025 17:30:25 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:30:26 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:30:26 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 10:30:30 Europe/Berlin] DEBUG START: 2025-11-20 10:30:30
+[20-Nov-2025 17:30:30 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:30:30 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:30:31 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:30:35 Europe/Berlin] DEBUG START: 2025-11-20 10:30:35
+[20-Nov-2025 17:30:35 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:30:36 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:30:36 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 10:30:40 Europe/Berlin] DEBUG START: 2025-11-20 10:30:40
+[20-Nov-2025 17:30:40 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:30:41 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:30:41 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 10:30:45 Europe/Berlin] DEBUG START: 2025-11-20 10:30:45
+[20-Nov-2025 17:30:45 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:30:46 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:30:46 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 10:30:50 Europe/Berlin] DEBUG START: 2025-11-20 10:30:50
+[20-Nov-2025 17:30:50 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:30:51 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:30:51 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 10:30:55 Europe/Berlin] DEBUG START: 2025-11-20 10:30:55
+[20-Nov-2025 17:30:55 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:30:56 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:30:56 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 10:31:00 Europe/Berlin] DEBUG START: 2025-11-20 10:31:00
+[20-Nov-2025 17:31:00 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:31:00 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:31:01 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:31:05 Europe/Berlin] DEBUG START: 2025-11-20 10:31:05
+[20-Nov-2025 17:31:05 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:31:06 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:31:06 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 10:31:10 Europe/Berlin] DEBUG START: 2025-11-20 10:31:10
+[20-Nov-2025 17:31:10 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:31:11 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:31:11 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 10:31:15 Europe/Berlin] DEBUG START: 2025-11-20 10:31:15
+[20-Nov-2025 17:31:15 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:31:16 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:31:16 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 10:31:20 Europe/Berlin] DEBUG START: 2025-11-20 10:31:20
+[20-Nov-2025 17:31:20 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:31:21 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:31:21 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 10:31:25 Europe/Berlin] DEBUG START: 2025-11-20 10:31:25
+[20-Nov-2025 17:31:25 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:31:25 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:31:25 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1808
+[20-Nov-2025 10:31:30 Europe/Berlin] DEBUG START: 2025-11-20 10:31:30
+[20-Nov-2025 17:31:30 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:31:31 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:31:31 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+[20-Nov-2025 10:31:35 Europe/Berlin] DEBUG START: 2025-11-20 10:31:35
+[20-Nov-2025 17:31:35 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:31:36 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-20, expiry=2030-11-02, days_diff=1807
+[20-Nov-2025 17:31:36 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-20, expiry=2030-11-03, days_diff=1809
+>>>>>>> Stashed changes
+[22-Nov-2025 11:45:03 Europe/Berlin] DEBUG START: 2025-11-22 11:45:03
+[22-Nov-2025 18:45:03 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-22, expiry=2030-11-02, days_diff=1805
+[22-Nov-2025 18:45:03 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-22, expiry=2030-11-02, days_diff=1805
+[22-Nov-2025 18:45:03 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-22, expiry=2030-11-03, days_diff=1806
+[22-Nov-2025 12:04:17 Europe/Berlin] DEBUG START: 2025-11-22 12:04:17
+[22-Nov-2025 19:04:17 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-22, expiry=2030-11-02, days_diff=1805
+[22-Nov-2025 19:04:17 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-22, expiry=2030-11-02, days_diff=1805
+[22-Nov-2025 19:04:17 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-22, expiry=2030-11-03, days_diff=1806
+[22-Nov-2025 12:06:31 Europe/Berlin] DEBUG START: 2025-11-22 12:06:31
+[22-Nov-2025 19:06:31 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-22, expiry=2030-11-02, days_diff=1805
+[22-Nov-2025 19:06:31 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-22, expiry=2030-11-02, days_diff=1805
+[22-Nov-2025 19:06:31 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-22, expiry=2030-11-03, days_diff=1806
+[22-Nov-2025 12:06:31 Europe/Berlin] DEBUG START: 2025-11-22 12:06:31
+[22-Nov-2025 19:06:31 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-22, expiry=2030-11-02, days_diff=1805
+[22-Nov-2025 19:06:31 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-22, expiry=2030-11-02, days_diff=1805
+[22-Nov-2025 19:06:31 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-22, expiry=2030-11-03, days_diff=1806
+[23-Nov-2025 03:21:58 Europe/Berlin] DEBUG START: 2025-11-23 03:21:58
+[23-Nov-2025 10:21:58 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE big, today=2025-11-23, expiry=2030-11-02, days_diff=1804
+[23-Nov-2025 10:21:58 Asia/Manila] EXPIRY CHECK → product=ZEALANT TIRE small, today=2025-11-23, expiry=2030-11-02, days_diff=1804
+[23-Nov-2025 10:21:58 Asia/Manila] EXPIRY CHECK → product=FLM Sealant INF, today=2025-11-23, expiry=2030-11-03, days_diff=1805

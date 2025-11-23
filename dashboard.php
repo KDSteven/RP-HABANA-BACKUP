@@ -88,8 +88,6 @@ if ($filterBranch !== '') {
     $branchCondition = " AND s.branch_id = " . intval($filterBranch);
 }
 
-
-
 // Summary stats (non-overlapping: OOS = stock=0; Low = stock>0 and <= critical_point>0)
 // Detect historical columns once (safe if they don't exist)
 $hasCreatedAt   = false;
@@ -154,7 +152,6 @@ if (!$hasPArchived) {
   }
 }
 
-
 $baseSql = "
   SELECT
     COUNT(*) AS totalProducts,
@@ -192,8 +189,6 @@ $stmt->close();
 $totalProducts = (int)$row['totalProducts'];
 $outOfStocks   = (int)$row['outOfStocks'];
 $lowStocks     = (int)$row['lowStocks'];
-
-
 
 $totalSales = getTotalSales(
     $conn,
@@ -321,8 +316,6 @@ while ($row = $slowMovingResult->fetch_assoc()) {
   $slowItems[] = $row;
 }
 
-
-
 $nonSql = "
 SELECT DISTINCT p.product_id, p.product_name
 FROM inventory i
@@ -376,7 +369,6 @@ $stmt->bind_param($nonTypes, ...$nonVals);
 $stmt->execute();
 $res = $stmt->get_result();
 
-
 $notMovingItems = [];
 if ($res) {
   while ($row = $res->fetch_assoc()) {
@@ -384,7 +376,6 @@ if ($res) {
   }
 }
 $stmt->close(); // optional but good practice
-
 
 // Notifications (Pending Approvals)
 $pending = $conn->query("SELECT COUNT(*) AS pending FROM transfer_requests WHERE status='Pending'")->fetch_assoc()['pending'];
