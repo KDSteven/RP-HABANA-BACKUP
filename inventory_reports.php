@@ -44,7 +44,8 @@ if ($branch_id) {
 ============================================================================= */
 $movementSQL = "
 SELECT * FROM (
-    /* ================= STOCK IN ================= */
+
+    /* ===================== STOCK IN ===================== */
     SELECT 
         i.request_date AS date,
         i.product_id,
@@ -55,130 +56,118 @@ SELECT * FROM (
         NULL AS to_branch,
         'STOCK IN' AS type,
         i.quantity AS qty,
-        i.id AS ref,
-        NULL AS sale_id,
-        NULL AS shift_id,
-        NULL AS total,
-        NULL AS payment,
-        NULL AS change_given,
-        NULL AS processed_by,
-        NULL AS sale_status,
-        NULL AS discount,
-        NULL AS discount_type
+        i.id AS ref
+
     FROM stock_in_requests i
-    JOIN products p ON p.product_id=i.product_id
-    JOIN branches b ON b.branch_id=i.branch_id
+    JOIN products p ON p.product_id = i.product_id
+    JOIN branches b ON b.branch_id = i.branch_id
     WHERE i.status='approved'
       AND i.request_date BETWEEN '$from' AND '$toEnd'
 
+
     UNION ALL
 
-    /* ================= SALES ================= */
+
+    /* ==========================================================
+       SALES — EXCLUDE ITEMS THAT ARE USED IN A SERVICE
+       ========================================================== */
     SELECT
-        s.sale_date,
+        s.sale_date AS date,
         si.product_id,
         p.product_name,
         s.branch_id,
         b.branch_name,
-        NULL,
-        NULL,
-        'SALE',
-        si.quantity,
-        s.sale_id AS ref,
-
-        /* SALES FIELDS */
-        s.sale_id,
-        s.shift_id,
-        s.total,
-        s.payment,
-        s.change_given,
-        s.processed_by,
-        s.status AS sale_status,
-        s.discount,
-        s.discount_type
+        NULL AS from_branch,
+        NULL AS to_branch,
+        'SALE' AS type,
+        SUM(si.quantity) AS qty,
+        s.sale_id AS ref
 
     FROM sales_items si
-    JOIN sales s ON s.sale_id=si.sale_id
-    JOIN products p ON p.product_id=si.product_id
-    JOIN branches b ON b.branch_id=s.branch_id
-    WHERE s.sale_date BETWEEN '$from' AND '$toEnd'
+    JOIN sales s ON s.sale_id = si.sale_id
+    JOIN products p ON p.product_id = si.product_id
+    JOIN branches b ON b.branch_id = s.branch_id
+    LEFT JOIN (
+        SELECT ss.sale_id, sm.product_id
+        FROM sales_services ss
+        JOIN service_materials sm ON sm.service_id = ss.service_id
+    ) srv ON srv.sale_id = s.sale_id AND srv.product_id = si.product_id
+
+    WHERE srv.product_id IS NULL
+      AND s.sale_date BETWEEN '$from' AND '$toEnd'
+
+    GROUP BY s.sale_id, si.product_id
+
 
     UNION ALL
 
-    /* ================= SERVICE USED (Correct Product Consumption) ================= */
-  SELECT
-      s.sale_date,
-      sm.product_id,
-      p.product_name,
-      s.branch_id,
-      b.branch_name,
-      NULL, NULL,
-      'SERVICE USED',
-      sm.qty_needed AS qty,
-      ss.id AS ref,
 
-        s.sale_id,
-        s.shift_id,
-        s.total,
-        s.payment,
-        s.change_given,
-        s.processed_by,
-        s.status AS sale_status,
-        s.discount,
-        s.discount_type
+    /* ==========================================================
+       SERVICE USED — MATERIALS PER SALE
+       ========================================================== */
+    SELECT
+        s.sale_date AS date,
+        sm.product_id,
+        p.product_name,
+        s.branch_id,
+        b.branch_name,
+        NULL AS from_branch,
+        NULL AS to_branch,
+        'SERVICE USED' AS type,
+        SUM(sm.qty_needed) AS qty,
+        s.sale_id AS ref
 
     FROM sales_services ss
     JOIN sales s ON s.sale_id = ss.sale_id
     JOIN service_materials sm ON sm.service_id = ss.service_id
     JOIN products p ON p.product_id = sm.product_id
     JOIN branches b ON b.branch_id = s.branch_id
+
     WHERE s.sale_date BETWEEN '$from' AND '$toEnd'
+    GROUP BY s.sale_id, sm.product_id
+
 
     UNION ALL
 
-    /* ================= TRANSFER OUT ================= */
+
+    /* ===================== TRANSFERS ===================== */
     SELECT 
-        t.decision_date,
+        t.decision_date AS date,
         t.product_id,
         p.product_name,
         t.source_branch AS branch_id,
         sb.branch_name,
-        sb.branch_name,
-        db.branch_name,
-        'TRANSFER OUT',
-        t.quantity,
-        t.request_id,
-
-        NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+        sb.branch_name AS from_branch,
+        db.branch_name AS to_branch,
+        'TRANSFER OUT' AS type,
+        t.quantity AS qty,
+        t.request_id AS ref
 
     FROM transfer_requests t
-    JOIN products p ON p.product_id=t.product_id
-    JOIN branches sb ON sb.branch_id=t.source_branch
-    JOIN branches db ON db.branch_id=t.destination_branch
+    JOIN products p ON p.product_id = t.product_id
+    JOIN branches sb ON sb.branch_id = t.source_branch
+    JOIN branches db ON db.branch_id = t.destination_branch
     WHERE t.status='approved'
       AND t.decision_date BETWEEN '$from' AND '$toEnd'
 
     UNION ALL
 
-    /* ================= TRANSFER IN ================= */
     SELECT 
-        t.decision_date,
+        t.decision_date AS date,
         t.product_id,
         p.product_name,
         t.destination_branch AS branch_id,
         db.branch_name,
-        sb.branch_name,
-        db.branch_name,
-        'TRANSFER IN',
-        t.quantity,
-        t.request_id,
-
-        NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+        sb.branch_name AS from_branch,
+        db.branch_name AS to_branch,
+        'TRANSFER IN' AS type,
+        t.quantity AS qty,
+        t.request_id AS ref
 
     FROM transfer_requests t
-    JOIN products p ON p.product_id=t.product_id
-    JOIN branches sb ON sb.branch_id=t.source_branch
-    JOIN branches db ON db.branch_id=t.destination_branch
+    JOIN products p ON p.product_id = t.product_id
+    JOIN branches sb ON sb.branch_id = t.source_branch
+    JOIN branches db ON db.branch_id = t.destination_branch
     WHERE t.status='approved'
       AND t.decision_date BETWEEN '$from' AND '$toEnd'
 
@@ -189,9 +178,8 @@ $branchScope
 ORDER BY m.date DESC
 ";
 
+
 $movements = $conn->query($movementSQL)->fetch_all(MYSQLI_ASSOC);
-
-
 
 /* =============================================================================
    2. SUMMARY FIRST PASS

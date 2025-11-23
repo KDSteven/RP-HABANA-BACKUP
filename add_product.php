@@ -1,8 +1,4 @@
 <?php
-// add_product.php (drop-in)
-// - Auto-sets expiry_required=1 when expiration_date is provided (or auto-filled by tire rule)
-// - No front-end changes needed
-
 session_start();
 include 'config/db.php';
 ini_set('display_errors', 1);
@@ -18,7 +14,6 @@ function logAction($conn, $action, $details, $user_id = null, $branch_id = null)
     $stmt->close();
 }
 
-// EAN-13 checksum + generator (for auto barcode if blank)
 function ean13CheckDigit(string $base12): int {
     $sum = 0;
     for ($i = 0; $i < 12; $i++) {
@@ -28,14 +23,13 @@ function ean13CheckDigit(string $base12): int {
     return (10 - ($sum % 10)) % 10;
 }
 function makeEan13FromId(int $productId): string {
-    // 200 = internal prefix; register GS1 for retail distribution
     $base12 = '200' . str_pad((string)$productId, 9, '0', STR_PAD_LEFT);
     return $base12 . ean13CheckDigit($base12);
 }
 
 /* ---------- Guard ---------- */
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: inventory.php');
+    echo json_encode(["status"=>"error","message"=>"Invalid request"]);
     exit;
 }
 
@@ -48,42 +42,26 @@ $markupPrice   = (float)($_POST['markup_price'] ?? 0);
 $retailPrice   = $price + ($price * $markupPrice / 100);
 $ceilingPoint  = (int)($_POST['ceiling_point'] ?? 0);
 $criticalPoint = (int)($_POST['critical_point'] ?? 0);
-// $vat           = (float)($_POST['vat'] ?? 0);
 $stocks        = (int)($_POST['stocks'] ?? 0);
 $branchId      = (int)($_POST['branch_id'] ?? 0);
 $brandName     = trim($_POST['brand_name'] ?? '');
-$expiration    = $_POST['expiration_date'] ?? null; // may be '' or null
+$expiration    = $_POST['expiration_date'] ?? null;
 
 /* ---------- Basic validations ---------- */
 if ($productName === '' || $categoryId <= 0 || $branchId <= 0) {
-    echo json_encode([
-        "status" => "error",
-        "message" => "Please fill in all required fields: Product Name, Category, and Branch."
-    ]);
+    echo json_encode(["status"=>"error","message"=>"Required fields missing."]);
     exit;
 }
-
 if ($price < 0 || $markupPrice < 0 || $retailPrice < 0 || $ceilingPoint < 0 || $criticalPoint < 0 || $stocks < 0) {
-    echo json_encode([
-        "status" => "error",
-        "message" => "Numeric values cannot be negative. Please check Price, Markup, Stock, and Threshold fields."
-    ]);
+    echo json_encode(["status"=>"error","message"=>"Numeric values cannot be negative."]);
     exit;
 }
-
 if ($criticalPoint > $ceilingPoint) {
-    echo json_encode([
-        "status" => "error",
-        "message" => "Critical Point cannot be higher than Ceiling Point."
-    ]);
+    echo json_encode(["status"=>"error","message"=>"Critical Point cannot be higher than Ceiling Point."]);
     exit;
 }
-
 if ($stocks > $ceilingPoint) {
-    echo json_encode([
-        "status" => "error",
-        "message" => "Initial stock exceeds the Ceiling Point. Please lower the stock amount."
-    ]);
+    echo json_encode(["status"=>"error","message"=>"Initial stock exceeds the Ceiling Point."]);
     exit;
 }
 
@@ -95,70 +73,43 @@ $categoryRow  = $stmt->get_result()->fetch_assoc();
 $categoryName = $categoryRow['category_name'] ?? '';
 $stmt->close();
 
-/* ---------- Tire rule: auto +5 years if category contains 'tire' and no expiration provided ---------- */
+/* ---------- Tire rule ---------- */
 if (stripos($categoryName, 'tire') !== false && empty($expiration)) {
     $dt = new DateTime();
     $dt->modify('+5 years');
     $expiration = $dt->format('Y-m-d');
 }
 
-/* ---------- Server-driven expiry_required ---------- */
 $expiryRequired = !empty($expiration) ? 1 : 0;
 
-/* ---------- Validate expiration if provided ---------- */
+/* ---------- Validate expiration ---------- */
 if (!empty($expiration)) {
     $dt = DateTime::createFromFormat('Y-m-d', $expiration);
     if (!($dt && $dt->format('Y-m-d') === $expiration)) {
-        header("Location: inventory.php?ap=error");
+        echo json_encode(["status"=>"error","message"=>"Invalid expiration date"]);
         exit;
     }
-    // Optional: disallow past dates
-    // if ($expiration < date('Y-m-d')) { ... reject ... }
 }
 
-/* ---------- Uniqueness checks ---------- */
-// Global barcode uniqueness (if provided)
+/* ---------- Barcode uniqueness ---------- */
 if ($barcode !== '') {
     $check = $conn->prepare("SELECT product_id FROM products WHERE barcode = ?");
     $check->bind_param("s", $barcode);
     $check->execute();
     $check->store_result();
     if ($check->num_rows > 0) {
-        $_SESSION['stock_message'] = "This barcode already exists. Please use a unique barcode.";
-        $check->close();
-        header("Location: inventory.php?ap=error");
+        echo json_encode(["status"=>"error","message"=>"Barcode already exists."]);
         exit;
     }
     $check->close();
 }
 
-// Per-branch duplication check (product with same barcode already in branch inventory)
-if ($barcode !== '') {
-    $check = $conn->prepare("
-        SELECT p.product_id 
-        FROM products p
-        JOIN inventory i ON p.product_id = i.product_id
-        WHERE p.barcode = ? AND i.branch_id = ?
-    ");
-    $check->bind_param("si", $barcode, $branchId);
-    $check->execute();
-    $check->store_result();
-    if ($check->num_rows > 0) {
-        $_SESSION['stock_message'] = "This product already exists in this branch.";
-        $check->close();
-        header("Location: inventory.php?ap=error");
-        exit();
-    }
-    $check->close();
-}
-
-/* ---------- Begin transaction for atomicity ---------- */
+/* ---------- Begin transaction ---------- */
 $conn->begin_transaction();
 
 try {
-    // Insert product
-    $barcodeParam    = ($barcode !== '') ? $barcode : null;         // allow NULL
-    $expirationParam = (!empty($expiration)) ? $expiration : null;  // allow NULL
+    $barcodeParam    = ($barcode !== '') ? $barcode : null;
+    $expirationParam = (!empty($expiration)) ? $expiration : null;
 
     $stmt = $conn->prepare("
         INSERT INTO products 
@@ -169,7 +120,7 @@ try {
     ");
 
     $stmt->bind_param(
-    "sssdddiisisi",
+        "sssdddiisisi",
         $barcodeParam,
         $productName,
         $categoryName,
@@ -181,46 +132,27 @@ try {
         $expirationParam,
         $expiryRequired,
         $brandName,
-        $stocks   // THIS SAVES INITIAL STOCK!!!
+        $stocks
     );
 
     $stmt->execute();
-    $productId = (int)$conn->insert_id;
+    $productId = $conn->insert_id;
     $stmt->close();
 
-    // Auto-generate barcode if blank
     if ($barcode === '') {
         $auto = makeEan13FromId($productId);
-        $attempts = 0;
-        do {
-            $ok = true;
-            $u = $conn->prepare("UPDATE products SET barcode=? WHERE product_id=?");
-            $u->bind_param("si", $auto, $productId);
-            try {
-                $u->execute();
-            } catch (mysqli_sql_exception $e) {
-                // Rare: collision on UNIQUE(barcode)
-                if (stripos($e->getMessage(), 'Duplicate') !== false && $attempts < 3) {
-                    $attempts++;
-                    $auto = substr($auto, 0, 12) . (($auto[12] ?? '0') + $attempts); // adjust last digit
-                    $ok = false;
-                } else {
-                    throw $e;
-                }
-            }
-            $u->close();
-        } while (!$ok);
+        $u = $conn->prepare("UPDATE products SET barcode=? WHERE product_id=?");
+        $u->bind_param("si", $auto, $productId);
+        $u->execute();
+        $u->close();
     }
 
-    // Insert opening inventory
     $stmt2 = $conn->prepare("INSERT INTO inventory (product_id, branch_id, stock) VALUES (?, ?, ?)");
     $stmt2->bind_param("iii", $productId, $branchId, $stocks);
     $stmt2->execute();
     $stmt2->close();
 
-    // OPTIONAL: seed initial lot if we have both opening stock and an expiration
     if ($stocks > 0 && $expiryRequired === 1 && !empty($expirationParam)) {
-        // Ensure inventory_lots has UNIQUE(product_id, branch_id, expiry_date)
         $lot = $conn->prepare("
             INSERT INTO inventory_lots (product_id, branch_id, expiry_date, qty)
             VALUES (?, ?, ?, ?)
@@ -231,22 +163,14 @@ try {
         $lot->close();
     }
 
-    // Log + commit
-    logAction($conn, "Add Product", "Added product '$productName' (ID: $productId) with stock $stocks to branch $branchId");
+    logAction($conn, "Add Product", "Added product '$productName' (ID: $productId)");
     $conn->commit();
 
-    $_SESSION['stock_message'] = "Product '$productName' added successfully with stock: $stocks (Branch ID: $branchId)"
-        . ($expiryRequired ? " — expiry tracking enabled" : "");
-
-    header('Location: inventory.php?ap=added');
+    echo json_encode(["status"=>"success","message"=>"Product added successfully"]);
     exit;
 
-} catch (mysqli_sql_exception $e) {
+} catch (Exception $e) {
     $conn->rollback();
-    $_SESSION['stock_message'] = "Database error: " . $e->getMessage();
-        echo json_encode([
-        "status" => "error",
-        "message" => "Ayaw"
-    ]);
+    echo json_encode(["status"=>"error","message"=>"Database error: ".$e->getMessage()]);
     exit;
 }
