@@ -168,20 +168,20 @@ html, body { height: 100%; }
 }
 /* Make "Forgot password" link visible on light backgrounds */
 .link-ghost {
-  color: #ff9d2f !important; /* Bootstrap primary blue */
+  color: #6b0f0f !important; /* Bootstrap primary blue */
   font-weight: 500;
   text-decoration: none;
 }
 
 .link-ghost:hover,
 .link-ghost:focus {
-  color: #ff9d2f !important; /* darker on hover */
+  color: #bb1a1aff !important; /* darker on hover */
   text-decoration: underline;
 }
 
 /* Optional: keep underline-slide animation */
 .underline-slide::after {
-  background: #ff9d2f;
+  background: #bb1a1aff;
 }
 
     /* Card + inputs */
@@ -235,7 +235,7 @@ html, body { height: 100%; }
     <div class="col-12 col-lg-5 auth-left d-flex align-items-center justify-content-center">
       <div class="auth-left-inner w-100" style="max-width: 440px;">
         <div class="brand mb-4">
-          <h3 class="m-0 fw-bold"><span class="text" style="color: #ff9d2f;">R.P</span> HABANA</h3>
+          <h3 class="m-0 fw-bold"><span class="text" style="color: #6b0f0f;">R.P</span> HABANA</h3>
           <small class="text-muted">Sign in to start your session</small>
         </div>
 
@@ -257,7 +257,7 @@ html, body { height: 100%; }
 
           <button type="submit"
             class="btn w-100"
-            style="background-color:#ff9d2f; border-color:#ff9d2f; color:#fff;">
+            style="background-color:#6b0f0f; border-color:#fff; color:#fff;">
             Sign in
           </button>
 

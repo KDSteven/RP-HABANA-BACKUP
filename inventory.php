@@ -1207,7 +1207,7 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
-      <form id="addStockForm" method="post" action="inventory.php" autocomplete="off">
+    <form id="addStockForm" method="post" action="add_stock.php" autocomplete="off">
         <input type="hidden" name="op" value="add_stock">
         <input type="hidden" name="branch_id" value="<?= $_SESSION['current_branch_id'] ?? $_SESSION['branch_id'] ?>">
 
@@ -1299,7 +1299,7 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
 
         <!-- Submit -->
         <div class="modal-footer px-3 pb-3">
-          <button type="button" id="openConfirmStock" class="btn btn-sucess w-100 py-3">
+          <button type="button" id="openConfirmStock" class="btn btn-success w-100 py-3">
             <span class="btn-label">Add</span>
           </button>
         </div>
@@ -1814,37 +1814,52 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
 </script>
 
 <script> console.log("🔥 TEST SCRIPT RUNNING 1"); </script>
-<!-- <script>
+<script>
 document.addEventListener("DOMContentLoaded", function () {
-  function setupConfirm(openBtnId, formId, sectionId, messageId, cancelBtnId, label) {
-    const openBtn = document.getElementById(openBtnId);
-    const form = document.getElementById(formId);
-    const confirmSection = document.getElementById(sectionId);
-    const confirmMessage = document.getElementById(messageId);
-    const cancelBtn = document.getElementById(cancelBtnId);
 
-    if (!openBtn || !form || !confirmSection || !confirmMessage || !cancelBtn) return;
+  const openBtn        = document.getElementById("openConfirmStock");
+  const form           = document.getElementById("addStockForm");
+  const confirmSection = document.getElementById("confirmSection");
+  const confirmMessage = document.getElementById("confirmMessage");
+  const cancelBtn      = document.getElementById("cancelConfirm");
 
-    openBtn.addEventListener("click", function () {
-      const requiredFields = form.querySelectorAll("input[required], select[required], textarea[required]");
-      const emptyField = Array.from(requiredFields).some(f => !f.value.trim());
-      if (emptyField) {
-        // alert("Please fill in all required fields.");
-        return;
-      }
-      const values = Array.from(requiredFields).map(f => f.value.trim());
-      confirmMessage.textContent = `Confirm adding ${label}: ${values.join(" - ")} ?`;
-      confirmSection.classList.remove("d-none");
-    });
-
-    cancelBtn.addEventListener("click", function () {
-      confirmSection.classList.add("d-none");
-    });
+  if (!openBtn || !form || !confirmSection || !confirmMessage || !cancelBtn) {
+    console.warn("Add Stock confirmation JS: Missing required elements.");
+    return;
   }
 
-  // setupConfirm("openConfirmStock", "addStockForm", "confirmSection", "confirmMessage", "cancelConfirm", "Stock");
-  setupConfirm("openConfirmProduct", "addProductForm", "confirmSectionProduct", "confirmMessageProduct", "cancelConfirmProduct", "Product");
-}); -->
+  // When user clicks ADD button
+  openBtn.addEventListener("click", function () {
+
+    // Get required fields inside form
+    const requiredFields = form.querySelectorAll("input[required], select[required]");
+    let empty = false;
+
+    requiredFields.forEach(f => {
+      if (!f.value.trim()) empty = true;
+    });
+
+    if (empty) {
+      showToast("Please fill in all required fields.", "danger");
+      return;
+    }
+
+    // Build confirmation message
+    const qty = document.getElementById("addstock_qty")?.value || "";
+    const prodText = document.getElementById("addstock_product")?.selectedOptions[0]?.textContent || "";
+    confirmMessage.textContent = `Add ${qty} to ${prodText}?`;
+
+    // Show confirmation section
+    confirmSection.classList.remove("d-none");
+  });
+
+  // Cancel confirmation
+  cancelBtn.addEventListener("click", function () {
+    confirmSection.classList.add("d-none");
+  });
+
+});
+</script>
 
 </script>
 <script> console.log("🔥 TEST SCRIPT RUNNING2"); </script>
