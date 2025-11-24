@@ -738,25 +738,34 @@ $salesTitle = $salesTitleBase . ' — ' . $salesDetail;
 <audio id="notifSound" src="img/notif.mp3" preload="auto"></audio>
 </head>
 <body class="dashboard-page">
+<!-- Toggle button OUTSIDE the sidebar -->
+<button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
+  <i class="fas fa-bars" aria-hidden="true"></i>
+</button>
 
 <!-- Sidebar -->
-<div class="sidebar" id="mainSidebar">
-  <!-- Toggle button always visible on the rail -->
-  <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
-    <i class="fas fa-bars" aria-hidden="true"></i>
-  </button>
-
-  <!-- Wrap existing sidebar content so we can hide/show it cleanly -->
+<div class="sidebar expanded" id="mainSidebar"> 
   <div class="sidebar-content">
+
     <h2 class="user-heading">
-      <span class="role"><?= htmlspecialchars(strtoupper($role), ENT_QUOTES) ?></span>
+      <span class="role">
+        <?= htmlspecialchars(strtoupper($role), ENT_QUOTES) ?>
+      </span>
+
       <?php if ($currentName !== ''): ?>
-        <span class="name">(<?= htmlspecialchars($currentName, ENT_QUOTES) ?>)</span>
+        <span class="name">
+          (<?= htmlspecialchars($currentName, ENT_QUOTES) ?>)
+        </span>
       <?php endif; ?>
+
+      <!-- Bell visible ONLY when sidebar is expanded -->
       <span class="notif-wrapper">
         <i class="fas fa-bell" id="notifBell"></i>
-        <span id="notifCount" <?= $pending > 0 ? '' : 'style="display:none;"' ?>><?= (int)$pending ?></span>
+        <span id="notifCount" <?= $pending > 0 ? '' : 'style="display:none;"' ?>>
+          <?= (int)$pending ?>
+        </span>
       </span>
+
     </h2>
 
         <!-- Common -->
@@ -839,8 +848,6 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
   </a>
 
 <?php endif; ?>
-
-
 
    <!-- Stockman Links -->
   <?php if ($role === 'stockman'): ?>
@@ -955,7 +962,7 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
     <!-- Service Jobs -->
     <section style="flex:1 1 250px; min-width:200px;">
         <h2>Service Jobs</h2>
-        <canvas id="serviceJobChart" style="width:100%; height:150px;"></canvas>
+        <canvas id="serviceJobChart" style="width:270%; height:100px;"></canvas>
     </section>
 
 </div>
@@ -1186,15 +1193,14 @@ if (serviceJobData.length > 0) {
 <script>
 (function(){
   const groups = document.querySelectorAll('.menu-group.has-sub');
-
   groups.forEach((g, idx) => {
     const btn = g.querySelector('.menu-toggle');
     const panel = g.querySelector('.submenu');
     if (!btn || !panel) return;
 
-    // Optional: restore last state from localStorage
     const key = 'sidebar-sub-' + idx;
     const saved = localStorage.getItem(key);
+
     if (saved === 'open') {
       btn.setAttribute('aria-expanded', 'true');
       panel.hidden = false;
@@ -1208,6 +1214,7 @@ if (serviceJobData.length > 0) {
     });
   });
 })();
+
 </script>
 <!-- For Responsive Chart -->
 <script>

@@ -1,195 +1,185 @@
 /* ==========================================================
-   PHYSICAL INVENTORY PAGE — RESPONSIVE, CLEAN, BALANCED
+PHYSICAL INVENTORY PAGE — FLEX LAYOUT (BARCODE-LIKE)
 ========================================================== */
-/* ------------------------------
-   MAIN CONTAINER
------------------------------- */
-.inventory-page .container {
-  width: calc(100% - 220px);
-  padding: 24px 25px;
-  min-height: 100vh;
-  background: #f8f9fa;
-  transition: margin-left .2s ease, width .2s ease;
-}
 
-@media (max-width: 992px) {
-  .inventory-page .container {
-    margin-left: 0 !important;
-    width: 100% !important;
-    padding: 18px 14px;
-  }
+/* ------------------------------
+COLORS
+------------------------------ */
+:root {
+--success: #28A745;
+--product: #17A2B8;
+--danger: #DC3545;
+--info: #5b696b;
+--surface: #ffffff;
+--border: #e0e0e0;
+--text-dark: #343a40;
+--text-muted: #6c757d;
 }
 
 /* ------------------------------
-   STAT CARDS LAYOUT
+BODY & LAYOUT
 ------------------------------ */
-.stat-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+body.inventory-page {
+display: flex;          /* sidebar + content flex layout */
+width: 100%;
+margin: 0;
+overflow-x: hidden;
+}
+
+/* ------------------------------
+STATS CARDS
+------------------------------ */
+.cards {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+gap: 16px;
+margin-bottom: 16px;
 }
 
 .card {
-  border: none;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  background: #fff;
-  padding: 16px 18px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-  min-height: 110px;
+background: var(--surface);
+padding: 16px 20px;
+border-radius: 12px;
+box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+text-align: center;
+transition: 0.25s ease;
+}
+
+.card:hover {
+transform: translateY(-3px);
+box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.card.green  { border-left: 6px solid var(--success); }
+.card.blue   { border-left: 6px solid var(--product); }
+.card.red    { border-left: 6px solid var(--danger); }
+.card.gray   { border-left: 6px solid var(--info); }
+
+.card h4 {
+font-size: 24px;
+font-weight: bold;
+margin-top: 8px;
 }
 
 .card h6 {
-  font-weight: 600;
-  color: #fff;
-  margin-bottom: 4px;
-}
-
-.card h4 {
-  font-weight: 700;
-  font-size: 1.4rem;
-  margin: 0;
-}
-
-@media (max-width: 768px) {
-  .card h4 { font-size: 1.2rem; }
-  .card h6 { font-size: 0.9rem; }
+font-size: 14px;
+color: var(--text-muted);
+text-transform: uppercase;
+letter-spacing: 0.5px;
 }
 
 /* ------------------------------
-   FILTER / SEARCH BAR
+FILTER / SEARCH BAR
 ------------------------------ */
-.filter-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  align-items: center;
-  justify-content: space-between;
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 10px;
-  padding: 10px 12px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-  margin-bottom: 1rem;
+.d-flex.gap-2 {
+display: flex;
+flex-wrap: wrap;
+gap: 0.5rem;
+align-items: center;
+justify-content: flex-start;
+background-color: #f8f9fa;
+padding: 10px;
+border-radius: 8px;
+position: sticky;
+top: 0;
+z-index: 20;
+box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-.filter-bar input {
-  flex: 1;
-  min-width: 180px;
-  max-width: 400px;
+.d-flex.gap-2 input.form-control {
+flex: 1;
+min-width: 150px;
+max-width: 300px;
 }
 
-@media (max-width: 768px) {
-  .filter-bar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .filter-bar input,
-  .filter-bar button {
-    width: 100%;
-  }
+.d-flex.gap-2 .btn {
+white-space: nowrap;
 }
 
 /* ------------------------------
-   TABLE STYLING
+TABLE
 ------------------------------ */
 .table-responsive {
-  width: 100%;
-  max-height: 70vh;
-  overflow-y: auto;
-  border-radius: 10px;
-  background-color: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+width: 100%;
+overflow-x: auto;
+overflow-y: auto;
+max-height: 65vh;
+border-radius: 10px;
+background: var(--surface);
+box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 #inventoryTable {
-  width: 100%;
-  border-collapse: collapse;
+width: 100%;
+border-collapse: collapse;
 }
 
 #inventoryTable th,
 #inventoryTable td {
-  text-align: center;
-  vertical-align: middle;
-  padding: 10px 12px;
-  font-size: 15px;
+text-align: center;
+vertical-align: middle;
+padding: 8px 10px;
+font-size: 14px;
 }
+
 #inventoryTable th {
-  background-color: #FF7A30;
+background-color: #A72F2F;
+color: #fff;
+font-weight: 600;
+position: sticky;
+top: 0;
+z-index: 10;
 }
 
-/* Sticky header */
-#inventoryTable thead.sticky-top {
-  position: sticky;
-  top: 0;
-  background: linear-gradient(90deg, #f7931e, #ffb347);
-  color: #fff;
-  z-index: 5;
+/* Inputs in table */
+#inventoryTable tbody input.physical-count {
+width: 70px;
+margin: 0 auto;
+text-align: center;
+border: 1px solid #ced4da;
+border-radius: 4px;
+background: #fff;
+padding: 2px 4px;
 }
 
-/* Table input fields */
-#inventoryTable tbody tr input {
-  background: transparent;
-  border: none;
-  text-align: center;
-  width: 70px;
-  margin: 0 auto;
+/* Discrepancy column */
+.discrepancy {
+font-weight: bold;
 }
 
-/* ------------------------------
-   STATUS BADGES
------------------------------- */
-.badge.status-badge {
-  padding: 5px 9px;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 0.9rem;
+/* STATUS BADGES */
+.status-badge {
+padding: 4px 8px;
+border-radius: 6px;
+font-size: 0.85rem;
+font-weight: 600;
+color: #fff;
+display: inline-block;
 }
 
-.status-over    { background-color: #E63946; color: #fff; }
-.status-under   { background-color: #FF7A30; color: #fff; }
-.status-complete{ background-color: #1f8a4b; color: #fff; }
-.status-pending { background-color: #6c757d; color: #fff; }
-
-/* ------------------------------
-   BUTTONS
------------------------------- */
-.btn-success {
-  background-color: #1f8a4b;
-  border: none;
-}
-.btn-primary {
-  background-color: #007bff;
-  border: none;
-}
-.btn:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
+.status-over     { background-color: #d6747c; }
+.status-under    { background-color: #e7a581; }
+.status-complete { background-color: #73ce99; }
+.status-pending  { background-color: #75a4ce; }
 
 /* ------------------------------
-   RESPONSIVENESS
+RESPONSIVENESS
 ------------------------------ */
 @media (max-width: 992px) {
-  #inventoryTable th,
-  #inventoryTable td {
-    font-size: 0.9rem;
-    padding: 6px;
-  }
+.content.container {
+padding: 16px;
 }
+#inventoryTable th, #inventoryTable td { font-size: 13px; padding: 6px; }
+}
+
 @media (max-width: 768px) {
-  #inventoryTable th,
-  #inventoryTable td {
-    font-size: 0.85rem;
-    padding: 5px;
-  }
-  .table-responsive { max-height: 60vh; }
+#inventoryTable th, #inventoryTable td { font-size: 12px; padding: 5px; }
+.cards { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+.d-flex.gap-2 { flex-direction: column; align-items: stretch; }
+.d-flex.gap-2 input, .d-flex.gap-2 button { width: 100%; }
 }
+
 @media (max-width: 576px) {
-  #inventoryTable { font-size: 0.8rem; }
-  .btn, .form-control { font-size: 0.8rem; }
+#inventoryTable { font-size: 11px; }
+.btn, .form-control { font-size: 0.8rem; }
 }

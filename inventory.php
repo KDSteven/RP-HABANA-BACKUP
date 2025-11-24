@@ -549,141 +549,155 @@ if ($flag || $flash) {
 <body class="inventory-page">
   
   <script> console.log("🔥 TEST SCRIPT RUNNING"); </script>
-<!-- Sidebar -->
-<div class="sidebar" id="mainSidebar">
-  <!-- Toggle button always visible on the rail -->
-  <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
-    <i class="fas fa-bars" aria-hidden="true"></i>
-  </button>
+<!-- Toggle button (ALWAYS outside sidebar) -->
+<button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
+  <i class="fas fa-bars"></i>
+</button>
 
-  <!-- Wrap existing sidebar content so we can hide/show it cleanly -->
+<!-- Sidebar -->
+<div class="sidebar expanded" id="mainSidebar">
+
   <div class="sidebar-content">
+    
     <h2 class="user-heading">
       <span class="role"><?= htmlspecialchars(strtoupper($role), ENT_QUOTES) ?></span>
+
       <?php if ($currentName !== ''): ?>
-        <span class="name">(<?= htmlspecialchars($currentName, ENT_QUOTES) ?>)</span>
+      <span class="name">(<?= htmlspecialchars($currentName, ENT_QUOTES) ?>)</span>
       <?php endif; ?>
+
       <span class="notif-wrapper">
         <i class="fas fa-bell" id="notifBell"></i>
-        <span id="notifCount" <?= $pending > 0 ? '' : 'style="display:none;"' ?>><?= (int)$pending ?></span>
+        <span id="notifCount" <?= $pending > 0 ? '' : 'style="display:none;"' ?>>
+          <?= (int)$pending ?>
+        </span>
       </span>
     </h2>
 
-        <!-- Common -->
-    <a href="dashboard.php"><i class="fas fa-tv"></i> Dashboard</a>
+    <!-- Common -->
+    <a href="dashboard.php" class="<?= $self === 'dashboard.php' ? 'active' : '' ?>">
+      <i class="fas fa-tv"></i> Dashboard
+    </a>
 
     <?php
-// put this once before the sidebar (top of file is fine)
-$self = strtolower(basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)));
-$isArchive = substr($self, 0, 7) === 'archive'; // matches archive.php, archive_view.php, etc.
-$invOpen   = in_array($self, ['inventory.php','physical_inventory.php'], true);
-$toolsOpen = ($self === 'backup_admin.php' || $isArchive);
-?>
+      $self = strtolower(basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)));
+      $isArchive = substr($self,0,7)==='archive';
+      $invOpen   = in_array($self,['inventory.php','physical_inventory.php'],true);
+      $toolsOpen = ($self==='backup_admin.php' || $isArchive);
+    ?>
 
-<!-- Admin Links -->
-<?php if ($role === 'admin'): ?>
+    <!-- ADMIN -->
+    <?php if ($role === 'admin'): ?>
 
-  <!-- Inventory group (unchanged) -->
-<div class="menu-group has-sub">
-  <button class="menu-toggle" type="button" aria-expanded="<?= $invOpen ? 'true' : 'false' ?>">
-  <span><i class="fas fa-box"></i> Inventory
-    <?php if ($pendingTotalInventory > 0): ?>
-      <span class="badge-pending"><?= $pendingTotalInventory ?></span>
-    <?php endif; ?>
-  </span>
-    <i class="fas fa-chevron-right caret"></i>
-  </button>
-  <div class="submenu" <?= $invOpen ? '' : 'hidden' ?>>
-    <!-- removed #pendingrequests |inventory.php#pendingrequests-->
-    <a href="inventory.php" class="<?= $self === 'inventory.php' ? 'active' : '' ?>"> 
-      <i class="fas fa-list"></i> Inventory List
-        <?php if ($pendingTotalInventory > 0): ?>
-          <span class="badge-pending"><?= $pendingTotalInventory ?></span>
-        <?php endif; ?>
-    </a>
-     <a href="inventory_reports.php" class="<?= $self === 'inventory_reports.php' ? 'active' : '' ?>">
-      <i class="fas fa-chart-line"></i> Inventory Reports
-    </a>
-    <a href="physical_inventory.php" class="<?= $self === 'physical_inventory.php' ? 'active' : '' ?>">
-      <i class="fas fa-warehouse"></i> Physical Inventory
-    </a>
-        <a href="barcode-print.php<?php 
-        $b = (int)($_SESSION['current_branch_id'] ?? 0);
-        echo $b ? ('?branch='.$b) : '';?>" class="<?= $self === 'barcode-print.php' ? 'active' : '' ?>">
-        <i class="fas fa-barcode"></i> Barcode Labels
-    </a>
-  </div>
-</div>
-
-    <a href="services.php" class="<?= $self === 'services.php' ? 'active' : '' ?>">
-      <i class="fa fa-wrench" aria-hidden="true"></i> Services
-    </a>
-
-  <!-- Sales (normal link with active state) -->
-  <a href="sales.php" class="<?= $self === 'sales.php' ? 'active' : '' ?>">
-    <i class="fas fa-receipt"></i> Sales
-  </a>
-
-<a href="accounts.php" class="<?= $self === 'accounts.php' ? 'active' : '' ?>">
-  <i class="fas fa-users"></i> Accounts & Branches
-</a>
-
-  <!-- NEW: Backup & Restore group with Archive inside -->
-  <div class="menu-group has-sub">
-    <button class="menu-toggle" type="button" aria-expanded="<?= $toolsOpen ? 'true' : 'false' ?>">
-      <span><i class="fas fa-screwdriver-wrench me-2"></i> Data Tools</span>
-      <i class="fas fa-chevron-right caret"></i>
-    </button>
-    <div class="submenu" <?= $toolsOpen ? '' : 'hidden' ?>>
-      <a href="/config/admin/backup_admin.php" class="<?= $self === 'backup_admin.php' ? 'active' : '' ?>">
-        <i class="fa-solid fa-database"></i> Backup & Restore
-      </a>
-      <a href="archive.php" class="<?= $isArchive ? 'active' : '' ?>">
-        <i class="fas fa-archive"></i> Archive
-      </a>
-    </div>
-  </div>
-
-  <a href="logs.php" class="<?= $self === 'logs.php' ? 'active' : '' ?>">
-    <i class="fas fa-file-alt"></i> Logs
-  </a>
-
-<?php endif; ?>
-
-   <!-- Stockman Links -->
-  <?php if ($role === 'stockman'): ?>
+    <!-- Inventory -->
     <div class="menu-group has-sub">
-      <button class="menu-toggle" type="button" aria-expanded="<?= $invOpen ? 'true' : 'false' ?>">
-        <span><i class="fas fa-box"></i> Inventory</span>
+      <button class="menu-toggle" aria-expanded="<?= $invOpen ? 'true' : 'false' ?>">
+        <span>
+          <i class="fas fa-box"></i> Inventory
+          <?php if ($pendingTotalInventory > 0): ?>
+          <span class="badge-pending"><?= $pendingTotalInventory ?></span>
+          <?php endif; ?>
+        </span>
         <i class="fas fa-chevron-right caret"></i>
       </button>
+
       <div class="submenu" <?= $invOpen ? '' : 'hidden' ?>>
-        <a href="inventory.php" class="<?= $self === 'inventory.php' ? 'active' : '' ?>">
+        <a href="inventory.php" class="<?= $self==='inventory.php'?'active':'' ?>">
           <i class="fas fa-list"></i> Inventory List
         </a>
-        <a href="physical_inventory.php" class="<?= $self === 'physical_inventory.php' ? 'active' : '' ?>">
+
+        <a href="inventory_reports.php" class="<?= $self==='inventory_reports.php'?'active':'' ?>">
+          <i class="fas fa-chart-line"></i> Inventory Reports
+        </a>
+
+        <a href="physical_inventory.php" class="<?= $self==='physical_inventory.php'?'active':'' ?>">
           <i class="fas fa-warehouse"></i> Physical Inventory
         </a>
-        <!-- Stockman can access Barcode Labels; server forces their branch -->
-        <a href="barcode-print.php" class="<?= $self === 'barcode-print.php' ? 'active' : '' ?>">
+
+        <a href="barcode-print.php<?php $b=(int)($_SESSION['current_branch_id']??0); echo $b?'?branch='.$b:'';?>"
+           class="<?= $self==='barcode-print.php'?'active':'' ?>">
           <i class="fas fa-barcode"></i> Barcode Labels
         </a>
       </div>
     </div>
-  <?php endif; ?>
-    <!-- Staff Links -->
+
+    <a href="services.php" class="<?= $self==='services.php'?'active':'' ?>">
+      <i class="fa fa-wrench"></i> Services
+    </a>
+
+    <a href="sales.php" class="<?= $self==='sales.php'?'active':'' ?>">
+      <i class="fas fa-receipt"></i> Sales
+    </a>
+
+    <a href="accounts.php" class="<?= $self==='accounts.php'?'active':'' ?>">
+      <i class="fas fa-users"></i> Accounts & Branches
+    </a>
+
+    <!-- Data Tools -->
+    <div class="menu-group has-sub">
+      <button class="menu-toggle" aria-expanded="<?= $toolsOpen?'true':'false' ?>">
+        <span><i class="fas fa-screwdriver-wrench"></i> Data Tools</span>
+        <i class="fas fa-chevron-right caret"></i>
+      </button>
+
+      <div class="submenu" <?= $toolsOpen ? '' : 'hidden' ?>>
+        <a href="/config/admin/backup_admin.php"
+           class="<?= $self==='backup_admin.php'?'active':'' ?>">
+          <i class="fa-solid fa-database"></i> Backup & Restore
+        </a>
+
+        <a href="archive.php" class="<?= $isArchive?'active':'' ?>">
+          <i class="fas fa-archive"></i> Archive
+        </a>
+      </div>
+    </div>
+
+    <a href="logs.php" class="<?= $self==='logs.php'?'active':'' ?>">
+      <i class="fas fa-file-alt"></i> Logs
+    </a>
+
+    <?php endif; ?>
+
+
+    <!-- STOCKMAN -->
+    <?php if ($role === 'stockman'): ?>
+    <div class="menu-group has-sub">
+      <button class="menu-toggle" aria-expanded="<?= $invOpen?'true':'false' ?>">
+        <span><i class="fas fa-box"></i> Inventory</span>
+        <i class="fas fa-chevron-right caret"></i>
+      </button>
+
+      <div class="submenu" <?= $invOpen?'':'hidden' ?>>
+        <a href="inventory.php" class="<?= $self==='inventory.php'?'active':'' ?>">
+          <i class="fas fa-list"></i> Inventory List
+        </a>
+
+        <a href="physical_inventory.php" class="<?= $self==='physical_inventory.php'?'active':'' ?>">
+          <i class="fas fa-warehouse"></i> Physical Inventory
+        </a>
+
+        <a href="barcode-print.php" class="<?= $self==='barcode-print.php'?'active':'' ?>">
+          <i class="fas fa-barcode"></i> Barcode Labels
+        </a>
+      </div>
+    </div>
+    <?php endif; ?>
+
+
+    <!-- STAFF -->
     <?php if ($role === 'staff'): ?>
-        <a href="pos.php"><i class="fas fa-cash-register"></i> Point of Sale</a>
-        <a href="history.php"><i class="fas fa-history"></i> Sales History</a>
-        <a href="shift_summary.php" class="<?= $self === 'shift_summary.php' ? 'active' : '' ?>">
-  <i class="fa-solid fa-clipboard-check"></i> Shift Summary
-  </a>
+    <a href="pos.php"><i class="fas fa-cash-register"></i> Point of Sale</a>
+    <a href="history.php"><i class="fas fa-history"></i> Sales History</a>
+    <a href="shift_summary.php" class="<?= $self==='shift_summary.php'?'active':'' ?>">
+      <i class="fa-solid fa-clipboard-check"></i> Shift Summary
+    </a>
     <?php endif; ?>
 
     <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
-</div>
-  </div>
-</div>
+
+  </div><!-- /sidebar-content -->
+
+</div><!-- /sidebar -->
 
 <!-- Branch Navigation -->
 <div class="content">
@@ -918,7 +932,7 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
 
       <?php if ($requests && $requests->num_rows > 0): ?>
         <div class="table-responsive">
-          <table class="table table-header table-hover align-middle">
+          <table class="inventory-table request-table-fix">
             <thead class="table-dark">
               <tr>
                 <th>TRANSFER ID</th>
@@ -994,7 +1008,7 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
 
       <?php if ($sir && $sir->num_rows > 0): ?>
         <div class="table-responsive">
-          <table class="table table-header table-hover align-middle">
+          <table class="inventory-table request-table-fix">
             <thead class="table-dark">
               <tr>
                 <th>STOCK_IN ID</th>
@@ -1406,11 +1420,10 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-danger" id="confirmArchiveProductBtn">
-          <i class="fa-solid fa-archive me-1"></i> Yes, Archive
-        </button>
-      </div>
+    <button type="button" class="action-btn btn-reject" data-bs-dismiss="modal">Cancel</button>
+    <button type="submit" class="action-btn btn-archive">Archive</button>
+</div>
+
     </div>
   </div>
 </div>
@@ -1535,9 +1548,10 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
         </div>
          <!-- Modal Footer with Cancel and Save buttons -->
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-success">Save Changes</button>
-        </div>
+    <button type="button" class="action-btn btn-reject" data-bs-dismiss="modal">Cancel</button>
+    <button type="submit" class="action-btn btn-edit">Save Changes</button>
+</div>
+
       </form>
     </div>
   </div>
@@ -2579,15 +2593,14 @@ document.addEventListener("DOMContentLoaded", () => {
 <script>
 (function(){
   const groups = document.querySelectorAll('.menu-group.has-sub');
-
   groups.forEach((g, idx) => {
     const btn = g.querySelector('.menu-toggle');
     const panel = g.querySelector('.submenu');
     if (!btn || !panel) return;
 
-    // Optional: restore last state from localStorage
     const key = 'sidebar-sub-' + idx;
     const saved = localStorage.getItem(key);
+
     if (saved === 'open') {
       btn.setAttribute('aria-expanded', 'true');
       panel.hidden = false;
@@ -2601,6 +2614,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 })();
+
 </script>
 <!-- Success message for Stock Transfer Approval -->
 <script>

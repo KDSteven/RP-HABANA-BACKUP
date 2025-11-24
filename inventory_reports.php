@@ -466,145 +466,160 @@ if (isset($_SESSION['user_id'])) {
 <link rel="stylesheet" href="css/notifications.css">
 
 </head>
-<body class="inventory-reports-page">
+<body class="inventory-page">
+<!-- Toggle button (ALWAYS outside sidebar) -->
+<button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
+  <i class="fas fa-bars"></i>
+</button>
 
 <!-- Sidebar -->
-<div class="sidebar" id="mainSidebar">
-  <!-- Toggle button always visible on the rail -->
-  <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
-    <i class="fas fa-bars" aria-hidden="true"></i>
-  </button>
+<div class="sidebar expanded" id="mainSidebar">
 
-  <!-- Wrap existing sidebar content so we can hide/show it cleanly -->
   <div class="sidebar-content">
+    
     <h2 class="user-heading">
       <span class="role"><?= htmlspecialchars(strtoupper($role), ENT_QUOTES) ?></span>
+
       <?php if ($currentName !== ''): ?>
-        <span class="name">(<?= htmlspecialchars($currentName, ENT_QUOTES) ?>)</span>
+      <span class="name">(<?= htmlspecialchars($currentName, ENT_QUOTES) ?>)</span>
       <?php endif; ?>
+
       <span class="notif-wrapper">
         <i class="fas fa-bell" id="notifBell"></i>
-        <span id="notifCount" <?= $pending > 0 ? '' : 'style="display:none;"' ?>><?= (int)$pending ?></span>
+        <span id="notifCount" <?= $pending > 0 ? '' : 'style="display:none;"' ?>>
+          <?= (int)$pending ?>
+        </span>
       </span>
     </h2>
 
-        <!-- Common -->
-    <a href="dashboard.php"><i class="fas fa-tv"></i> Dashboard</a>
+    <!-- Common -->
+    <a href="dashboard.php" class="<?= $self === 'dashboard.php' ? 'active' : '' ?>">
+      <i class="fas fa-tv"></i> Dashboard
+    </a>
 
     <?php
-// put this once before the sidebar (top of file is fine)
-$self = strtolower(basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)));
-$isArchive = substr($self, 0, 7) === 'archive'; // matches archive.php, archive_view.php, etc.
-$invOpen   = in_array($self, ['inventory.php','physical_inventory.php'], true);
-$toolsOpen = ($self === 'backup_admin.php' || $isArchive);
-?>
+      $self = strtolower(basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)));
+      $isArchive = substr($self,0,7)==='archive';
+      $invOpen   = in_array($self,['inventory.php','physical_inventory.php'],true);
+      $toolsOpen = ($self==='backup_admin.php' || $isArchive);
+    ?>
 
-<!-- Admin Links -->
-<?php if ($role === 'admin'): ?>
+    <!-- ADMIN -->
+    <?php if ($role === 'admin'): ?>
 
-  <!-- Inventory group (unchanged) -->
-<div class="menu-group has-sub">
-  <button class="menu-toggle" type="button" aria-expanded="<?= $invOpen ? 'true' : 'false' ?>">
-  <span><i class="fas fa-box"></i> Inventory
-    <?php if ($pendingTotalInventory > 0): ?>
-      <span class="badge-pending"><?= $pendingTotalInventory ?></span>
-    <?php endif; ?>
-  </span>
-    <i class="fas fa-chevron-right caret"></i>
-  </button>
-  <div class="submenu" <?= $invOpen ? '' : 'hidden' ?>>
-    <a href="inventory.php#pending-requests" class="<?= $self === 'inventory.php#pending-requests' ? 'active' : '' ?>">
-      <i class="fas fa-list"></i> Inventory List
-        <?php if ($pendingTotalInventory > 0): ?>
-          <span class="badge-pending"><?= $pendingTotalInventory ?></span>
-        <?php endif; ?>
-    </a>
-    <a href="inventory_reports.php" class="<?= $self === 'inventory_reports.php' ? 'active' : '' ?>">
-      <i class="fas fa-chart-line"></i> Inventory Reports
-    </a>
-    <a href="physical_inventory.php" class="<?= $self === 'physical_inventory.php' ? 'active' : '' ?>">
-      <i class="fas fa-warehouse"></i> Physical Inventory
-    </a>
-        <a href="barcode-print.php<?php 
-        $b = (int)($_SESSION['current_branch_id'] ?? 0);
-        echo $b ? ('?branch='.$b) : '';?>" class="<?= $self === 'barcode-print.php' ? 'active' : '' ?>">
-        <i class="fas fa-barcode"></i> Barcode Labels
-    </a>
-  </div>
-</div>
-
-    <a href="services.php" class="<?= $self === 'services.php' ? 'active' : '' ?>">
-      <i class="fa fa-wrench" aria-hidden="true"></i> Services
-    </a>
-
-  <!-- Sales (normal link with active state) -->
-  <a href="sales.php" class="<?= $self === 'sales.php' ? 'active' : '' ?>">
-    <i class="fas fa-receipt"></i> Sales
-  </a>
-
-
-<a href="accounts.php" class="<?= $self === 'accounts.php' ? 'active' : '' ?>">
-  <i class="fas fa-users"></i> Accounts & Branches
-</a>
-
-  <!-- NEW: Backup & Restore group with Archive inside -->
-  <div class="menu-group has-sub">
-    <button class="menu-toggle" type="button" aria-expanded="<?= $toolsOpen ? 'true' : 'false' ?>">
-      <span><i class="fas fa-screwdriver-wrench me-2"></i> Data Tools</span>
-      <i class="fas fa-chevron-right caret"></i>
-    </button>
-    <div class="submenu" <?= $toolsOpen ? '' : 'hidden' ?>>
-      <a href="/config/admin/backup_admin.php" class="<?= $self === 'backup_admin.php' ? 'active' : '' ?>">
-        <i class="fa-solid fa-database"></i> Backup & Restore
-      </a>
-      <a href="archive.php" class="<?= $isArchive ? 'active' : '' ?>">
-        <i class="fas fa-archive"></i> Archive
-      </a>
-    </div>
-  </div>
-
-  <a href="logs.php" class="<?= $self === 'logs.php' ? 'active' : '' ?>">
-    <i class="fas fa-file-alt"></i> Logs
-  </a>
-
-<?php endif; ?>
-
-
-
-   <!-- Stockman Links -->
-  <?php if ($role === 'stockman'): ?>
+    <!-- Inventory -->
     <div class="menu-group has-sub">
-      <button class="menu-toggle" type="button" aria-expanded="<?= $invOpen ? 'true' : 'false' ?>">
-        <span><i class="fas fa-box"></i> Inventory</span>
+      <button class="menu-toggle" aria-expanded="<?= $invOpen ? 'true' : 'false' ?>">
+        <span>
+          <i class="fas fa-box"></i> Inventory
+          <?php if ($pendingTotalInventory > 0): ?>
+          <span class="badge-pending"><?= $pendingTotalInventory ?></span>
+          <?php endif; ?>
+        </span>
         <i class="fas fa-chevron-right caret"></i>
       </button>
+
       <div class="submenu" <?= $invOpen ? '' : 'hidden' ?>>
-        <a href="inventory.php" class="<?= $self === 'inventory.php' ? 'active' : '' ?>">
+        <a href="inventory.php" class="<?= $self==='inventory.php'?'active':'' ?>">
           <i class="fas fa-list"></i> Inventory List
         </a>
-        <a href="physical_inventory.php" class="<?= $self === 'physical_inventory.php' ? 'active' : '' ?>">
+
+        <a href="inventory_reports.php" class="<?= $self==='inventory_reports.php'?'active':'' ?>">
+          <i class="fas fa-chart-line"></i> Inventory Reports
+        </a>
+
+        <a href="physical_inventory.php" class="<?= $self==='physical_inventory.php'?'active':'' ?>">
           <i class="fas fa-warehouse"></i> Physical Inventory
         </a>
-        <!-- Stockman can access Barcode Labels; server forces their branch -->
-        <a href="barcode-print.php" class="<?= $self === 'barcode-print.php' ? 'active' : '' ?>">
+
+        <a href="barcode-print.php<?php $b=(int)($_SESSION['current_branch_id']??0); echo $b?'?branch='.$b:'';?>"
+           class="<?= $self==='barcode-print.php'?'active':'' ?>">
           <i class="fas fa-barcode"></i> Barcode Labels
         </a>
       </div>
     </div>
-  <?php endif; ?>
-    <!-- Staff Links -->
+
+    <a href="services.php" class="<?= $self==='services.php'?'active':'' ?>">
+      <i class="fa fa-wrench"></i> Services
+    </a>
+
+    <a href="sales.php" class="<?= $self==='sales.php'?'active':'' ?>">
+      <i class="fas fa-receipt"></i> Sales
+    </a>
+
+    <a href="accounts.php" class="<?= $self==='accounts.php'?'active':'' ?>">
+      <i class="fas fa-users"></i> Accounts & Branches
+    </a>
+
+    <!-- Data Tools -->
+    <div class="menu-group has-sub">
+      <button class="menu-toggle" aria-expanded="<?= $toolsOpen?'true':'false' ?>">
+        <span><i class="fas fa-screwdriver-wrench"></i> Data Tools</span>
+        <i class="fas fa-chevron-right caret"></i>
+      </button>
+
+      <div class="submenu" <?= $toolsOpen ? '' : 'hidden' ?>>
+        <a href="/config/admin/backup_admin.php"
+           class="<?= $self==='backup_admin.php'?'active':'' ?>">
+          <i class="fa-solid fa-database"></i> Backup & Restore
+        </a>
+
+        <a href="archive.php" class="<?= $isArchive?'active':'' ?>">
+          <i class="fas fa-archive"></i> Archive
+        </a>
+      </div>
+    </div>
+
+    <a href="logs.php" class="<?= $self==='logs.php'?'active':'' ?>">
+      <i class="fas fa-file-alt"></i> Logs
+    </a>
+
+    <?php endif; ?>
+
+
+    <!-- STOCKMAN -->
+    <?php if ($role === 'stockman'): ?>
+    <div class="menu-group has-sub">
+      <button class="menu-toggle" aria-expanded="<?= $invOpen?'true':'false' ?>">
+        <span><i class="fas fa-box"></i> Inventory</span>
+        <i class="fas fa-chevron-right caret"></i>
+      </button>
+
+      <div class="submenu" <?= $invOpen?'':'hidden' ?>>
+        <a href="inventory.php" class="<?= $self==='inventory.php'?'active':'' ?>">
+          <i class="fas fa-list"></i> Inventory List
+        </a>
+
+        <a href="physical_inventory.php" class="<?= $self==='physical_inventory.php'?'active':'' ?>">
+          <i class="fas fa-warehouse"></i> Physical Inventory
+        </a>
+
+        <a href="barcode-print.php" class="<?= $self==='barcode-print.php'?'active':'' ?>">
+          <i class="fas fa-barcode"></i> Barcode Labels
+        </a>
+      </div>
+    </div>
+    <?php endif; ?>
+
+
+    <!-- STAFF -->
     <?php if ($role === 'staff'): ?>
-        <a href="pos.php"><i class="fas fa-cash-register"></i> Point of Sale</a>
-        <a href="history.php"><i class="fas fa-history"></i> Sales History</a>
+    <a href="pos.php"><i class="fas fa-cash-register"></i> Point of Sale</a>
+    <a href="history.php"><i class="fas fa-history"></i> Sales History</a>
+    <a href="shift_summary.php" class="<?= $self==='shift_summary.php'?'active':'' ?>">
+      <i class="fa-solid fa-clipboard-check"></i> Shift Summary
+    </a>
     <?php endif; ?>
 
     <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
-</div>
-  </div>
-</div>
+
+  </div><!-- /sidebar-content -->
+
+</div><!-- /sidebar -->
 
 
-<div class="main-content">
+<div class="main-content content">
+  <div class="container">
 <h2>Inventory Reports</h2>
 
 <form method="get" class="row g-3 mb-4">
@@ -644,80 +659,95 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
 
 <!-- MOVEMENT TABLE -->
 <h3>Movement Details</h3>
-<div class="table-scroll">
+  <div class="table-scroll">
   <table class="table table-light table-striped">
-  <thead>
-  <tr>
-  <th>Date</th><th>Product</th><th>Branch</th>
-  <th>From</th><th>To</th><th>Type</th><th>Qty</th><th>Ref</th>
-  </tr>
-  </thead>
-  <tbody>
+    <thead>
+      <tr>
+      <th>Date</th><th>Product</th><th>Branch</th>
+      <th>From</th><th>To</th><th>Type</th><th>Qty</th><th>Ref</th>
+      </tr>
+      </thead>
+    <tbody>
   <?php if (!empty($movements)): foreach($movements as $m): ?>
 
   <tr>
-  <td><?=date("M d, Y", strtotime($m['date']))?></td>
-  <td><?=$m['product_name']?></td>
-  <td><?=$m['branch']?></td>
-  <td><?=$m['from_branch'] ?: "-"?></td>
-  <td><?=$m['to_branch'] ?: "-"?></td>
-  <td><?=$m['type']?></td>
-  <td><?=$m['qty']?></td>
-  <td><?=$m['ref']?></td>
+    <td><?=date("M d, Y", strtotime($m['date']))?></td>
+    <td><?=$m['product_name']?></td>
+    <td><?=$m['branch']?></td>
+    <td><?=$m['from_branch'] ?: "-"?></td>
+    <td><?=$m['to_branch'] ?: "-"?></td>
+    <td><?=$m['type']?></td>
+    <td><?=$m['qty']?></td>
+    <td><?=$m['ref']?></td>
   </tr>
-  <?php endforeach; else: ?>
-  <tr><td colspan="8" class="text-center text-muted">No movements found</td></tr>
-  <?php endif; ?>
-  </tbody>
-  </table>
+    <?php endforeach; else: ?>
+      <tr><td colspan="8" class="text-center text-muted">No movements found</td></tr>
+    <?php endif; ?>
+    </tbody>
+    </table>
   </div>
 
 <!-- SUMMARY TABLE -->
 <h3 class="mt-4">Summary Report</h3>
-<div class="table-scroll">
-<table class="table table-light table-striped">
-<thead>
-<tr>
-<th>Product</th><th>Branch</th><th>Begin</th><th>In</th>
-<th>Sales</th><th>Service</th><th>T.in</th><th>T.out</th>
-<th>Ending</th>
-</tr>
-<tbody>
-<?php if (!empty($summary)): ?>
-    <?php foreach ($summary as $s): ?>
-        <tr>
-            <td><?= htmlspecialchars($s['product']) ?></td>
-            <td><?= htmlspecialchars($s['branch']) ?></td>
-            <td><?= $s['begin'] ?></td>
-            <td><?= $s['stockIn'] ?></td>
-            <td><?= $s['sales'] ?></td>
-            <td><?= $s['serviceUsed'] ?></td>
-            <td><?= $s['transferIn'] ?></td>
-            <td><?= $s['transferOut'] ?></td>
-            <td><b><?= $s['ending'] ?></b></td>
-        </tr>
-    <?php endforeach; ?>
-<?php else: ?>
-    <tr>
-        <td colspan="10" class="text-center text-muted">No summary rows</td>
+  <div class="table-scroll">
+    <table class="table table-light table-striped">
+      <thead>
+      <tr>
+      <th>Product</th><th>Branch</th><th>Begin</th><th>In</th>
+      <th>Sales</th><th>Service</th><th>T.in</th><th>T.out</th>
+      <th>Ending</th>
     </tr>
-<?php endif; ?>
-</tbody>
-</table>
-</div>
+  <tbody>
+    <?php if (!empty($summary)): ?>
+        <?php foreach ($summary as $s): ?>
+            <tr>
+                <td><?= htmlspecialchars($s['product']) ?></td>
+                <td><?= htmlspecialchars($s['branch']) ?></td>
+                <td><?= $s['begin'] ?></td>
+                <td><?= $s['stockIn'] ?></td>
+                <td><?= $s['sales'] ?></td>
+                <td><?= $s['serviceUsed'] ?></td>
+                <td><?= $s['transferIn'] ?></td>
+                <td><?= $s['transferOut'] ?></td>
+                <td><b><?= $s['ending'] ?></b></td>
+            </tr>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <tr>
+            <td colspan="10" class="text-center text-muted">No summary rows</td>
+        </tr>
+    <?php endif; ?>
+    </tbody>
+    </table>
+  </div>
 
-</div>
-</div>
+  </div>
+
 <script>
-    document.querySelectorAll('.menu-group .menu-toggle').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const submenu = btn.parentElement.querySelector('.submenu');
-        const expanded = btn.getAttribute('aria-expanded') === 'true';
+    (function(){
+  const groups = document.querySelectorAll('.menu-group.has-sub');
+  groups.forEach((g, idx) => {
+    const btn = g.querySelector('.menu-toggle');
+    const panel = g.querySelector('.submenu');
+    if (!btn || !panel) return;
 
-        btn.setAttribute('aria-expanded', !expanded);
-        submenu.hidden = expanded;
+    const key = 'sidebar-sub-' + idx;
+    const saved = localStorage.getItem(key);
+
+    if (saved === 'open') {
+      btn.setAttribute('aria-expanded', 'true');
+      panel.hidden = false;
+    }
+
+    btn.addEventListener('click', () => {
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!expanded));
+      panel.hidden = expanded;
+      localStorage.setItem(key, expanded ? 'closed' : 'open');
     });
-});
+  });
+})();
+
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 

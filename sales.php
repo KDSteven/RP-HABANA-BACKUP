@@ -228,14 +228,15 @@ if ($branch_id) {
     <title><?= htmlspecialchars("RP Habana — $pageTitle") ?></title>
 </head>
 <body>
-    
-<!-- Sidebar -->
-<div class="sidebar" id="mainSidebar">
-  <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
+     <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
     <i class="fas fa-bars" aria-hidden="true"></i>
   </button>
 
+<!-- Sidebar -->
+<div class="sidebar expanded" id="mainSidebar">
+
   <div class="sidebar-content">
+    
     <h2 class="user-heading">
       <span class="role"><?= htmlspecialchars(strtoupper($role), ENT_QUOTES) ?></span>
       <?php if ($currentName !== ''): ?>
@@ -570,6 +571,7 @@ if ($branch_id) {
 
     const key = 'sidebar-sub-' + idx;
     const saved = localStorage.getItem(key);
+
     if (saved === 'open') {
       btn.setAttribute('aria-expanded', 'true');
       panel.hidden = false;
@@ -583,6 +585,7 @@ if ($branch_id) {
     });
   });
 })();
+
 </script>
 <script>
 let productChart, serviceChart;

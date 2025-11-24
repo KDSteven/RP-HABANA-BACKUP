@@ -343,14 +343,15 @@ if (isset($_SESSION['user_id'])) {
 </head>
 <body>
 <!-- Sidebar -->
-<div class="sidebar" id="mainSidebar">
-  <!-- Toggle button always visible on the rail -->
-  <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
     <i class="fas fa-bars" aria-hidden="true"></i>
   </button>
 
-  <!-- Wrap existing sidebar content so we can hide/show it cleanly -->
+<!-- Sidebar -->
+<div class="sidebar expanded" id="mainSidebar">
+
   <div class="sidebar-content">
+    
     <h2 class="user-heading">
       <span class="role"><?= htmlspecialchars(strtoupper($role), ENT_QUOTES) ?></span>
       <?php if ($currentName !== ''): ?>
@@ -870,15 +871,14 @@ document.addEventListener("DOMContentLoaded", () => {
 <script>
 (function(){
   const groups = document.querySelectorAll('.menu-group.has-sub');
-
   groups.forEach((g, idx) => {
     const btn = g.querySelector('.menu-toggle');
     const panel = g.querySelector('.submenu');
     if (!btn || !panel) return;
 
-    // Optional: restore last state from localStorage
     const key = 'sidebar-sub-' + idx;
     const saved = localStorage.getItem(key);
+
     if (saved === 'open') {
       btn.setAttribute('aria-expanded', 'true');
       panel.hidden = false;
@@ -892,6 +892,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 })();
+
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 

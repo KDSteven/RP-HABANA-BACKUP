@@ -500,24 +500,30 @@ $toolsOpen = ($self === 'backup_admin.php' || $isArchive);
 <body class="accounts-page">
 
 <!-- ========================= Sidebar ========================= -->
-<div class="sidebar" id="mainSidebar">
-  <!-- rail toggle for collapsed view -->
-  <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
     <i class="fas fa-bars" aria-hidden="true"></i>
   </button>
 
-  <!-- Collapsible sidebar content -->
+<!-- Sidebar -->
+<div class="sidebar expanded" id="mainSidebar">
+
   <div class="sidebar-content">
-    <h2 class="user-heading">
-      <span class="role"><?= htmlspecialchars(strtoupper($currentRole), ENT_QUOTES) ?></span>
-      <?php if ($currentName !== ''): ?>
-        <span class="name">(<?= htmlspecialchars($currentName, ENT_QUOTES) ?>)</span>
-      <?php endif; ?>
-      <span class="notif-wrapper">
-        <i class="fas fa-bell" id="notifBell"></i>
-        <span id="notifCount" <?= $pending > 0 ? '' : 'style="display:none;"' ?>><?= (int)$pending ?></span>
-      </span>
-    </h2>
+    
+   <h2 class="user-heading">
+  <span class="role"><?= htmlspecialchars(strtoupper($currentRole), ENT_QUOTES) ?></span>
+
+  <span class="notif-wrapper">
+    <i class="fas fa-bell" id="notifBell"></i>
+    <span id="notifCount" <?= $pending > 0 ? '' : 'style="display:none;"' ?>>
+      <?= (int)$pending ?>
+    </span>
+  </span>
+
+  <?php if ($currentName !== ''): ?>
+    <span class="name">(<?= htmlspecialchars($currentName, ENT_QUOTES) ?>)</span>
+  <?php endif; ?>
+</h2>
+
 
         <!-- Common -->
     <a href="dashboard.php"><i class="fas fa-tv"></i> Dashboard</a>
@@ -1450,15 +1456,15 @@ function toggleCreateBranch(){
     const btn = g.querySelector('.menu-toggle');
     const panel = g.querySelector('.submenu');
     if (!btn || !panel) return;
-    const key = 'sidebar-sub-' + idx;
 
-    // Restore previous state
-    if (localStorage.getItem(key) === 'open') {
-      btn.setAttribute('aria-expanded','true');
+    const key = 'sidebar-sub-' + idx;
+    const saved = localStorage.getItem(key);
+
+    if (saved === 'open') {
+      btn.setAttribute('aria-expanded', 'true');
       panel.hidden = false;
     }
 
-    // Toggle and persist on click
     btn.addEventListener('click', () => {
       const expanded = btn.getAttribute('aria-expanded') === 'true';
       btn.setAttribute('aria-expanded', String(!expanded));
@@ -1467,6 +1473,7 @@ function toggleCreateBranch(){
     });
   });
 })();
+
 </script>
 
 <script>

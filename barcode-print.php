@@ -144,7 +144,7 @@ $toolsOpen = $self === 'backup_admin.php' || $isArchive;
     --pill-active-bg:#ffd9a6;
     --pill-active-fg:#7a4b00;
     --section-bg:#ffeecd;
-    --section-accent:#ff9800;
+    --section-accent:#A72F2F;
     --grid-gap:16px;
     --label-w:45mm;
     --label-h:30mm;
@@ -263,14 +263,15 @@ body{
 </head>
 
 <body>
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
+    <i class="fas fa-bars" aria-hidden="true"></i>
+  </button>
 
-<!-- SIDEBAR -->
-<div class="sidebar" id="mainSidebar">
-    <button class="sidebar-toggle" id="sidebarToggle">
-        <i class="fas fa-bars"></i>
-    </button>
+<!-- Sidebar -->
+<div class="sidebar expanded" id="mainSidebar">
 
-    <div class="sidebar-content">
+  <div class="sidebar-content">
+    
         <h2 class="user-heading">
             <span class="role"><?= strtoupper($role) ?></span>
             <?php if ($currentName): ?>
@@ -435,27 +436,29 @@ document.querySelectorAll('svg[id^="bc"]').forEach(svg => {
 <script>
 // persist submenu state
 (function(){
-    const groups = document.querySelectorAll('.menu-group.has-sub');
-    groups.forEach((g,i)=>{
-        const btn = g.querySelector('.menu-toggle');
-        const sub = g.querySelector('.submenu');
-        if(!btn || !sub) return;
+  const groups = document.querySelectorAll('.menu-group.has-sub');
+  groups.forEach((g, idx) => {
+    const btn = g.querySelector('.menu-toggle');
+    const panel = g.querySelector('.submenu');
+    if (!btn || !panel) return;
 
-        const key = 'sidebar-sub-'+i;
-        const saved = localStorage.getItem(key);
-        if(saved==='open'){
-            btn.setAttribute('aria-expanded','true');
-            sub.hidden = false;
-        }
+    const key = 'sidebar-sub-' + idx;
+    const saved = localStorage.getItem(key);
 
-        btn.addEventListener('click',()=>{
-            const exp = btn.getAttribute('aria-expanded')==='true';
-            btn.setAttribute('aria-expanded', String(!exp));
-            sub.hidden = exp;
-            localStorage.setItem(key, exp?'closed':'open');
-        });
+    if (saved === 'open') {
+      btn.setAttribute('aria-expanded', 'true');
+      panel.hidden = false;
+    }
+
+    btn.addEventListener('click', () => {
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!expanded));
+      panel.hidden = expanded;
+      localStorage.setItem(key, expanded ? 'closed' : 'open');
     });
+  });
 })();
+
 </script>
 
 <script src="notifications.js"></script>

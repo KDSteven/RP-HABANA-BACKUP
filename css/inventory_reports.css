@@ -4,27 +4,11 @@
    ============================================================ */
 
 body.inventory-reports-page {
-    
     color: #000000;
     margin: 0;
     padding: 0;
     overflow-x: hidden !important;
-    width: 100%;
-}
 
-/* MAIN CONTENT WRAPPER */
-.main-content {
-    margin-left: 260px;  /* sidebar width */
-    padding: 20px 30px;
-    max-width: calc(100% - 260px);
-    width: calc(100% - 260px);
-}
-
-/* When sidebar is collapsed */
-.sidebar.collapsed + .main-content {
-    margin-left: 80px;
-    max-width: calc(100% - 80px);
-    width: calc(100% - 80px);
 }
 
 /* TABLE FIXES */
@@ -58,11 +42,20 @@ html, body {
 }
 
 /* Ensure content does NOT shift right */
-.container,
-.main-content,
-.report-section {
-    width: 100% !important;
-    max-width: 100% !important;
+.container.main-content{
+  background: var(--surface);
+    border-radius: 12px;
+    padding: 16px 20px;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 22px;
+    width: 100%;
+    margin-left: 0;   
+     transition: all 0.3s ease;
 }
 
 /* Fix tables overflowing vertically */
