@@ -400,6 +400,11 @@ if ($branch_id) {
         <option value="weekly"  <?= $reportType==='weekly' ?'selected':'' ?>>Weekly</option>
         <option value="monthly" <?= $reportType==='monthly'?'selected':'' ?>>Monthly</option>
     </select>
+    
+<a href="export_product_sales_csv.php?range=<?= $reportType ?>&month=<?= $selectedMonth ?>&branch_id=<?= $branch_id ?>"
+   class="btn btn-success">
+    <i class="fas fa-file-csv"></i> Export Product Sales CSV
+</a>
 
     <input type="month" name="month" value="<?= htmlspecialchars($selectedMonth) ?>" 
            onchange="this.form.submit()" class="form-control w-auto">
