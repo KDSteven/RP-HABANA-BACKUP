@@ -420,7 +420,7 @@ function keep_qs(array $overrides = []): string {
                 <tr>
                   <td><?= (int)$sale['sale_id'] ?></td>
                   <td><?= htmlspecialchars($sale['branch_name']) ?></td>
-                  <td><?= htmlspecialchars($sale['sale_date']) ?></td>
+                   <td><?= date('F j, Y | g:i A', strtotime($sale['sale_date'])) ?></td>
 
                   <td>
                     <span class="fw-bold text-success">
@@ -697,7 +697,7 @@ function printReceipt() {
   // Map toast variants to header colors & icons
   const STYLES = {
     info:    { cls: 'bg-primary',  icon: 'fa-info-circle',   title: 'System Notice' },
-    success: { cls: 'bg-success',  icon: 'fa-check-circle',  title: 'Success' },
+    success: { cls: 'bg-success text-white',  icon: 'fa-check-circle',  title: 'Success' },
     warning: { cls: 'bg-warning text-dark', icon: 'fa-exclamation-triangle', title: 'Heads up' },
     danger:  { cls: 'bg-danger',   icon: 'fa-times-circle',  title: 'Error' }
   };
@@ -737,7 +737,7 @@ function printReceipt() {
         showToast('Refund failed. Please try again.', 'danger');
         break;
       case 'filters':
-        showToast('Filters applied.', 'info');
+        showToast('Filters applied.', 'success');
         break;
       case 'search':
         showToast(`Showing results for "${params.get('q') || ''}"`, 'info');
@@ -752,7 +752,7 @@ function printReceipt() {
     .some(k => (params.get(k) || '').trim() !== '');
   if (anyFilter && !toastKey && (params.get('page') || '1') === '1') {
     // Only show once, not on every paginated click
-    showToast('Filters applied.', 'info');
+    showToast('Filters applied.', 'success');
   }
 
   // Make it globally available if you want to call it manually

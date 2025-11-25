@@ -401,11 +401,6 @@ if ($branch_id) {
         <option value="monthly" <?= $reportType==='monthly'?'selected':'' ?>>Monthly</option>
     </select>
     
-<a href="export_product_sales_csv.php?range=<?= $reportType ?>&month=<?= $selectedMonth ?>&branch_id=<?= $branch_id ?>"
-   class="btn btn-success">
-    <i class="fas fa-file-csv"></i> Export Product Sales CSV
-</a>
-
     <input type="month" name="month" value="<?= htmlspecialchars($selectedMonth) ?>" 
            onchange="this.form.submit()" class="form-control w-auto">
 
@@ -435,7 +430,19 @@ if ($branch_id) {
     <button type="submit" class="btn btn-primary d-inline-flex align-items-center">
       <i class="fas fa-search me-1"></i> Search
     </button>
+
+      <!-- Export Period Selection -->
+        <select id="export_period" class="form-select w-auto">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+        </select>
+        <!-- Export Button (Dynamic Link) -->
+        <a id="exportLink" href="export_product_sales_csv.php?export_period=daily&month=<?= $selectedMonth ?>&branch_id=<?= $branch_id ?>" class="btn btn-success">
+            <i class="fas fa-file-csv"></i> Export Product Sales CSV
+        </a>
 </form>
+
 
 <div class="row g-4">
 
@@ -521,7 +528,7 @@ if ($branch_id) {
     ?>
     <tr>
         <td><?= htmlspecialchars($row['sale_id']) ?></td>
-        <td><?= htmlspecialchars($row['sale_date']) ?></td>
+        <td><?= date("F j, Y | h:i A", strtotime($row['sale_date'])) ?></td>
         <td><?= htmlspecialchars($row['branch_name'] ?? 'N/A') ?></td>
         <td style="white-space: normal; line-height: 1.5em;"><?= $row['item_list'] ?: '—' ?></td>
         <td>₱<?= number_format($row['subtotal'], 2) ?></td>
@@ -701,6 +708,19 @@ document.querySelector("input[name='month']")
 document.querySelector("select[name='branch_id']")
   ?.addEventListener("change", loadRevenueCharts);
 
+  function updateExportLink() {
+            const period = document.getElementById('export_period').value;
+            const month = document.querySelector('[name="month"]').value;
+            const branchId = document.querySelector('[name="branch_id"]')?.value || '';
+            const url = `export_product_sales_csv.php?export_period=${period}&month=${month}&branch_id=${branchId}`;
+            document.getElementById('exportLink').href = url;
+        }
+        // Initialize and update on changes
+        document.addEventListener("DOMContentLoaded", updateExportLink);
+        document.getElementById('export_period').addEventListener('change', updateExportLink);
+        document.querySelector('[name="month"]').addEventListener('change', updateExportLink);
+        document.querySelector('[name="branch_id"]')?.addEventListener('change', updateExportLink);
+        
 </script>
 
 <script src="sidebar.js"></script>

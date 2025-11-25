@@ -954,7 +954,7 @@ if ($flag || $flash) {
                   <td><?= htmlspecialchars($r['source_name']) ?></td>
                   <td><?= htmlspecialchars($r['dest_name']) ?></td>
                   <td><?= htmlspecialchars($r['requested_by_user']) ?></td>
-                  <td><?= date('Y-m-d H:i', strtotime($r['request_date'])) ?></td>
+                  <td><?= date('F j, Y | h:i A', strtotime($r['request_date'])) ?></td>
                   <!-- APPROVE transfer -->
                    <td>
 <form method="POST" class="d-inline">
@@ -1028,7 +1028,7 @@ if ($flag || $flash) {
                   <td><?= (int)$x['quantity'] ?></td>
                   <td><?= htmlspecialchars($x['branch_name']) ?></td>
                   <td><?= htmlspecialchars($x['requested_by_user']) ?></td>
-                  <td><?= date('Y-m-d H:i', strtotime($x['request_date'])) ?></td>
+                  <td><?= date('F j, Y | h:i A', strtotime($x['request_date'])) ?></td>
                   <td>
                     <form method="POST" class="d-inline" onsubmit="event.stopImmediatePropagation(); return true;">
   <input type="hidden" name="sir_id" value="<?= (int)$x['id'] ?>">

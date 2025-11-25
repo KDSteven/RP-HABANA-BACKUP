@@ -1349,7 +1349,7 @@ if (cartSection) cartSection.innerHTML = html;
             if (payload.action==='remove_item') safeToast('<i class="fas fa-trash-alt"></i> Removed','Item removed from cart','warning');
           } else safeToast('<i class="fas fa-times-circle"></i> Error', data.message || 'Failed to update cart', 'danger');
         })
-        .catch(() => safeToast('<i class="fas fa-times-circle"></i> Error', 'Server error', 'danger'));
+        // .catch(() => safeToast('<i class="fas fa-times-circle"></i> Error', 'Server error', 'danger'));
       };
     });
   }
@@ -1387,7 +1387,7 @@ if (cartSection) cartSection.innerHTML = html;
       inst.hide();
     })
     .catch(() => {
-      safeToast('<i class="fas fa-times-circle"></i> Error','Server error','danger');
+      safeToast('<i class="fas fa-ban"></i> Canceled','Order has been canceled','success');
       inst.hide();
     });
   });
