@@ -2,6 +2,11 @@
 
 date_default_timezone_set('Asia/Manila');
 
+// $servername = "localhost";  
+// $username   = "u542150242_rp_habana";         
+// $password   = "Rphabana@123";            
+// $dbname     = "u542150242_rp_habana";  
+
 $servername = "localhost";  
 $username   = "root";         
 $password   = "";            
