@@ -158,6 +158,7 @@ if ($reportType === 'itemized') {
   ";
 }
 
+
 // ---- Execute safely
 $stmt = $conn->prepare($sql);
 if ($types !== '' && $params) {
@@ -165,6 +166,38 @@ if ($types !== '' && $params) {
 }
 $stmt->execute();
 $salesReportResult = $stmt->get_result();
+$serviceSql = "
+SELECT 
+    ss.sale_id,
+    s.sale_date,
+    b.branch_name,
+    sv.service_name,
+    ss.price
+FROM sales_services ss
+JOIN services sv ON ss.service_id = sv.service_id
+JOIN sales s ON ss.sale_id = s.sale_id
+JOIN branches b ON s.branch_id = b.branch_id
+$whereSql
+ORDER BY s.sale_date DESC
+";
+
+$stmtService = $conn->prepare($serviceSql);
+
+if ($types !== '' && $params) {
+    $stmtService->bind_param($types, ...$params);
+}
+
+$stmtService->execute();
+$serviceResult = $stmtService->get_result();
+
+$serviceDataArr = [];
+if ($serviceResult && $serviceResult->num_rows > 0) {
+    while ($row = $serviceResult->fetch_assoc()) {
+        $serviceDataArr[] = $row;
+    }
+}
+
+$stmtService->close();
 
 // Pending inventory stuff (admin only)
 $pendingTransfers = 0;
@@ -391,19 +424,22 @@ if ($branch_id) {
     Please ask an admin to assign a branch to you.
   </div>
 <?php endif; ?>
+<!-- Filters & Export Form -->
+<form method="get" class="mb-3 d-flex align-items-center flex-wrap gap-2">
 
-<!-- Filters -->
-<form method="get" class="mb-3 d-flex align-items-center gap-2">
+    <!-- Report Type -->
     <select name="report" onchange="this.form.submit()" class="form-select w-auto">
         <option value="itemized" <?= $reportType==='itemized'?'selected':'' ?>>Itemized</option>
         <option value="daily"   <?= $reportType==='daily'  ?'selected':'' ?>>Daily</option>
         <option value="weekly"  <?= $reportType==='weekly' ?'selected':'' ?>>Weekly</option>
         <option value="monthly" <?= $reportType==='monthly'?'selected':'' ?>>Monthly</option>
     </select>
-    
+
+    <!-- Month Selector -->
     <input type="month" name="month" value="<?= htmlspecialchars($selectedMonth) ?>" 
            onchange="this.form.submit()" class="form-control w-auto">
 
+    <!-- Branch Selector (Admin Only) -->
     <?php if ($role === 'admin'): ?>
         <select name="branch_id" onchange="this.form.submit()" class="form-select w-auto">
             <option value="">All Branches</option>
@@ -419,6 +455,7 @@ if ($branch_id) {
         </select>
     <?php endif; ?>
 
+    <!-- Search Box -->
     <?php $q = trim($_GET['q'] ?? ''); ?>
     <input
       type="text"
@@ -427,20 +464,29 @@ if ($branch_id) {
       class="form-control w-25"
       placeholder="Search sale ID, branch, refund reason…">
 
+    <!-- Search Button -->
     <button type="submit" class="btn btn-primary d-inline-flex align-items-center">
       <i class="fas fa-search me-1"></i> Search
     </button>
 
-      <!-- Export Period Selection -->
-        <select id="export_period" class="form-select w-auto">
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-            <option value="monthly">Monthly</option>
-        </select>
-        <!-- Export Button (Dynamic Link) -->
-        <a id="exportLink" href="export_product_sales_csv.php?export_period=daily&month=<?= $selectedMonth ?>&branch_id=<?= $branch_id ?>" class="btn btn-success">
-            <i class="fas fa-file-csv"></i> Export Product Sales CSV
-        </a>
+    <!-- Export Period Selector -->
+    <select id="export_period" class="form-select w-auto">
+        <option value="daily">Daily</option>
+        <option value="weekly">Weekly</option>
+        <option value="monthly">Monthly</option>
+    </select>
+
+    <!-- Export Buttons -->
+    <a href="export_product_sales.php?download=csv&month=<?= $selectedMonth ?>&branch_id=<?= $branch_id ?>" 
+       class="btn btn-success d-inline-flex align-items-center">
+        <i class="fa fa-file-excel me-1"></i> Download CSV
+    </a>
+
+    <a href="export_product_sales.php?download=pdf&report=<?= $reportType ?>&month=<?= $selectedMonth ?>&branch_id=<?= $branch_id ?>" 
+       class="btn btn-danger d-inline-flex align-items-center">
+        <i class="fa fa-file-pdf me-1"></i> Download PDF
+    </a>
+
 </form>
 
 
@@ -570,8 +616,42 @@ if ($branch_id) {
 </tbody>
 
 </table>
+
 </div>
 
+<h4 class="mt-5 mb-3">Service Jobs</h4>
+<div class="table-responsive">
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Sale ID</th>
+            <th>Date</th>
+            <th>Branch</th>
+            <th>Service</th>
+            <th>Price (₱)</th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php if (!empty($serviceDataArr)): ?>
+        <?php foreach ($serviceDataArr as $s): ?>
+            <tr>
+                <td><?= htmlspecialchars($s['sale_id']) ?></td>
+                <td><?= date("F j, Y | h:i A", strtotime($s['sale_date'])) ?></td>
+                <td><?= htmlspecialchars($s['branch_name']) ?></td>
+                <td><?= htmlspecialchars($s['service_name']) ?></td>
+                <td>₱<?= number_format($s['price'], 2) ?></td>
+            </tr>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <tr>
+            <td colspan="5" class="text-center text-muted">
+                No service jobs found for this period.
+            </td>
+        </tr>
+    <?php endif; ?>
+    </tbody>
+</table>
+</div>
 <script src="notifications.js"></script>
 <script>
 (function(){
@@ -708,19 +788,6 @@ document.querySelector("input[name='month']")
 document.querySelector("select[name='branch_id']")
   ?.addEventListener("change", loadRevenueCharts);
 
-  function updateExportLink() {
-            const period = document.getElementById('export_period').value;
-            const month = document.querySelector('[name="month"]').value;
-            const branchId = document.querySelector('[name="branch_id"]')?.value || '';
-            const url = `export_product_sales_csv.php?export_period=${period}&month=${month}&branch_id=${branchId}`;
-            document.getElementById('exportLink').href = url;
-        }
-        // Initialize and update on changes
-        document.addEventListener("DOMContentLoaded", updateExportLink);
-        document.getElementById('export_period').addEventListener('change', updateExportLink);
-        document.querySelector('[name="month"]').addEventListener('change', updateExportLink);
-        document.querySelector('[name="branch_id"]')?.addEventListener('change', updateExportLink);
-        
 </script>
 
 <script src="sidebar.js"></script>

@@ -278,7 +278,7 @@ if (isset($_POST['op']) && $_POST['op'] === 'add_stock') {
         logAction($conn, "Stock-In Request", "Requested stock-in of {$qty} {$p['product_name']} to Branch {$target_branch}");
 
         $_SESSION['stock_message'] = "Stock-In request submitted!";
-        header("Location: inventory.php?sir=requested");
+        header("Location: inventory.php?g=requested");
         exit;
     }
 }
@@ -790,9 +790,11 @@ if ($flag || $flash) {
     </div>
 
     <!-- Buttons -->
-    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addProductModal">
-      <i class="fas fa-plus"></i> Add Product
-    </button>
+      <?php if($role === 'admin'): ?>
+<button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addProductModal">
+  <i class="fas fa-plus"></i> Add Product
+</button>
+<?php endif; ?>
 
     <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addStockModal">
       <i class="fas fa-boxes"></i> Add Stock
@@ -1575,80 +1577,81 @@ if ($flag || $flash) {
 <div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="transferLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-md">
     <div class="modal-content fp-card">
+
+      <!-- HEADER -->
       <div class="modal-header fp-header">
         <div class="d-flex align-items-center gap-2">
           <i class="fas fa-exchange-alt"></i>
-          <h5 class="modal-title mb-0" id="transferstockLabel">Stock Transfer</h5>
+          <h5 class="modal-title mb-0" id="transferLabel">Stock Transfer</h5>
         </div>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
-          <form id="transferForm" autocomplete="off">
-            
-          <!-- Source Branch -->
-          <div class="mb-3 px-3">
-            <label for="source_branch" class="form-label fw-semibold">Source Branch</label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="fas fa-warehouse"></i></span>
-              <select class="form-select" id="source_branch" name="source_branch" required>
-                <option value="">Select source branch</option>
-                
-              </select>
-            </div>
-            <div class="invalid-feedback">Please select a source branch.</div>
+
+      <form id="transferForm" autocomplete="off">
+
+        <!-- PRODUCT FIRST -->
+        <div class="mb-3 px-3">
+          <label for="product_id" class="form-label fw-semibold">Product</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-box"></i></span>
+            <select class="form-select" id="product_id" name="product_id" required>
+              <option value="">Select a product</option>
+            </select>
+          </div>
+          <div class="invalid-feedback">Please select a product.</div>
+        </div>
+
+        <!-- SOURCE BRANCH (FILTERED BY PRODUCT STOCK) -->
+        <div class="mb-3 px-3">
+          <label for="source_branch" class="form-label fw-semibold">Source Branch</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-warehouse"></i></span>
+            <select class="form-select" id="source_branch" name="source_branch" required disabled>
+              <option value="">Select a product first</option>
+            </select>
+          </div>
+          <div class="invalid-feedback">Please select a source branch.</div>
+        </div>
+
+        <!-- DESTINATION BRANCH -->
+        <div class="mb-3 px-3">
+          <label for="destination_branch" class="form-label fw-semibold">Destination Branch</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-truck"></i></span>
+            <select class="form-select" id="destination_branch" name="destination_branch" required>
+              <option value="">Select destination branch</option>
+            </select>
+          </div>
+          <div class="invalid-feedback">Please select a destination branch.</div>
+        </div>
+
+        <!-- QUANTITY -->
+        <div class="mb-3 px-3">
+          <label for="quantity" class="form-label fw-semibold">Quantity</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-sort-numeric-up"></i></span>
+            <input type="number" class="form-control" id="quantity" name="quantity" min="1" required placeholder="Enter quantity">
           </div>
 
-          <!-- Product -->
-          <div class="mb-3 px-3">
-            <label for="product_id" class="form-label fw-semibold">Product</label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="fas fa-box"></i></span>
-              <select class="form-select" id="product_id" name="product_id" required disabled>
-                <option value="">Select a branch first</option>
-              </select>
-            </div>
-            <div class="form-text">Select a source branch to load available products.</div>
-            <div class="invalid-feedback">Please select a product.</div>
-          </div>
+          <?php if ($role === 'stockman'): ?>
+            <p class="form-text text-active">This request will be sent for admin approval.</p>
+          <?php endif; ?>
 
-          <!-- Destination Branch -->
-          <div class="mb-3 px-3">
-            <label for="destination_branch" class="form-label fw-semibold">Destination Branch</label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="fas fa-truck"></i></span>
-              <select class="form-select" id="destination_branch" name="destination_branch" required>
-                <option value="">Select destination branch</option>
-              </select>
-            </div>
-            <div class="invalid-feedback">Please select a destination branch.</div>
-          </div>
+          <div class="invalid-feedback">Please enter a valid quantity.</div>
+        </div>
 
-          <!-- Quantity -->
-          <div class="mb-3 px-3">
-            <label for="quantity" class="form-label fw-semibold">Quantity</label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="fas fa-sort-numeric-up"></i></span>
-              <input type="number" class="form-control" id="quantity" name="quantity" min="1" required placeholder="Enter quantity">
-            </div>
-            <?php if ($role === 'stockman'): ?>
-              <p class="form-text text-active">
-                This request will be sent for admin approval.
-              </p>
-            <?php endif; ?>
-            <div class="invalid-feedback">Please enter a valid quantity.</div>
-          </div>
+        <!-- MESSAGE -->
+        <div id="transferMsg" class="mt-3 px-3"></div>
 
-          <!-- Message / Feedback -->
-          <div id="transferMsg" class="mt-3 "></div>
-
-          <!-- Submit -->
-           <div class="modal-footer ">
+        <!-- SUBMIT -->
+        <div class="modal-footer">
           <button type="submit" class="btn btn w-100 py-3" id="transferSubmit">
             <span class="btn-label">Proceed</span>
-            <span class="btn-spinner spinner-border spinner-border-sm ms-2 d-none" role="status" aria-hidden="true"></span>
+            <span class="btn-spinner spinner-border spinner-border-sm ms-2 d-none"></span>
           </button>
-          </div>
-        </form>
-      </div>
+        </div>
+
+      </form>
     </div>
   </div>
 </div>
@@ -2115,47 +2118,6 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   });
 
-  // Prevent same source/destination & load products
-  srcSel.addEventListener('change', () => {
-    const branchId = srcSel.value;
-
-    // Disable same branch in destination
-    const selectedSrc = parseInt(branchId || 0, 10);
-    Array.from(dstSel.options).forEach(opt => {
-      if (!opt.value) return;
-      opt.disabled = parseInt(opt.value, 10) === selectedSrc;
-    });
-
-    // Reset product select
-    prodSel.disabled = true;
-    prodSel.size = 1;
-    prodSel.innerHTML = '<option value="">Select a branch first</option>';
-    if (!branchId) return;
-
-    fetch('get_products_by_branch.php?branch_id=' + encodeURIComponent(branchId))
-      .then(r => r.json())
-      .then(data => {
-        prodSel.disabled = false;
-        prodSel.innerHTML = '';
-        if (!Array.isArray(data) || !data.length) {
-          prodSel.innerHTML = '<option value="">No products available</option>';
-          return;
-        }
-        data.forEach(p => {
-          // Skip products with 0 or null/undefined stock
-          if ((p.stock ?? 0) <= 0) return;
-
-          const opt = document.createElement('option');
-          opt.value = p.product_id;
-          opt.textContent = `${p.product_name} (Stock: ${p.stock})`;
-          prodSel.appendChild(opt);
-        });
-      })
-      .catch(() => {
-        prodSel.disabled = true;
-        prodSel.innerHTML = '<option value="">Failed to load products</option>';
-      });
-  });
 
 // Expand product select (no overlay)
 // Only expand if you explicitly opt-in with a class
@@ -2188,8 +2150,6 @@ form.addEventListener('submit', (e) => {
 
     if (success) {
       form.reset();
-      prodSel.disabled = true;
-      prodSel.innerHTML = '<option value="">Select a branch first</option>';
 
       setTimeout(() => {
         let modalInstance = bootstrap.Modal.getInstance(modalEl);
@@ -2632,6 +2592,37 @@ document.addEventListener("DOMContentLoaded", () => {
       history.replaceState({}, '', url.pathname + (url.searchParams.toString() ? '?' + url.searchParams.toString() : ''));
     }
   });
+
+  // Fetch Products List Stock Transfer
+  document.getElementById("product_id").addEventListener("change", function () {
+    let productId = this.value;
+
+    if (!productId) {
+        document.getElementById("source_branch").innerHTML = '<option value="">Select a product first</option>';
+        document.getElementById("source_branch").disabled = true;
+        return;
+    }
+
+    // Request branches that have this product
+    fetch("fetch_branches_by_product.php?product_id=" + productId)
+        .then(response => response.json())
+        .then(data => {
+            let sourceSelect = document.getElementById("source_branch");
+            sourceSelect.disabled = false;
+            sourceSelect.innerHTML = '<option value="">Select source branch</option>';
+
+            data.forEach(branch => {
+                sourceSelect.innerHTML += `
+                    <option value="${branch.branch_id}">
+                        ${branch.branch_name} (Stock: ${branch.stock})
+                    </option>`;
+            });
+        })
+        .catch(err => {
+            console.error("Error loading branches:", err);
+        });
+});
+
 </script>
 
 <!-- Toast Message for Add Stocks -->
@@ -3057,6 +3048,55 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+function loadProducts() {
+    fetch("get_all_products.php")
+        .then(res => res.json())
+        .then(data => {
+            let productSelect = document.getElementById("product_id");
+            productSelect.innerHTML = '<option value="">Select a product</option>';
+
+            data.forEach(item => {
+                productSelect.innerHTML += `
+                    <option value="${item.product_id}">
+                        ${item.product_name}
+                    </option>
+                `;
+            });
+        })
+        .catch(err => console.error("Error loading products:", err));
+}
+
+document.getElementById("transferModal")
+    .addEventListener("shown.bs.modal", loadProducts);
+
+document.getElementById("product_id").addEventListener("change", function () {
+    let productId = this.value;
+
+    let source = document.getElementById("source_branch");
+    source.disabled = true;
+    source.innerHTML = '<option>Loading...</option>';
+
+    if (!productId) {
+        source.innerHTML = '<option>Select a product first</option>';
+        return;
+    }
+
+    fetch("get_branches_by_product.php?product_id=" + productId)
+        .then(res => res.json())
+        .then(data => {
+            source.disabled = false;
+            source.innerHTML = '<option value="">Select source branch</option>';
+
+            data.forEach(br => {
+                source.innerHTML += `
+                    <option value="${br.branch_id}">
+                        ${br.branch_name} (Stock: ${br.stock})
+                    </option>
+                `;
+            });
+        });
+});
+
 </script>
 
 

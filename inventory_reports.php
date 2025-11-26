@@ -2,7 +2,8 @@
 session_start();
 if (!isset($_SESSION['user_id'])) { header("Location: index.html"); exit; }
 include "config/db.php";
-
+require_once "vendor/autoload.php";
+use Dompdf\Dompdf;
 // Load all product names
 $productNames = [];
 $res = $conn->query("SELECT product_id, product_name FROM products");
@@ -34,9 +35,17 @@ if (!empty($_GET["product"])) {
     $pidFilter = "AND m.product_id = $pid";
 }
 
+// BRANCH FILTER
 $branchScope = "";
-if ($branch_id) {
-    $branchScope = "AND m.branch_id = $branch_id";
+if ($role === 'admin') {
+    if (!empty($_GET['branch'])) {
+        $branchScope = "AND m.branch_id = " . intval($_GET["branch"]);
+    }
+} else {
+    // staff/stockman restricted
+    if ($branch_id) {
+        $branchScope = "AND m.branch_id = $branch_id";
+    }
 }
 
 /* =============================================================================
@@ -186,10 +195,11 @@ $movements = $conn->query($movementSQL)->fetch_all(MYSQLI_ASSOC);
 ============================================================================= */
 $summary = [];
 foreach ($movements as $m) {
-    $key = $m["product_id"]."-".$m["branch_id"];
+    $key = $m["product_id"]."-".$m["branch_id"]. "-" . $m["date"];
 
     if (!isset($summary[$key])) {
         $summary[$key] = [
+            "date" => $m["date"], 
             "product_id"=>$m["product_id"],
             "product"=>$m["product_name"],
             "branch_id"=>$m["branch_id"],
@@ -429,6 +439,118 @@ $allProducts = $conn->query("
 /* =============================================================================
    6. HTML + UI
 ============================================================================= */
+if (isset($_GET["download"]) && $_GET["download"] === "excel") {
+    header("Content-Type: text/csv; charset=UTF-8");
+    header("Content-Disposition: attachment; filename=summary_report.csv");
+    header("Cache-Control: max-age=0");
+
+    // UTF-8 BOM for Excel
+    echo "\xEF\xBB\xBF";
+
+    $output = fopen('php://output', 'w');
+
+    // Report header rows with spacing
+    fputcsv($output, ["Summary Report"]);
+    fputcsv($output, ["Date:", date("F d, Y h:i A")]);
+    fputcsv($output, []); // empty line for spacing
+
+    // Column headers
+    fputcsv($output, [
+        'Date','Product','Branch','Beginning','Stock In','Sales','Service','Transfer In','Transfer Out','Ending'
+    ]);
+
+    // Data rows
+    foreach ($summary as $row) {
+        fputcsv($output, [
+            "'".$row['date'],
+            $row['product'],
+            $row['branch'],
+            $row['begin'],
+            $row['stockIn'],
+            $row['sales'],
+            $row['serviceUsed'],
+            $row['transferIn'],
+            $row['transferOut'],
+            $row['ending']
+        ]);
+    }
+
+    fclose($output);
+    exit;
+}
+
+
+if (isset($_GET["download"]) && $_GET["download"] === "pdf") {
+
+    require_once "vendor/autoload.php";
+    $dompdf = new Dompdf();
+
+    ob_start();
+?>
+<style>
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+th, td {
+    border: 1px solid #333;
+    padding: 4px;
+    text-align: center;
+}
+h2, .header {
+    text-align: center;
+    margin-bottom: 10px;
+}
+</style>
+<div class="header">
+   <strong>RP Habana Reports</strong><br>
+    <small>Summary Report</small><br>
+    <small><?= date("F d, Y h:i A") ?></small>
+</div>
+
+
+<table>
+    <thead>
+        <tr>
+            <th>DATE</th>
+            <th>Product</th>
+            <th>Branch</th>
+            <th>Beginning</th>
+            <th>In</th>
+            <th>Sales</th>
+            <th>Service</th>
+            <th>Transfer In</th>
+            <th>Transfer Out</th>
+            <th>Ending</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($summary as $s): ?>
+        <tr>
+                <td><?= $s["date"] ?></td>
+            <td><?= $s["product"] ?></td>
+            <td><?= $s["branch"] ?></td>
+            <td><?= $s["begin"] ?></td>
+            <td><?= $s["stockIn"] ?></td>
+            <td><?= $s["sales"] ?></td>
+            <td><?= $s["serviceUsed"] ?></td>
+            <td><?= $s["transferIn"] ?></td>
+            <td><?= $s["transferOut"] ?></td>
+            <td><?= $s["ending"] ?></td>
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+
+<?php
+    $html = ob_get_clean();
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper("A4", "landscape");
+    $dompdf->render();
+    $dompdf->stream("summary_report.pdf", ["Attachment" => true]);
+    exit;
+}
 
 // Notifications (Pending Approvals)
 $pending = $conn->query("SELECT COUNT(*) AS pending FROM transfer_requests WHERE status='Pending'")->fetch_assoc()['pending'] ?? 0;
@@ -621,41 +743,64 @@ if (isset($_SESSION['user_id'])) {
 <div class="main-content content">
   <div class="container">
 <h2>Inventory Reports</h2>
+<form method="get" class="row g-2 align-items-end mb-4">
 
-<form method="get" class="row g-3 mb-4">
-    <div class="col-md-3">
-        <label>From</label>
-        <input type="date" name="from" class="form-control"
-               value="<?= htmlspecialchars($from) ?>">
+    <!-- From Date -->
+    <div class="col-md-2">
+        <label class="form-label">From</label>
+        <input type="date" name="from" class="form-control" value="<?= htmlspecialchars($from) ?>">
     </div>
 
-    <div class="col-md-3">
-        <label>To</label>
-        <input type="date" name="to" class="form-control"
-               value="<?= htmlspecialchars($to) ?>">
+    <!-- To Date -->
+    <div class="col-md-2">
+        <label class="form-label">To</label>
+        <input type="date" name="to" class="form-control" value="<?= htmlspecialchars($to) ?>">
     </div>
 
-    <div class="col-md-4">
-        <label>Product</label>
+    <!-- Branch Filter (Admin Only) -->
+    <?php if ($role === 'admin'): ?>
+    <div class="col-md-2">
+        <label class="form-label">Branch</label>
+        <select name="branch" class="form-control">
+            <option value="">All Branches</option>
+            <?php foreach ($branchNames as $bid => $bname): ?>
+                <option value="<?= $bid ?>" <?= (isset($_GET["branch"]) && $_GET["branch"] == $bid) ? "selected" : "" ?>>
+                    <?= htmlspecialchars($bname) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+    <?php endif; ?>
+
+    <!-- Product Filter -->
+    <div class="col-md-3">
+        <label class="form-label">Product</label>
         <select name="product" class="form-control">
             <option value="">All Products</option>
             <?php while($p=$allProducts->fetch_assoc()): ?>
-                <option value="<?= $p['product_id'] ?>"
-                    <?= (!empty($_GET['product']) && $_GET['product']==$p['product_id']) 
-                        ? "selected" 
-                        : "" ?>>
+                <option value="<?= $p['product_id'] ?>" <?= (!empty($_GET['product']) && $_GET['product']==$p['product_id']) ? "selected" : "" ?>>
                     <?= htmlspecialchars($p['product_name']) ?>
                 </option>
             <?php endwhile; ?>
         </select>
     </div>
 
-    <div class="col-md-2">
-        <label>&nbsp;</label>
+    <!-- Apply Button -->
+    <div class="col-md-1">
         <button class="btn btn-primary w-100">Apply</button>
     </div>
-</form>
 
+    <!-- Export Buttons -->
+    <div class="col-md-2 d-flex gap-2">
+        <a href="inventory_reports.php?download=excel&<?= http_build_query($_GET) ?>" class="btn btn-success flex-grow-1">
+            <i class="fa fa-file-excel me-1"></i> Excel
+        </a>
+        <a href="inventory_reports.php?download=pdf&<?= http_build_query($_GET) ?>" class="btn btn-danger flex-grow-1">
+            <i class="fa fa-file-pdf me-1"></i> PDF
+        </a>
+    </div>
+
+</form>
 
 <!-- MOVEMENT TABLE -->
 <h3>Movement Details</h3>
@@ -722,6 +867,36 @@ if (isset($_SESSION['user_id'])) {
   </div>
 
   </div>
+  <!-- filter branch -->
+<script>
+function autoRange() {
+    let r = document.querySelector('[name=range]').value;
+    let f = document.querySelector('[name=from]');
+    let t = document.querySelector('[name=to]');
+
+    let now = new Date();
+    let first, last;
+
+    if (r === 'daily') {
+        first = last = now;
+    } 
+    else if (r === 'weekly') {
+        let day = now.getDay();
+        first = new Date(now); first.setDate(now.getDate() - day);
+        last = new Date(first); last.setDate(first.getDate() + 6);
+    }
+    else if (r === 'monthly') {
+        first = new Date(now.getFullYear(), now.getMonth(), 1);
+        last = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    } 
+    else {
+        return;
+    }
+
+    f.value = first.toISOString().substring(0, 10);
+    t.value = last.toISOString().substring(0, 10);
+}
+</script>
 
 <script>
     (function(){
