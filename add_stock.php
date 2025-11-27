@@ -39,12 +39,33 @@ if ($barcode !== '') {
 
 /* expiry validation */
 $expiryDateForLot = null;
-if ((int)$expiry_required === 1 && $expiry_date === '') die("Expiry date is required for this product.");
-if ($expiry_date !== '') {
-  $dt = DateTime::createFromFormat('Y-m-d', $expiry_date);
-  if (!($dt && $dt->format('Y-m-d') === $expiry_date)) die("Invalid expiry date format. Use YYYY-MM-DD.");
-  $expiryDateForLot = $expiry_date;
+
+if ((int)$expiry_required === 1 && $expiry_date === '') {
+    $_SESSION['stock_message'] = "❌ Expiry date is required for this product.";
+    header("Location: inventory.php?stock=error");
+    exit;
 }
+
+if ($expiry_date !== '') {
+    $dt = DateTime::createFromFormat('Y-m-d', $expiry_date);
+    if (!($dt && $dt->format('Y-m-d') === $expiry_date)) {
+        $_SESSION['stock_message'] = "❌ Invalid expiry date format. Use YYYY-MM-DD.";
+        header("Location: inventory.php?stock=error");
+        exit;
+    }
+
+    // ❌ Block expired dates
+    $today = new DateTime('today');
+    if ($dt < $today) { // use <= to also block “expires today”
+        $_SESSION['stock_message'] = "❌ Cannot add stock: this product is already expired.";
+        header("Location: inventory.php?stock=error");
+        exit;
+    }
+
+    $expiryDateForLot = $expiry_date;
+}
+
+
 
 $user_id = (int)($_SESSION['user_id'] ?? 0);
 $AUTO_APPROVE_ADMIN = true; // flip to false if you want admins to queue too

@@ -91,6 +91,20 @@ if (!empty($expiration)) {
     }
 }
 
+/* ---------- Reject expired products ---------- */
+if (!empty($expiration)) {
+    $now = new DateTime('today'); // Compare using dates only
+    $expDt = new DateTime($expiration);
+
+    if ($expDt < $now) {
+        echo json_encode([
+            "status"  => "error",
+            "message" => "Product has expired and cannot be added."
+        ]);
+        exit;
+    }
+}
+
 /* ---------- Barcode uniqueness ---------- */
 if ($barcode !== '') {
     $check = $conn->prepare("SELECT product_id FROM products WHERE barcode = ?");

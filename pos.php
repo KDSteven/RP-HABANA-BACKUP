@@ -121,13 +121,21 @@ $totalVat = 0;                // ALWAYS 0
 $grand_total = $subtotal;     // VAT removed
 
     // ---------- 2. APPLY DISCOUNT ----------
-    $discount_value = 0.0;
-    if ($discount > 0) {
-        $discount_value = ($discount_type === 'percent')
-            ? $subtotal * ($discount / 100)
-            : min($discount, $subtotal);
-    }
-    $after_discount = $subtotal - $discount_value;
+$discount_value = 0.0;
+if ($discount > 0) {
+    $discount_value = ($discount_type === 'percent')
+        ? $subtotal * ($discount / 100)
+        : $discount;
+}
+
+// NEW VALIDATION — BLOCK invalid discounts
+if ($discount_value > $subtotal) {
+    throw new Exception(
+        "Discount cannot exceed the subtotal of ₱" . number_format($subtotal, 2)
+    );
+}
+
+$after_discount = $subtotal - $discount_value;
 
     // ---------- 3. GRAND TOTAL ----------
     $grand_total = $after_discount;
@@ -642,6 +650,12 @@ if (isset($_SESSION['user_id'])) {
                   Total Due: ₱<?= number_format($cartGrandTotal, 2) ?>
               </h4>
 
+              <!-- Payment -->
+              <input type="number" step="0.01" min="0"
+                     name="payment" id="paymentInput" 
+                     class="form-control mt-3"
+                     placeholder="Enter cash received..." required>
+
               <!-- Discount -->
               <div class="d-flex gap-2">
                 <input type="number" step="0.01" min="0" max="500" name="discount" 
@@ -660,15 +674,6 @@ if (isset($_SESSION['user_id'])) {
                           data-value="<?= $cash ?>">₱<?= $cash ?></button>
                 <?php endforeach; ?>
               </div>
-
-              <!-- Payment -->
-              <input type="number" step="0.01" min="0"
-                     name="payment" id="paymentInput" 
-                     class="form-control mt-3"
-                     placeholder="Enter cash received..." required>
-
-              <!-- Change -->
-              <h5 class="mt-2 text-success fw-bold" id="displayChange">₱0.00</h5>
 
               <!-- Notes -->
               <textarea name="note" id="paymentNote" 
@@ -1509,6 +1514,48 @@ document.getElementById("discountInput").addEventListener("input", function () {
 
     updatePaymentComputed();
 });
+
+// INTERCEPT CHECKOUT SUBMIT — prevent closing modal if discount is invalid
+document.getElementById("paymentForm").addEventListener("submit", function (e) {
+
+    const body = document.getElementById("paymentModalBody");
+    const subtotal = parseFloat(body.dataset.subtotal || "0");
+    const vat = 0;
+    const grand = subtotal + vat;
+
+    const discountInput = document.getElementById("discountInput");
+    const discountType = document.getElementById("discountType");
+
+    let discount = parseFloat(discountInput.value || "0");
+
+    // Convert percent -> amount
+    if (discountType.value === "percent") {
+        discount = subtotal * (discount / 100);
+    }
+
+    // VALIDATIONS
+    if (discount < 0) {
+        e.preventDefault();
+        safeToast("Invalid Discount", "Discount cannot be negative.", "danger");
+        return false;
+    }
+
+    if (discount > grand) {
+        e.preventDefault();
+        safeToast("Invalid Discount", "Discount cannot exceed the total amount.", "danger");
+        return false;
+    }
+
+    if (discountType.value === "percent" && parseFloat(discountInput.value) > 100) {
+        e.preventDefault();
+        safeToast("Invalid Percentage", "Percentage discount cannot exceed 100%.", "danger");
+        return false;
+    }
+
+    // If valid: allow form submission normally
+    return true;
+});
+
 </script>
 
 
