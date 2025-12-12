@@ -1423,7 +1423,7 @@ if ($flag || $flash) {
       </div>
       <div class="modal-footer">
     <button type="button" class="action-btn btn-reject" data-bs-dismiss="modal">Cancel</button>
-    <button type="submit" class="action-btn btn-archive">Archive</button>
+    <button type="submit" id="confirmArchiveProductBtn" class="action-btn btn-archive">Archive</button>
 </div>
 
     </div>
